@@ -2,13 +2,16 @@ package xx.projmap.swing
 
 import xx.projmap.geometry.GeoPoint
 import xx.projmap.scene.GraphicsAdapter
+import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.geom.AffineTransform
 import java.util.*
 
 class Graphics2DImpl(var graphics2D: Graphics2D) : GraphicsAdapter {
-
     private val matrixStack: Stack<AffineTransform> = Stack()
+
+    override var color: Color = graphics2D.color
+    override var backgroundColor: Color = graphics2D.background
 
     override fun push() {
         matrixStack.push(graphics2D.transform)
@@ -42,7 +45,7 @@ class Graphics2DImpl(var graphics2D: Graphics2D) : GraphicsAdapter {
     override fun drawPointArray(pointArray: Array<out GeoPoint>) {
         val xs = pointArray.map(GeoPoint::x).map(Number::toInt).toIntArray()
         val ys = pointArray.map(GeoPoint::y).map(Number::toInt).toIntArray()
-        graphics2D.drawPolygon(xs, ys, 4)
+        graphics2D.fillPolygon(xs, ys, Math.min(xs.size, ys.size))
     }
 
 }

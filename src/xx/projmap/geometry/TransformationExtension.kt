@@ -8,7 +8,7 @@ fun Transformation.transformQuad(quad: Quad, direction: TransformationDirection 
     val dstPointArray = Array(4, { MutPoint() })
 
     pointArray.zip(dstPointArray).map { (srcPoint, dstPoint) ->
-        transform(srcPoint, dstPoint, direction)
+        transform(srcPoint, direction, dstPoint)
     }
 
     return createQuadFromPoints(dstPointArray)

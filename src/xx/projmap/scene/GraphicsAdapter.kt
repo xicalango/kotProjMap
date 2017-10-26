@@ -1,6 +1,7 @@
 package xx.projmap.scene
 
 import xx.projmap.geometry.*
+import java.awt.Color
 
 interface GraphicsAdapter {
     fun drawPoint(point: GeoPoint)
@@ -20,6 +21,9 @@ interface GraphicsAdapter {
     fun translate(x: Double, y: Double)
     fun scale(x: Double, y: Double)
     fun pop()
+
+    var color : Color
+    var backgroundColor : Color
 }
 
 fun GraphicsAdapter.createViewport(region: GeoRect) = Viewport(region.toMutable(), this)

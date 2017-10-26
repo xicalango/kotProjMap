@@ -25,19 +25,21 @@ class Transformation(srcQuad: Quad, dstQuad: Quad) {
         reverseMatrix = srcMatrix.mult(dstMatrixInv)
     }
 
-    private fun transform(src: GeoPoint, dst: MutPoint, matrix: SimpleMatrix) {
+    private fun transform(src: GeoPoint, matrix: SimpleMatrix, dst: MutPoint): MutPoint {
         val extendedMatrix = src.toExtendedMatrix()
         val transformedMatrix = matrix.mult(extendedMatrix)
 
         dst.x = transformedMatrix[0, 0] / transformedMatrix[2, 0]
         dst.y = transformedMatrix[1, 0] / transformedMatrix[2, 0]
+
+        return dst
     }
 
-    fun transform(src: GeoPoint, dst: MutPoint, direction: TransformationDirection) = when (direction) {
+    fun transform(src: GeoPoint, direction: TransformationDirection, dst: MutPoint = MutPoint()) = when (direction) {
         SRC_TO_DST -> srcToDst(src, dst)
         DST_TO_SRC -> dstToSrc(src, dst)
     }
 
-    fun srcToDst(src: GeoPoint, dst: MutPoint) = transform(src, dst, transformationMatrix)
-    fun dstToSrc(src: GeoPoint, dst: MutPoint) = transform(src, dst, reverseMatrix)
+    fun srcToDst(src: GeoPoint, dst: MutPoint = MutPoint()) = transform(src, transformationMatrix, dst)
+    fun dstToSrc(src: GeoPoint, dst: MutPoint = MutPoint()) = transform(src, reverseMatrix, dst)
 }

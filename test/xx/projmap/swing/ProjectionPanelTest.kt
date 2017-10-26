@@ -30,9 +30,6 @@ internal class ProjectionPanelTest {
         scene.cameras += Camera(MutRect(0.0, 0.0, 640.0, 480.0), viewport, projectionTransform)
 
         val frame: JFrame = with(JFrame()) {
-            add(panel)
-            pack()
-            defaultCloseOperation = JFrame.EXIT_ON_CLOSE
 
             addComponentListener(object : ComponentAdapter() {
                 override fun componentResized(e: ComponentEvent?) {
@@ -45,13 +42,17 @@ internal class ProjectionPanelTest {
                 }
             })
 
+            add(panel)
+            pack()
+            defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+
             this
         }
 
         frame.isVisible = true
 
         while (true) {
-            entity.origin.x += 5
+            entity.move(dx = 5.0)
             scene.render()
             panel.repaint()
             Thread.sleep(1000)

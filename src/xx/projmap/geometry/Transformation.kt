@@ -9,7 +9,7 @@ enum class TransformationDirection {
     DST_TO_SRC
 }
 
-class Transformation(srcQuad: Quad, dstQuad: Quad) {
+class Transformation(srcQuad: GeoQuad, dstQuad: GeoQuad) {
 
     private val transformationMatrix: SimpleMatrix
     private val reverseMatrix: SimpleMatrix
@@ -42,4 +42,6 @@ class Transformation(srcQuad: Quad, dstQuad: Quad) {
 
     fun srcToDst(src: GeoPoint, dst: MutPoint = MutPoint()) = transform(src, transformationMatrix, dst)
     fun dstToSrc(src: GeoPoint, dst: MutPoint = MutPoint()) = transform(src, reverseMatrix, dst)
+
+    fun toTransform() = ProjectionTransform(this)
 }

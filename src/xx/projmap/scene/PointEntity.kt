@@ -6,11 +6,8 @@ class PointEntity(origin: MutPoint = MutPoint()) : Entity(origin) {
 
     private val transformedPoint = MutPoint()
 
-    override fun renderEntity(graphicsAdapter: GraphicsAdapter) {
-        graphicsAdapter.drawPoint(transformedPoint)
-    }
-
-    override fun updateCache(transform: Transform) {
+    override fun render(graphicsAdapter: GraphicsAdapter, transform: Transform) {
         transform.srcToDst(origin, transformedPoint)
+        graphicsAdapter.drawPoint(transformedPoint)
     }
 }

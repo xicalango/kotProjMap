@@ -11,23 +11,22 @@ internal class ProjectionPanelTest {
 
     @Test
     internal fun testProjectionPanel() {
-
-        val panel = ProjectionPanel()
-
-        val viewport = panel.graphicsAdapter.createViewport(MutRect(0.0, 0.0, 640.0, 480.0))
-
-        val world = World()
+        val scene = Scene()
+        val world = scene.world
         val entity = PointEntity(MutPoint(10.0, 10.0))
         world.entities += entity
         world.entities += RectEntity(MutPoint(100.0, 100.0), 20.0, 20.0)
 
-        val scene = Scene(world)
 
         val srcQuad = Rect(0.0, 0.0, 640.0, 480.0).toQuad()
         val dstQuad = Quad(10.0, 10.0, 410.0, 100.0, 410.0, 250.0, 10.0, 250.0)
-        val projectionTransform = ProjectionTransform(Transformation(srcQuad, dstQuad))
+        val projectionTransform = Transformation(srcQuad, dstQuad).toTransform()
 
+        val panel = ProjectionPanel()
+        val viewport = panel.graphicsAdapter.createViewport(MutRect(0.0, 0.0, 640.0, 480.0))
+        val viewport2 = panel.graphicsAdapter.createViewport(MutRect(320.0, 240.0, 320.0, 240.0))
         scene.cameras += Camera(MutRect(0.0, 0.0, 640.0, 480.0), viewport, projectionTransform)
+        scene.cameras += Camera(MutRect(0.0, 0.0, 640.0, 480.0), viewport2)
 
         val frame: JFrame = with(JFrame()) {
 
@@ -38,6 +37,8 @@ internal class ProjectionPanelTest {
                         panel.onResize(size)
                         viewport.region.w = panel.size.getWidth()
                         viewport.region.h = panel.size.getHeight()
+                        viewport2.region.w = panel.size.getWidth()
+                        viewport2.region.h = panel.size.getHeight()
                     }
                 }
             })

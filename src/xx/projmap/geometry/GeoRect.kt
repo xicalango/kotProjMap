@@ -59,7 +59,6 @@ data class Rect(override val x: Double, override val y: Double, override val w: 
     override fun toImmutable(): Rect = this
 
     override fun toMutable(): MutRect = MutRect(x, y, w, h)
-
 }
 
 fun mutRectFrom(point: GeoPoint, w: Double, h: Double) = MutRect(point.x, point.y, w, h)

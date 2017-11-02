@@ -7,16 +7,19 @@ class RectEntity(origin: MutPoint = MutPoint(), private val w: Double = 0.0, pri
 
     private val dstPointArray: Array<MutPoint> = Array(4, { MutPoint() })
 
-    override fun renderEntity(graphicsAdapter: GraphicsAdapter) {
+    override fun render(graphicsAdapter: GraphicsAdapter, transform: Transform) {
         graphicsAdapter.color = Color.GREEN
         graphicsAdapter.backgroundColor = Color.RED
+
+        transformRect(transform)
         graphicsAdapter.drawPointArray(dstPointArray)
     }
 
-    override fun updateCache(transform: Transform) {
+    private fun transformRect(transform: Transform) {
         val srcPointArray = Rect(origin.x, origin.y, w, h).toPointArray()
         srcPointArray.forEachIndexed { index, point ->
             transform.srcToDst(point, dstPointArray[index])
         }
     }
+
 }

@@ -7,13 +7,6 @@ class PolygonEntity(origin: MutPoint, vararg points: GeoPoint) : Entity(origin) 
 
     val path = points.toList()
 
-
-
-    override fun renderEntity(graphicsAdapter: GraphicsAdapter) {
-        super.renderEntity(graphicsAdapter)
-    }
-
-    override fun updateCache(transform: Transform) {
-        super.updateCache(transform)
+    override fun render(graphicsAdapter: GraphicsAdapter, transform: Transform) {
     }
 }

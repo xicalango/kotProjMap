@@ -1,16 +1,11 @@
 package xx.projmap.geometry
 
 interface Transform {
-    fun srcToDst(src: GeoPoint, dst: MutPoint = MutPoint()): MutPoint
-    fun dstToSrc(src: GeoPoint, dst: MutPoint = MutPoint()): MutPoint
-}
-
-class ProjectionTransform(private val transformation: Transformation) : Transform {
-    override fun srcToDst(src: GeoPoint, dst: MutPoint): MutPoint = transformation.srcToDst(src, dst)
-    override fun dstToSrc(src: GeoPoint, dst: MutPoint): MutPoint = transformation.dstToSrc(src, dst)
+    fun srcToDst(srcPoint: GeoPoint, dstPoint: MutPoint = MutPoint()): MutPoint
+    fun dstToSrc(srcPoint: GeoPoint, dstPoint: MutPoint = MutPoint()): MutPoint
 }
 
 class IdentityTransform : Transform {
-    override fun srcToDst(src: GeoPoint, dst: MutPoint): MutPoint = dst.updateFrom(src)
-    override fun dstToSrc(src: GeoPoint, dst: MutPoint): MutPoint = dst.updateFrom(src)
+    override fun srcToDst(srcPoint: GeoPoint, dstPoint: MutPoint): MutPoint = dstPoint.updateFrom(srcPoint)
+    override fun dstToSrc(srcPoint: GeoPoint, dstPoint: MutPoint): MutPoint = dstPoint.updateFrom(srcPoint)
 }

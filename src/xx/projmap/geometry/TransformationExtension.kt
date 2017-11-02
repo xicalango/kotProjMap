@@ -13,6 +13,3 @@ fun Transformation.transformQuad(quad: Quad, direction: TransformationDirection 
 
     return createQuadFromPoints(dstPointArray)
 }
-
-fun Transformation.toTransform() = ProjectionTransform(this)
-

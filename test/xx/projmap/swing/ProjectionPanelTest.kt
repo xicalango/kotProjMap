@@ -21,7 +21,7 @@ internal class ProjectionPanelTest {
 
         val srcQuad = Rect(0.0, 0.0, 640.0, 480.0).toQuad()
         val dstQuad = Quad(10.0, 10.0, 410.0, 100.0, 410.0, 250.0, 10.0, 250.0)
-        val projectionTransform = Transformation(srcQuad, dstQuad).toTransform()
+        val projectionTransform = Transformation(srcQuad, dstQuad)
 
         val panel = ProjectionPanel()
         val viewport = panel.graphicsAdapter.createViewport(MutRect(0.0, 0.0, 320.0, 240.0))

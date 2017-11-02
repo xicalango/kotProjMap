@@ -7,7 +7,7 @@ class Camera(private val region: GeoRect, private val viewport: Viewport, privat
     private val graphicsAdapter = viewport.graphicsAdapter
 
     fun render(world: World) {
-        viewport.clear()
+        viewport.initialize()
 
         graphicsAdapter.push()
         graphicsAdapter.translate(viewport.region.x - region.x, viewport.region.y - region.y)

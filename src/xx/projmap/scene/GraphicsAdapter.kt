@@ -3,11 +3,16 @@ package xx.projmap.scene
 import xx.projmap.geometry.*
 import java.awt.Color
 
+enum class DrawStyle {
+    LINE,
+    FILL
+}
+
 interface GraphicsAdapter {
     fun clear(x: Double, y: Double, w: Double, h: Double)
 
     fun drawPoint(point: GeoPoint)
-    fun drawPointArray(pointArray: Array<out GeoPoint>)
+    fun drawPointArray(pointArray: Array<out GeoPoint>, drawStyle: DrawStyle = DrawStyle.FILL)
 
     fun push()
     fun translate(x: Double, y: Double)

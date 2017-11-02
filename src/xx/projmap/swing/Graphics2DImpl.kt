@@ -1,6 +1,7 @@
 package xx.projmap.swing
 
 import xx.projmap.geometry.GeoPoint
+import xx.projmap.scene.DrawStyle
 import xx.projmap.scene.GraphicsAdapter
 import java.awt.Color
 import java.awt.Graphics2D
@@ -42,10 +43,14 @@ class Graphics2DImpl(var graphics2D: Graphics2D) : GraphicsAdapter {
         graphics2D.drawOval(point.x.toInt(), point.y.toInt(), 5, 5)
     }
 
-    override fun drawPointArray(pointArray: Array<out GeoPoint>) {
+    override fun drawPointArray(pointArray: Array<out GeoPoint>, drawStyle: DrawStyle) {
         val xs = pointArray.map(GeoPoint::x).map(Number::toInt).toIntArray()
         val ys = pointArray.map(GeoPoint::y).map(Number::toInt).toIntArray()
-        graphics2D.fillPolygon(xs, ys, Math.min(xs.size, ys.size))
+        val nPoints = Math.min(xs.size, ys.size)
+        when(drawStyle) {
+            DrawStyle.LINE -> graphics2D.drawPolygon(xs, ys, nPoints)
+            DrawStyle.FILL -> graphics2D.fillPolygon(xs, ys, nPoints)
+        }
     }
 
 }

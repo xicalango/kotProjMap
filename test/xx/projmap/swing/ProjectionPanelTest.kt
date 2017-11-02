@@ -13,9 +13,10 @@ internal class ProjectionPanelTest {
     internal fun testProjectionPanel() {
         val scene = Scene()
         val world = scene.world
-        val entity = PointEntity(MutPoint(10.0, 10.0))
+        val entity = PointEntity(MutPoint(310.0, 110.0))
+        val rectEntity = RectEntity(MutPoint(100.0, 100.0), 20.0, 20.0)
         world.entities += entity
-        world.entities += RectEntity(MutPoint(100.0, 100.0), 20.0, 20.0)
+        world.entities += rectEntity
 
 
         val srcQuad = Rect(0.0, 0.0, 640.0, 480.0).toQuad()
@@ -23,10 +24,10 @@ internal class ProjectionPanelTest {
         val projectionTransform = Transformation(srcQuad, dstQuad).toTransform()
 
         val panel = ProjectionPanel()
-        val viewport = panel.graphicsAdapter.createViewport(MutRect(0.0, 0.0, 640.0, 480.0))
+        val viewport = panel.graphicsAdapter.createViewport(MutRect(0.0, 0.0, 320.0, 240.0))
         val viewport2 = panel.graphicsAdapter.createViewport(MutRect(320.0, 240.0, 320.0, 240.0))
-        scene.cameras += Camera(MutRect(0.0, 0.0, 640.0, 480.0), viewport, projectionTransform)
         scene.cameras += Camera(MutRect(0.0, 0.0, 320.0, 240.0), viewport2)
+        scene.cameras += Camera(MutRect(0.0, 0.0, 640.0, 480.0), viewport, projectionTransform)
 
         val frame: JFrame = with(JFrame()) {
 
@@ -35,8 +36,8 @@ internal class ProjectionPanelTest {
                     val size = e?.component?.size
                     if (size != null) {
                         panel.onResize(size)
-                        viewport.region.w = panel.size.getWidth()
-                        viewport.region.h = panel.size.getHeight()
+//                        viewport.region.w = panel.size.getWidth()
+//                        viewport.region.h = panel.size.getHeight()
                     }
                 }
             })
@@ -53,6 +54,7 @@ internal class ProjectionPanelTest {
         var dv = -1.0
         while (true) {
             entity.move(dx = dv)
+            rectEntity.move(dx = -dv * 2, dy = -dv / 2)
             viewport2.region.x += dv
             viewport2.region.y += dv
             if (viewport2.region.x < 0 || viewport2.region.y < 0 || viewport2.region.x > panel.width || viewport2.region.y > panel.height) {

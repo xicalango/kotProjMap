@@ -30,9 +30,10 @@ data class MutPoint(override var x: Double = 0.0, override var y: Double = 0.0) 
 
     override fun toImmutable() = Point(x, y)
 
-    fun updateFrom(point: GeoPoint) {
+    fun updateFrom(point: GeoPoint): MutPoint {
         x = point.x
         y = point.y
+        return this
     }
 }
 

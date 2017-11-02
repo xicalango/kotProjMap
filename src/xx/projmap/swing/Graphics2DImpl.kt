@@ -14,6 +14,14 @@ class Graphics2DImpl(var graphics2D: Graphics2D) : GraphicsAdapter {
     override var color: Color = graphics2D.color
     override var backgroundColor: Color = graphics2D.background
 
+    override fun resetClip() {
+        graphics2D.clip = null
+    }
+
+    override fun clip(x: Double, y: Double, w: Double, h: Double) {
+        graphics2D.clipRect(x.toInt(), y.toInt(), w.toInt(), h.toInt())
+    }
+
     override fun push() {
         matrixStack.push(graphics2D.transform)
     }

@@ -18,6 +18,8 @@ class Camera(private val region: GeoRect, private val viewport: Viewport, privat
         world.entities.forEach { it.render(graphicsAdapter, transform) }
 
         graphicsAdapter.pop()
+
+        viewport.finish()
     }
 
 }

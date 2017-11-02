@@ -1,6 +1,9 @@
 package xx.projmap.scene
 
-import xx.projmap.geometry.*
+import xx.projmap.geometry.GeoPoint
+import xx.projmap.geometry.GeoRect
+import xx.projmap.geometry.SimpleGeoEntity
+import xx.projmap.geometry.toPointArray
 import java.awt.Color
 
 enum class DrawStyle {
@@ -10,6 +13,8 @@ enum class DrawStyle {
 
 interface GraphicsAdapter {
     fun clear(x: Double, y: Double, w: Double, h: Double)
+    fun clip(x: Double, y: Double, w: Double, h: Double)
+    fun resetClip()
 
     fun drawPoint(point: GeoPoint)
     fun drawPointArray(pointArray: Array<out GeoPoint>, drawStyle: DrawStyle = DrawStyle.FILL)

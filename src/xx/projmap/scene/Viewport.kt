@@ -15,5 +15,10 @@ class Viewport(val region: MutRect, val graphicsAdapter: GraphicsAdapter) {
     fun initialize() {
         clear()
         drawBorder()
+        graphicsAdapter.clip(region.x, region.y, region.w, region.h)
+    }
+
+    fun finish() {
+        graphicsAdapter.resetClip()
     }
 }

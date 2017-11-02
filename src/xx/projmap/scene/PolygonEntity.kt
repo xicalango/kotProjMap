@@ -13,7 +13,7 @@ class PolygonEntity(origin: MutPoint, vararg points: GeoPoint) : Entity(origin) 
         super.renderEntity(graphicsAdapter)
     }
 
-    override fun updateCache(transform: Transform?) {
+    override fun updateCache(transform: Transform) {
         super.updateCache(transform)
     }
 }

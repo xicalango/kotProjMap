@@ -3,9 +3,9 @@ package xx.projmap.scene
 import xx.projmap.geometry.MutPoint
 
 open class Entity(protected val origin: MutPoint = MutPoint()) {
-    var updated: Boolean = true
+    private var updated: Boolean = true
 
-    fun render(graphicsAdapter: GraphicsAdapter, transform: Transform?) {
+    fun render(graphicsAdapter: GraphicsAdapter, transform: Transform) {
         if (updated) {
             println("updating cache")
             updateCache(transform)
@@ -24,7 +24,7 @@ open class Entity(protected val origin: MutPoint = MutPoint()) {
     open fun renderEntity(graphicsAdapter: GraphicsAdapter) {
     }
 
-    open fun updateCache(transform: Transform?) {
+    open fun updateCache(transform: Transform) {
 
     }
 }

@@ -2,7 +2,7 @@ package xx.projmap.scene
 
 import xx.projmap.geometry.GeoRect
 
-class Camera(val region: GeoRect, val viewport: Viewport, val transform: Transform? = null) {
+class Camera(private val region: GeoRect, private val viewport: Viewport, private val transform: Transform = IdentityTransform()) {
 
     private val graphicsAdapter = viewport.graphicsAdapter
 

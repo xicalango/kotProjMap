@@ -1,6 +1,6 @@
 package xx.projmap.scene
 
-class Scene(val world: World) {
+class Scene(private val world: World) {
 
     val cameras: MutableList<Camera> = ArrayList()
 

@@ -10,11 +10,7 @@ class PointEntity(origin: MutPoint = MutPoint()) : Entity(origin) {
         graphicsAdapter.drawPoint(transformedPoint)
     }
 
-    override fun updateCache(transform: Transform?) {
-        if (transform != null) {
-            transform.srcToDst(origin, transformedPoint)
-        } else {
-            transformedPoint.updateFrom(origin)
-        }
+    override fun updateCache(transform: Transform) {
+        transform.srcToDst(origin, transformedPoint)
     }
 }

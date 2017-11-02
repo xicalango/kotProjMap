@@ -35,13 +35,16 @@ class Transformation(srcQuad: GeoQuad, dstQuad: GeoQuad) {
         return dst
     }
 
-    fun transform(src: GeoPoint, direction: TransformationDirection, dst: MutPoint = MutPoint()) = when (direction) {
-        SRC_TO_DST -> srcToDst(src, dst)
-        DST_TO_SRC -> dstToSrc(src, dst)
+    private fun getTransformationMatrix(direction: TransformationDirection) = when(direction) {
+        SRC_TO_DST -> transformationMatrix
+        DST_TO_SRC -> reverseMatrix
     }
 
-    fun srcToDst(src: GeoPoint, dst: MutPoint = MutPoint()) = transform(src, transformationMatrix, dst)
-    fun dstToSrc(src: GeoPoint, dst: MutPoint = MutPoint()) = transform(src, reverseMatrix, dst)
+    fun transform(srcPoint: GeoPoint, direction: TransformationDirection, dstPoint: MutPoint = MutPoint()) : MutPoint {
+        val matrix = getTransformationMatrix(direction)
+        return transform(srcPoint, matrix, dstPoint)
+    }
 
-    fun toTransform() = ProjectionTransform(this)
+    fun srcToDst(srcPoint: GeoPoint, dstPoint: MutPoint = MutPoint()) = transform(srcPoint, transformationMatrix, dstPoint)
+    fun dstToSrc(srcPoint: GeoPoint, dstPoint: MutPoint = MutPoint()) = transform(srcPoint, reverseMatrix, dstPoint)
 }

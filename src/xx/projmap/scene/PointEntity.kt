@@ -1,6 +1,7 @@
 package xx.projmap.scene
 
 import xx.projmap.geometry.MutPoint
+import xx.projmap.geometry.Transform
 
 class PointEntity(origin: MutPoint = MutPoint()) : Entity(origin) {
 

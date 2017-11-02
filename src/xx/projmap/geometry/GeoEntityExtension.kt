@@ -1,10 +1,10 @@
 package xx.projmap.geometry
 
-fun GeoEntity<*, *>.toPointArray(): Array<Point> = Array(size, { Point(getX(it), getY(it)) })
+fun SimpleGeoEntity.toPointArray(): Array<Point> = Array(size, { Point(getX(it), getY(it)) })
 
-fun GeoEntity<*, *>.toQuad(): Quad {
+fun SimpleGeoEntity.toQuad(): Quad {
     if (size != 4) {
-        throw IllegalArgumentException("expected 4 got $size")
+        throw IllegalArgumentException("expected 4 points, got $size")
     }
 
     return Quad(

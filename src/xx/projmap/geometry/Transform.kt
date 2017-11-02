@@ -1,4 +1,4 @@
-package xx.projmap.scene
+package xx.projmap.geometry
 
 import xx.projmap.geometry.GeoPoint
 import xx.projmap.geometry.MutPoint

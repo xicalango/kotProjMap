@@ -14,13 +14,16 @@ interface GraphicsAdapter {
     fun drawPoint(point: GeoPoint)
     fun drawPointArray(pointArray: Array<out GeoPoint>, drawStyle: DrawStyle = DrawStyle.FILL)
 
+    fun drawGeoEntity(geoEntity: SimpleGeoEntity, drawStyle: DrawStyle = DrawStyle.FILL) =
+            drawPointArray(geoEntity.toPointArray(), drawStyle)
+
     fun push()
     fun translate(x: Double, y: Double)
     fun scale(x: Double, y: Double)
     fun pop()
 
-    var color : Color
-    var backgroundColor : Color
+    var color: Color
+    var backgroundColor: Color
 }
 
 fun GraphicsAdapter.createViewport(region: GeoRect) = Viewport(region.toMutable(), this)

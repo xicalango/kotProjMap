@@ -1,6 +1,8 @@
 package xx.projmap.scene
 
 import xx.projmap.geometry.GeoRect
+import xx.projmap.geometry.IdentityTransform
+import xx.projmap.geometry.Transform
 
 class Camera(private val region: GeoRect, private val viewport: Viewport, private val transform: Transform = IdentityTransform()) {
 

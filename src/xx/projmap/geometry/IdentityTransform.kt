@@ -1,7 +1,4 @@
-package xx.projmap.scene
-
-import xx.projmap.geometry.GeoPoint
-import xx.projmap.geometry.MutPoint
+package xx.projmap.geometry
 
 class IdentityTransform : Transform {
     override fun srcToDst(src: GeoPoint, dst: MutPoint): MutPoint {

@@ -22,3 +22,4 @@ open class Entity(val origin: MutPoint = MutPoint(), var visible: Boolean = true
         origin.move(dx, dy)
     }
 }
+

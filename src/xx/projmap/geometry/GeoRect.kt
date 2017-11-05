@@ -37,9 +37,13 @@ interface GeoRect : GeoEntity<Rect, MutRect> {
     operator fun contains(other: GeoRect): Boolean = other.x >= x && other.y >= y && other.w <= w && other.h <= h
 
     operator fun contains(point: GeoPoint): Boolean = point.x >= x && point.y >= y && point.x <= x + w && point.y <= y + h
+
+    override fun translated(point: GeoPoint): GeoRect
 }
 
 data class MutRect(override var x: Double, override var y: Double, override var w: Double, override var h: Double) : GeoRect {
+    override fun translated(point: GeoPoint): MutRect = MutRect(x + point.x, y + point.y, w, h)
+
     override fun toImmutable(): Rect = Rect(x, y, w, h)
 
     override fun toMutable(): MutRect = this
@@ -68,6 +72,8 @@ data class MutRect(override var x: Double, override var y: Double, override var 
 }
 
 data class Rect(override val x: Double, override val y: Double, override val w: Double, override val h: Double) : GeoRect {
+    override fun translated(point: GeoPoint): Rect = Rect(x + point.x, y + point.y, w, h)
+
     override fun toImmutable(): Rect = this
 
     override fun toMutable(): MutRect = MutRect(x, y, w, h)

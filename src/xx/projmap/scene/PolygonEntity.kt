@@ -11,8 +11,9 @@ class PolygonEntity(origin: MutPoint, vararg points: GeoPoint) : Entity(origin) 
 
     override fun renderInternal(graphicsAdapter: GraphicsAdapter, transform: Transform) {
         polygon.forEachIndexed { index, point ->
-            transform.srcToDst(point, dstPolygon[index])
+            transform.srcToDst(point.translated(origin), dstPolygon[index])
         }
         graphicsAdapter.drawPointArray(dstPolygon)
     }
+
 }

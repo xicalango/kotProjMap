@@ -26,7 +26,7 @@ class ProjectionFrame(private val eventQueue: EventQueue) : JFrame(), MainFrame 
             }
 
             override fun componentHidden(e: ComponentEvent?) {
-                eventQueue.addEvent(QuitEvent(this@ProjectionFrame))
+                eventQueue.addEvent(QuitEvent)
             }
         })
 

@@ -11,6 +11,8 @@ interface SimpleGeoEntity {
         else -> throw IllegalArgumentException("$component")
     }
 
+    fun translated(point: GeoPoint): SimpleGeoEntity
+
     fun toNestedArrays(): Array<DoubleArray> = Array(size, { doubleArrayOf(getX(it), getY(it)) })
 }
 

@@ -1,11 +1,13 @@
 package xx.projmap.simulation.impl
 
 import xx.projmap.geometry.GeoRect
+import xx.projmap.geometry.Rect
 import xx.projmap.geometry.Transform
 import xx.projmap.scene.*
 import xx.projmap.simulation.api.Script
 import xx.projmap.simulation.api.SimulationManager
 import xx.projmap.simulation.api.SimulationState
+import java.awt.Color
 
 class MainState(simulationManager: SimulationManager, scene: Scene) : SimulationState(simulationManager, scene) {
 
@@ -20,6 +22,13 @@ class MainState(simulationManager: SimulationManager, scene: Scene) : Simulation
         val calibrationCamera = parameters.getOrNull(1) as? Camera ?: throw IllegalArgumentException("need camera")
 
         setupCameras(calibrationCamera, transform)
+
+        val keyEntityHandler = KeyEntityHandler(transformCamera)
+
+        scripts.clear()
+        scripts += keyEntityHandler
+
+        scene.world.entities += keyEntityHandler.entityGroup
     }
 
     private fun setupCameras(calibrationCamera: Camera, transform: Transform) {
@@ -56,20 +65,71 @@ class MainState(simulationManager: SimulationManager, scene: Scene) : Simulation
 
 }
 
-class KeyEntityHandler(keys: List<GeoRect> = emptyList()) : Script {
+class KeyEntityHandler(private val camera: Camera, keys: List<GeoRect> = emptyList()) : Script {
 
-    private val keys: MutableList<RectEntity> = keys.map { it.toEntity() }.toMutableList()
-    private var currentKey: Int? = null
+    val entityGroup = EntityGroup()
+    private val keys: MutableList<Entity> = entityGroup.entities
+
+    private var currentKey: RectEntity? = null
+
+    init {
+        this.keys += keys.map { it.toEntity() }
+    }
 
     override fun update(dt: Double) {
     }
 
     override fun handleEvent(event: Event) {
-        if (event is MouseClickEvent) {
-            handleMouseClick(event)
+        when (event) {
+            is MouseClickEvent -> handleMouseClick(event)
+            is KeyEvent -> handleKeyEvent(event)
+        }
+    }
+
+    private fun handleKeyEvent(event: KeyEvent) {
+        if (event.direction == Direction.RELEASED) {
+            when (event.keyChar) {
+                'r' -> removeCurrentKey()
+            }
+        }
+    }
+
+    private fun KeyEntityHandler.removeCurrentKey() {
+        val key = currentKey ?: return
+        removeKey(key)
+    }
+
+    private fun removeKey(key: RectEntity) {
+        keys.remove(key)
+
+        if (key == currentKey) {
+            updateCurrentKey(keys.getOrNull(0) as? RectEntity)
         }
     }
 
     private fun handleMouseClick(mouseClickEvent: MouseClickEvent) {
+
+        val worldPoint = camera.viewportToWorld(mouseClickEvent.point)
+
+        val clickedKey = keys
+                .filter { it is RectEntity }
+                .map { it as RectEntity }
+                .find { key -> worldPoint in key.translatedRect }
+
+        if (clickedKey != null) {
+            return updateCurrentKey(clickedKey)
+        }
+
+        val newKey = RectEntity(Rect(0.0, 0.0, 100.0, 100.0), origin = worldPoint.copy())
+        keys += newKey
+        updateCurrentKey(newKey)
+    }
+
+    private fun updateCurrentKey(clickedKey: RectEntity?) {
+        println("$currentKey, ${currentKey?.color}")
+        currentKey?.color = Color.WHITE
+        println("$currentKey, ${currentKey?.color}")
+        clickedKey?.color = Color.RED
+        currentKey = clickedKey
     }
 }

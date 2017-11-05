@@ -2,7 +2,10 @@ package xx.projmap.swing
 
 import org.junit.jupiter.api.Test
 import xx.projmap.geometry.*
-import xx.projmap.scene.*
+import xx.projmap.scene.Camera
+import xx.projmap.scene.PointEntity
+import xx.projmap.scene.RectEntity
+import xx.projmap.scene.Scene
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import javax.swing.JFrame
@@ -24,10 +27,7 @@ internal class ProjectionPanelTest {
         val projectionTransform = Transformation(srcQuad, dstQuad)
 
         val panel = ProjectionPanel()
-        val viewport = panel.graphicsAdapter.createViewport(MutRect(0.0, 0.0, 320.0, 240.0))
-        val viewport2 = panel.graphicsAdapter.createViewport(MutRect(320.0, 240.0, 320.0, 240.0))
-        scene.cameras += Camera(MutRect(0.0, 0.0, 320.0, 240.0), viewport2)
-        scene.cameras += Camera(MutRect(0.0, 0.0, 640.0, 480.0), viewport, projectionTransform)
+        scene.cameras += Camera(MutRect(0.0, 0.0, 640.0, 480.0), panel)
 
         val frame: JFrame = with(JFrame()) {
 
@@ -36,8 +36,6 @@ internal class ProjectionPanelTest {
                     val size = e?.component?.size
                     if (size != null) {
                         panel.onResize(size)
-//                        viewport.region.w = panel.size.getWidth()
-//                        viewport.region.h = panel.size.getHeight()
                     }
                 }
             })
@@ -55,11 +53,6 @@ internal class ProjectionPanelTest {
         while (true) {
             entity.move(dx = dv)
             rectEntity.move(dx = -dv * 2, dy = -dv / 2)
-            viewport2.region.x += dv
-            viewport2.region.y += dv
-            if (viewport2.region.x < 0 || viewport2.region.y < 0 || viewport2.region.x > panel.width || viewport2.region.y > panel.height) {
-                dv = -dv
-            }
             scene.render()
             panel.repaint()
             Thread.sleep(1000 / 30)

@@ -31,4 +31,4 @@ interface GraphicsAdapter {
     var backgroundColor: Color
 }
 
-fun GraphicsAdapter.createViewport(region: GeoRect) = Viewport(region.toMutable(), this)
+fun GraphicsAdapter.createViewport(region: GeoRect) = SimpleViewport(region.toMutable(), this)

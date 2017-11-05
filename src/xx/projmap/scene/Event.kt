@@ -3,12 +3,6 @@ package xx.projmap.scene
 import xx.projmap.geometry.GeoPoint
 import java.util.concurrent.ConcurrentLinkedDeque
 
-enum class EventType {
-    MOUSE_CLICK_EVENT,
-    KEY_PRESS_EVENT,
-    QUIT_EVENT
-}
-
 enum class MouseButton {
     LEFT,
     RIGHT,
@@ -20,24 +14,15 @@ enum class Direction {
     RELEASED
 }
 
-interface Event {
-    val eventType: EventType
-    val origin: Any
+sealed class Event {
+    abstract val origin: Any
 }
 
-data class MouseClickEvent(val point: GeoPoint, val button: MouseButton, override val origin: Viewport) : Event {
-    override val eventType: EventType
-        get() = EventType.MOUSE_CLICK_EVENT
-}
-
-data class KeyEvent(val keyChar: Char, val direction: Direction, override val origin: Any) : Event {
-    override val eventType: EventType
-        get() = EventType.KEY_PRESS_EVENT
-}
-
-data class QuitEvent(override val origin: Any = Unit) : Event {
-    override val eventType: EventType
-        get() = EventType.QUIT_EVENT
+data class MouseClickEvent(val point: GeoPoint, val button: MouseButton, override val origin: Viewport) : Event()
+data class KeyEvent(val keyChar: Char, val direction: Direction, override val origin: Any) : Event()
+object QuitEvent : Event() {
+    override val origin: Any
+        get() = Unit
 }
 
 class EventQueue {

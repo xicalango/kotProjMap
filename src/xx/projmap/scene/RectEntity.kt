@@ -1,9 +1,6 @@
 package xx.projmap.scene
 
-import xx.projmap.geometry.MutPoint
-import xx.projmap.geometry.Rect
-import xx.projmap.geometry.Transform
-import xx.projmap.geometry.toPointArray
+import xx.projmap.geometry.*
 import java.awt.Color
 
 class RectEntity(origin: MutPoint = MutPoint(), private val w: Double = 0.0, private val h: Double = 0.0) : Entity(origin) {
@@ -26,3 +23,5 @@ class RectEntity(origin: MutPoint = MutPoint(), private val w: Double = 0.0, pri
     }
 
 }
+
+fun GeoRect.toEntity() = RectEntity(MutPoint(x, y), w, h)

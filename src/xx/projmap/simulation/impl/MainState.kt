@@ -1,7 +1,9 @@
 package xx.projmap.simulation.impl
 
+import xx.projmap.geometry.GeoRect
 import xx.projmap.geometry.Transform
 import xx.projmap.scene.*
+import xx.projmap.simulation.api.Script
 import xx.projmap.simulation.api.SimulationManager
 import xx.projmap.simulation.api.SimulationState
 
@@ -52,4 +54,22 @@ class MainState(simulationManager: SimulationManager, scene: Scene) : Simulation
         }
     }
 
+}
+
+class KeyEntityHandler(keys: List<GeoRect> = emptyList()) : Script {
+
+    private val keys: MutableList<RectEntity> = keys.map { it.toEntity() }.toMutableList()
+    private var currentKey: Int? = null
+
+    override fun update(dt: Double) {
+    }
+
+    override fun handleEvent(event: Event) {
+        if (event is MouseClickEvent) {
+            handleMouseClick(event)
+        }
+    }
+
+    private fun handleMouseClick(mouseClickEvent: MouseClickEvent) {
+    }
 }

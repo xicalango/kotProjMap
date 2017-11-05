@@ -41,7 +41,7 @@ class Simulation(states: List<StateConstructor>, private val startState: String?
                 }
                 if (event is KeyEvent) {
                     if (event.keyChar == 'q') {
-                        eventQueue.addEvent(QuitEvent())
+                        eventQueue.addEvent(QuitEvent)
                     }
                 }
                 simulationManager.handleEvent(event)

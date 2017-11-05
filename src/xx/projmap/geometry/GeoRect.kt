@@ -22,12 +22,34 @@ interface GeoRect : GeoEntity<Rect, MutRect> {
         else -> throw IllegalArgumentException("$n")
     }
 
+    fun transformX(src: Double, dstRect: GeoRect) =
+            proj2(x, x + w, dstRect.x, dstRect.x + dstRect.w, src)
+
+    fun transformY(src: Double, dstRect: GeoRect) =
+            proj2(y, y + h, dstRect.y, dstRect.y + dstRect.h, src)
+
+    fun scaleW(src: Double, dstRect: GeoRect) =
+            scale2(w, dstRect.w, src)
+
+    fun scaleH(src: Double, dstRect: GeoRect) =
+            scale2(h, dstRect.h, src)
+
+    fun transformTo(dstRect: GeoRect, src: GeoPoint, dst: MutPoint = MutPoint()): MutPoint {
+        dst.x = transformX(src.x, dstRect)
+        dst.y = transformY(src.y, dstRect)
+        return dst
+    }
 }
 
 data class MutRect(override var x: Double, override var y: Double, override var w: Double, override var h: Double) : GeoRect {
     override fun toImmutable(): Rect = Rect(x, y, w, h)
 
     override fun toMutable(): MutRect = this
+
+    fun scale(factor: Double) {
+        w *= factor
+        h *= factor
+    }
 }
 
 data class Rect(override val x: Double, override val y: Double, override val w: Double, override val h: Double) : GeoRect {

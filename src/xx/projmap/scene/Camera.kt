@@ -1,14 +1,18 @@
 package xx.projmap.scene
 
-import xx.projmap.geometry.GeoRect
-import xx.projmap.geometry.IdentityTransform
-import xx.projmap.geometry.Transform
+import xx.projmap.geometry.*
 
-class Camera(private val region: GeoRect, private val viewport: Viewport, private val transform: Transform = IdentityTransform()) {
+class Camera(private val region: GeoRect, val viewport: Viewport, private val transform: Transform = IdentityTransform(), val id: String? = null) {
 
     private val graphicsAdapter = viewport.graphicsAdapter
 
+    var visible = true
+
     fun render(world: World) {
+        if (!visible) {
+            return
+        }
+
         viewport.initialize()
 
         graphicsAdapter.push()
@@ -20,6 +24,14 @@ class Camera(private val region: GeoRect, private val viewport: Viewport, privat
         graphicsAdapter.pop()
 
         viewport.finish()
+    }
+
+    fun viewportToCamera(srcPoint: GeoPoint, dstPoint: MutPoint = MutPoint()): MutPoint =
+            viewport.region.transformTo(region, srcPoint, dstPoint)
+
+    fun viewportToWorld(srcPoint: GeoPoint, dstPoint: MutPoint = MutPoint()): MutPoint {
+        val cameraPoint = viewportToCamera(srcPoint, dstPoint)
+        return transform.dstToSrc(cameraPoint, cameraPoint)
     }
 
 }

@@ -18,6 +18,6 @@ fun main(args: Array<String>) {
 
     simulation.run(frame.mainViewport, mapOf(Pair("debug", viewport2)))
 
-
+    System.exit(0)
 }
 

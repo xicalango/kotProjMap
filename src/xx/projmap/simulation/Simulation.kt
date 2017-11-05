@@ -3,27 +3,26 @@ package xx.projmap.simulation
 import xx.projmap.scene.*
 import java.util.concurrent.TimeUnit
 
-class Simulation(mainFrameConstructor: (EventQueue) -> MainFrame, states: List<StateConstructor>, private val startState: String? = null, private val fpsLimit: Long? = 30) : Runnable {
-    private val eventQueue: EventQueue = EventQueue()
+class Simulation(states: List<StateConstructor>, private val startState: String? = null, private val fpsLimit: Long? = 30) {
+    val eventQueue: EventQueue = EventQueue()
 
     val scene: Scene = Scene(eventQueue)
-
-    private val mainFrame: MainFrame = mainFrameConstructor(eventQueue)
-    val mainViewport = mainFrame.mainViewport
 
     private val simulationManager: SimulationManager = SimulationManager(scene, states)
 
     private var running: Boolean = true
 
-    override fun run() {
+    fun run(mainViewport: Viewport, additionalViewports: Map<String, Viewport> = emptyMap()) {
+
+        simulationManager.viewports.clear()
+        simulationManager.viewports += additionalViewports
+        simulationManager.viewports["main"] = mainViewport
 
         simulationManager.initialize()
 
         if (startState != null) {
             simulationManager.changeState(startState)
         }
-
-        mainFrame.showFrame()
 
         var lastTimestamp = System.nanoTime()
 
@@ -46,7 +45,7 @@ class Simulation(mainFrameConstructor: (EventQueue) -> MainFrame, states: List<S
 
             simulationManager.update(dt)
             scene.render()
-            mainViewport.render()
+            simulationManager.render()
 
             if (fpsLimit != null) {
                 Thread.sleep(1000 / fpsLimit)

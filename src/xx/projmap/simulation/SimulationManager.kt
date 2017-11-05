@@ -2,6 +2,7 @@ package xx.projmap.simulation
 
 import xx.projmap.scene.Event
 import xx.projmap.scene.Scene
+import xx.projmap.scene.Viewport
 
 typealias StateConstructor = (SimulationManager, Scene) -> SimulationState
 
@@ -16,6 +17,11 @@ class SimulationManager(val scene: Scene, stateConstructors: List<StateConstruct
     private var currentState: SimulationState = NoState(this, scene)
     private var nextState: SimulationState? = null
     private var nextStateArgs: Array<out Any>? = null
+
+    val viewports: MutableMap<String, Viewport> = HashMap()
+
+    val mainViewport: Viewport
+        get() = viewports["main"]!!
 
     fun initialize() {
         states.values.forEach(SimulationState::initialize)
@@ -38,10 +44,16 @@ class SimulationManager(val scene: Scene, stateConstructors: List<StateConstruct
         }
 
         currentState.update(dt)
+        currentState.scripts.forEach { it.update(dt) }
     }
 
     fun handleEvent(event: Event) {
         currentState.handleEvent(event)
+        currentState.scripts.forEach { it.handleEvent(event) }
+    }
+
+    fun render() {
+        viewports.values.forEach(Viewport::render)
     }
 
 }

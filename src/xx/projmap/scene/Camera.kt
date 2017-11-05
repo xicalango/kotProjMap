@@ -2,9 +2,11 @@ package xx.projmap.scene
 
 import xx.projmap.geometry.*
 
-class Camera(val region: GeoRect, val viewport: Viewport, private val transform: Transform = IdentityTransform(), val id: String? = null) {
+class Camera(region: GeoRect, val viewport: Viewport, private val transform: Transform = IdentityTransform(), val id: String? = null) {
 
     private val graphicsAdapter = viewport.graphicsAdapter
+
+    val region: MutRect = region.toMutable()
 
     var visible = true
 
@@ -17,7 +19,7 @@ class Camera(val region: GeoRect, val viewport: Viewport, private val transform:
         graphicsAdapter.translate(viewport.region.x - region.x, viewport.region.y - region.y)
         graphicsAdapter.scale(viewport.region.w / region.w, viewport.region.h / region.h)
 
-        world.entities.forEach { it.render(graphicsAdapter, transform) }
+        world.entities.filter { it.visible }.forEach { it.render(graphicsAdapter, transform) }
 
         graphicsAdapter.pop()
 

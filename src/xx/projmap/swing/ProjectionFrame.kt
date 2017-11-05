@@ -1,9 +1,6 @@
 package xx.projmap.swing
 
-import xx.projmap.scene.EventQueue
-import xx.projmap.scene.KeyEvent
-import xx.projmap.scene.MainFrame
-import xx.projmap.scene.Viewport
+import xx.projmap.scene.*
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.awt.event.KeyAdapter
@@ -11,7 +8,7 @@ import javax.swing.JFrame
 
 class ProjectionFrame(private val eventQueue: EventQueue) : JFrame(), MainFrame {
 
-    private val projectionPanel: ProjectionPanel = ProjectionPanel(eventQueue)
+    val projectionPanel: ProjectionPanel = ProjectionPanel(eventQueue)
 
     override val mainViewport: Viewport = projectionPanel
 
@@ -27,20 +24,28 @@ class ProjectionFrame(private val eventQueue: EventQueue) : JFrame(), MainFrame 
                     projectionPanel.onResize(size)
                 }
             }
+
+            override fun componentHidden(e: ComponentEvent?) {
+                eventQueue.addEvent(QuitEvent(this@ProjectionFrame))
+            }
         })
 
         addKeyListener(object : KeyAdapter() {
+            override fun keyPressed(e: java.awt.event.KeyEvent?) {
+                if (e != null) {
+                    eventQueue.addEvent(KeyEvent(e.keyChar, Direction.PRESSED, this@ProjectionFrame))
+                }
+            }
+
             override fun keyReleased(e: java.awt.event.KeyEvent?) {
                 if (e != null) {
-                    eventQueue.addEvent(KeyEvent(e.keyChar, this@ProjectionFrame))
+                    eventQueue.addEvent(KeyEvent(e.keyChar, Direction.RELEASED, this@ProjectionFrame))
                 }
             }
         })
 
         add(projectionPanel)
         pack()
-
-        defaultCloseOperation = JFrame.EXIT_ON_CLOSE
     }
 
 }

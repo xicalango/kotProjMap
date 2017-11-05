@@ -1,17 +1,20 @@
 package xx.projmap.simulation
 
 import org.junit.jupiter.api.Test
-import xx.projmap.scene.Camera
+import xx.projmap.geometry.Rect
+import xx.projmap.scene.createViewport
 import xx.projmap.swing.ProjectionFrame
 
 internal class SimulationTest {
 
     @Test
     internal fun testSimulation() {
-        val simulation = Simulation(::ProjectionFrame, listOf(::CalibrationState, ::MainState), "calibration")
+        val simulation = Simulation(listOf(::CalibrationState, ::MainState), "calibration")
+        val frame = ProjectionFrame(simulation.eventQueue)
+        val viewport2 = frame.projectionPanel.graphicsAdapter.createViewport(Rect(0.0, 0.0, 200.0, 150.0))
 
-        simulation.scene.cameras += Camera(simulation.mainViewport.region, simulation.mainViewport, id = "calibration")
+        frame.showFrame()
 
-        simulation.run()
+        simulation.run(frame.mainViewport, mapOf(Pair("debug", viewport2)))
     }
 }

@@ -50,6 +50,16 @@ data class MutRect(override var x: Double, override var y: Double, override var 
         w *= factor
         h *= factor
     }
+
+    fun move(dx: Double = 0.0, dy: Double = 0.0) {
+        x += dx
+        y += dy
+    }
+
+    fun resize(dw: Double = 0.0, dh: Double = 0.0) {
+        w += dw
+        h += dh
+    }
 }
 
 data class Rect(override val x: Double, override val y: Double, override val w: Double, override val h: Double) : GeoRect {

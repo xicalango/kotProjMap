@@ -46,7 +46,7 @@ internal class ProjectionPanelTest {
             addKeyListener(object : KeyAdapter() {
                 override fun keyReleased(e: java.awt.event.KeyEvent?) {
                     if (e != null) {
-                        scene.eventQueue.addEvent(KeyEvent(e.keyChar, this@with))
+                        scene.eventQueue.addEvent(KeyEvent(e.keyChar, Direction.RELEASED, this@with))
                     }
                 }
             })

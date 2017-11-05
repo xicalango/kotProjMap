@@ -15,6 +15,11 @@ enum class MouseButton {
     MIDDLE
 }
 
+enum class Direction {
+    PRESSED,
+    RELEASED
+}
+
 interface Event {
     val eventType: EventType
     val origin: Any
@@ -25,7 +30,7 @@ data class MouseClickEvent(val point: GeoPoint, val button: MouseButton, overrid
         get() = EventType.MOUSE_CLICK_EVENT
 }
 
-data class KeyEvent(val keyChar: Char, override val origin: Any) : Event {
+data class KeyEvent(val keyChar: Char, val direction: Direction, override val origin: Any) : Event {
     override val eventType: EventType
         get() = EventType.KEY_PRESS_EVENT
 }

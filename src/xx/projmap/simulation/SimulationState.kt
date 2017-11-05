@@ -3,26 +3,30 @@ package xx.projmap.simulation
 import xx.projmap.scene.Event
 import xx.projmap.scene.Scene
 
-interface SimulationState {
+abstract class SimulationState(val simulationManager: SimulationManager, val scene: Scene) {
 
-    val id: String
-    val simulationManager: SimulationManager
-    val scene: Scene
+    abstract val id: String
 
-    fun initialize() {
+    val scripts: MutableList<Script> = ArrayList()
 
-    }
-
-    fun onActivation(previousState: SimulationState, parameters: Array<out Any>) {
+    open fun initialize() {
 
     }
 
-    fun update(dt: Double)
-    fun handleEvent(event: Event)
+    open fun onActivation(previousState: SimulationState, parameters: Array<out Any>) {
+
+    }
+
+    open fun onDeactivation() {
+
+    }
+
+    abstract fun update(dt: Double)
+    abstract fun handleEvent(event: Event)
 
 }
 
-class NoState(override val simulationManager: SimulationManager, override val scene: Scene) : SimulationState {
+class NoState(simulationManager: SimulationManager, scene: Scene) : SimulationState(simulationManager, scene) {
     override val id: String
         get() = "__none"
 

@@ -11,8 +11,17 @@ import java.util.*
 class Graphics2DImpl(var graphics2D: Graphics2D) : GraphicsAdapter {
     private val matrixStack: Stack<AffineTransform> = Stack()
 
-    override var color: Color = graphics2D.color
-    override var backgroundColor: Color = graphics2D.background
+    override var color: Color
+        get() = graphics2D.color
+        set(value) {
+            graphics2D.color = value
+        }
+
+    override var backgroundColor: Color
+        get() = graphics2D.background
+        set(value) {
+            graphics2D.color = value
+        }
 
     override fun resetClip() {
         graphics2D.clip = null
@@ -55,7 +64,7 @@ class Graphics2DImpl(var graphics2D: Graphics2D) : GraphicsAdapter {
         val xs = pointArray.map(GeoPoint::x).map(Number::toInt).toIntArray()
         val ys = pointArray.map(GeoPoint::y).map(Number::toInt).toIntArray()
         val nPoints = Math.min(xs.size, ys.size)
-        when(drawStyle) {
+        when (drawStyle) {
             DrawStyle.LINE -> graphics2D.drawPolygon(xs, ys, nPoints)
             DrawStyle.FILL -> graphics2D.fillPolygon(xs, ys, nPoints)
         }

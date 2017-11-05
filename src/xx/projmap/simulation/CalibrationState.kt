@@ -90,7 +90,6 @@ class CalibrationPointsScript(private val camera: Camera) : Script {
     private fun handleMouseClickEvent(event: MouseClickEvent) {
         if (curPoint < 4) {
             val worldPoint = camera.viewportToWorld(event.point)
-            println("screen: ${event.point}, world: $worldPoint")
             calibrationPoints[curPoint].origin.updateFrom(worldPoint)
             selectNextPoint()
         }

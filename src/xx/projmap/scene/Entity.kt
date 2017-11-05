@@ -10,8 +10,9 @@ open class Entity(val origin: MutPoint = MutPoint(), var visible: Boolean = true
 
     fun render(graphicsAdapter: GraphicsAdapter, transform: Transform) {
         assert(visible)
-        graphicsAdapter.color = color
-        renderInternal(graphicsAdapter, transform)
+        graphicsAdapter.withColor(color, {
+            renderInternal(graphicsAdapter, transform)
+        })
     }
 
     protected open fun renderInternal(graphicsAdapter: GraphicsAdapter, transform: Transform) {

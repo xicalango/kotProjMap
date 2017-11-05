@@ -13,7 +13,6 @@ class CameraTranslationScript(private val camera: Camera) : Script {
     override fun handleEvent(event: Event) {
         if (event is KeyEvent) {
             if (event.direction == Direction.RELEASED) {
-                println("${event.keyChar}")
                 when (event.keyChar) {
                     'w' -> camera.region.move(dy = -1.0)
                     's' -> camera.region.move(dy = 1.0)

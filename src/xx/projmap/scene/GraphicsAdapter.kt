@@ -32,3 +32,10 @@ interface GraphicsAdapter {
 }
 
 fun GraphicsAdapter.createViewport(region: GeoRect) = SimpleViewport(region.toMutable(), this)
+
+inline fun GraphicsAdapter.withColor(color: Color, block: (GraphicsAdapter) -> Unit) {
+    val currentColor = this.color
+    this.color = color
+    block(this)
+    this.color = currentColor
+}

@@ -13,17 +13,18 @@ import java.awt.image.BufferedImage
 import javax.swing.JPanel
 
 class ProjectionPanel : JPanel(), Viewport {
-
     private var bufferedImage: BufferedImage = BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR)
+
     override val graphicsAdapter: Graphics2DImpl
-
     private var frameCounter = 0
-    private var last = System.currentTimeMillis()
 
+    private var last = System.currentTimeMillis()
     override var drawBorder: Boolean = true
 
     init {
         preferredSize = Dimension(640, 480)
+
+        background = Color.BLACK
 
         graphicsAdapter = Graphics2DImpl(bufferedImage.createGraphics())
 
@@ -36,6 +37,10 @@ class ProjectionPanel : JPanel(), Viewport {
         })
     }
 
+    override fun render() {
+        repaint()
+    }
+
     fun onResize(newDimension: Dimension) {
         preferredSize = newDimension
         bufferedImage = BufferedImage(newDimension.width, newDimension.height, BufferedImage.TYPE_4BYTE_ABGR)
@@ -45,8 +50,7 @@ class ProjectionPanel : JPanel(), Viewport {
     }
 
     override fun paintComponent(g: Graphics?) {
-        g?.color = Color.BLACK
-        g?.fillRect(0, 0, width, height)
+        super.paintComponent(g)
 
         g?.drawImage(bufferedImage, 0, 0, this)
 

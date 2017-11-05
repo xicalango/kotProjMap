@@ -49,12 +49,10 @@ internal class ProjectionPanelTest {
 
         frame.isVisible = true
 
-        var dv = -1.0
         while (true) {
-            entity.move(dx = dv)
-            rectEntity.move(dx = -dv * 2, dy = -dv / 2)
+            entity.move(dx = 0.1)
             scene.render()
-            panel.repaint()
+            panel.render()
             Thread.sleep(1000 / 30)
         }
     }

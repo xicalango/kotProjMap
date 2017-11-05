@@ -10,6 +10,7 @@ interface Viewport {
 
     val region: GeoRect
 
+    fun render()
     fun clear()
 
     fun initialize() {
@@ -26,6 +27,9 @@ interface Viewport {
 }
 
 class SimpleViewport(override val region: MutRect, override val graphicsAdapter: GraphicsAdapter) : Viewport {
+    override fun render() {
+    }
+
     override var drawBorder: Boolean = true
 
     override fun clear() {

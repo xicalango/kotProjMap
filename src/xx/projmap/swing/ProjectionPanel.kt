@@ -1,11 +1,11 @@
 package xx.projmap.swing
 
-import xx.projmap.events.EventQueue
-import xx.projmap.events.MouseButton
-import xx.projmap.events.MouseClickEvent
 import xx.projmap.geometry.GeoRect
 import xx.projmap.geometry.Point
 import xx.projmap.geometry.Rect
+import xx.projmap.scene.EventQueue
+import xx.projmap.scene.MouseButton
+import xx.projmap.scene.MouseClickEvent
 import xx.projmap.scene.Viewport
 import java.awt.Color
 import java.awt.Dimension

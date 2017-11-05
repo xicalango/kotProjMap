@@ -1,7 +1,7 @@
 package xx.projmap.swing
 
-import xx.projmap.events.EventQueue
-import xx.projmap.events.KeyEvent
+import xx.projmap.scene.EventQueue
+import xx.projmap.scene.KeyEvent
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.awt.event.KeyAdapter

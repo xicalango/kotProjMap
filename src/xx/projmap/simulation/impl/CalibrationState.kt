@@ -52,7 +52,7 @@ class CalibrationState(simulationManager: SimulationManager, scene: Scene) : Sim
 
 }
 
-class CalibrationPointsScript(private val camera: Camera) : Script {
+private class CalibrationPointsScript(private val camera: Camera) : Script {
 
     val calibrationPoints: Array<PointEntity> = Array(4, { PointEntity() })
     var curPoint = 0

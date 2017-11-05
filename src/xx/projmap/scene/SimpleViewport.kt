@@ -26,7 +26,7 @@ interface Viewport {
     }
 
     fun createSubViewport(subRegion: GeoRect): Viewport {
-        assert(region.containsFully(subRegion))
+        assert(subRegion in region)
         return SimpleViewport(subRegion.toMutable(), graphicsAdapter)
     }
 }

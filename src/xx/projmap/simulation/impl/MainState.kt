@@ -14,8 +14,8 @@ class MainState(simulationManager: SimulationManager, scene: Scene) : Simulation
         get() = "main"
 
     override fun onActivation(previousState: SimulationState, parameters: Array<out Any>) {
-        val transform = parameters.getOrNull(0) as Transform? ?: throw IllegalArgumentException("need transform")
-        val calibrationCamera = parameters.getOrNull(1) as Camera? ?: throw IllegalArgumentException("need camera")
+        val transform = parameters.getOrNull(0) as? Transform ?: throw IllegalArgumentException("need transform")
+        val calibrationCamera = parameters.getOrNull(1) as? Camera ?: throw IllegalArgumentException("need camera")
 
         setupCameras(calibrationCamera, transform)
     }
@@ -51,6 +51,5 @@ class MainState(simulationManager: SimulationManager, scene: Scene) : Simulation
             'c' -> simulationManager.changeState("calibration")
         }
     }
-
 
 }

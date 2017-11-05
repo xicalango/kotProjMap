@@ -28,19 +28,15 @@ interface GeoRect : GeoEntity<Rect, MutRect> {
     fun transformY(src: Double, dstRect: GeoRect) =
             proj2(y, y + h, dstRect.y, dstRect.y + dstRect.h, src)
 
-    fun scaleW(src: Double, dstRect: GeoRect) =
-            scale2(w, dstRect.w, src)
-
-    fun scaleH(src: Double, dstRect: GeoRect) =
-            scale2(h, dstRect.h, src)
-
     fun transformTo(dstRect: GeoRect, src: GeoPoint, dst: MutPoint = MutPoint()): MutPoint {
         dst.x = transformX(src.x, dstRect)
         dst.y = transformY(src.y, dstRect)
         return dst
     }
 
-    fun containsFully(other: GeoRect): Boolean = other.x >= x && other.y >= y && other.w <= w && other.h <= h
+    operator fun contains(other: GeoRect): Boolean = other.x >= x && other.y >= y && other.w <= w && other.h <= h
+
+    operator fun contains(point: GeoPoint): Boolean = point.x >= x && point.y >= y && point.x <= x + w && point.y <= y + h
 }
 
 data class MutRect(override var x: Double, override var y: Double, override var w: Double, override var h: Double) : GeoRect {

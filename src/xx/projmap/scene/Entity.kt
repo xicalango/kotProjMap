@@ -10,8 +10,8 @@ open class Entity(val origin: MutPoint = MutPoint(), var visible: Boolean = true
 
     fun render(graphicsAdapter: GraphicsAdapter, transform: Transform) {
         assert(visible)
-        graphicsAdapter.withColor(color, {
-            renderInternal(graphicsAdapter, transform)
+        graphicsAdapter.withColor(color, { adapter ->
+            renderInternal(adapter, transform)
         })
     }
 
@@ -19,7 +19,6 @@ open class Entity(val origin: MutPoint = MutPoint(), var visible: Boolean = true
     }
 
     fun move(dx: Double = 0.0, dy: Double = 0.0) {
-        origin.x += dx
-        origin.y += dy
+        origin.move(dx, dy)
     }
 }

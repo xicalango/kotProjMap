@@ -4,6 +4,13 @@ interface SimpleGeoEntity {
     val size: Int
     fun getX(n: Int): Double
     fun getY(n: Int): Double
+
+    fun get(n: Int, component: Int): Double = when (component) {
+        0 -> getX(n)
+        1 -> getY(n)
+        else -> throw IllegalArgumentException("$component")
+    }
+
     fun toNestedArrays(): Array<DoubleArray> = Array(size, { doubleArrayOf(getX(it), getY(it)) })
 }
 

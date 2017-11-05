@@ -26,6 +26,7 @@ data class Point(override val x: Double = 0.0, override val y: Double = 0.0) : G
 }
 
 data class MutPoint(override var x: Double = 0.0, override var y: Double = 0.0) : GeoPoint {
+
     override fun toMutable(): MutPoint = this
 
     override fun toImmutable() = Point(x, y)
@@ -34,6 +35,11 @@ data class MutPoint(override var x: Double = 0.0, override var y: Double = 0.0) 
         x = point.x
         y = point.y
         return this
+    }
+
+    fun move(dx: Double, dy: Double) {
+        x += dx
+        y += dy
     }
 }
 

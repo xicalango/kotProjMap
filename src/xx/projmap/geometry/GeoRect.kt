@@ -39,6 +39,8 @@ interface GeoRect : GeoEntity<Rect, MutRect> {
         dst.y = transformY(src.y, dstRect)
         return dst
     }
+
+    fun containsFully(other: GeoRect): Boolean = other.x >= x && other.y >= y && other.w <= w && other.h <= h
 }
 
 data class MutRect(override var x: Double, override var y: Double, override var w: Double, override var h: Double) : GeoRect {

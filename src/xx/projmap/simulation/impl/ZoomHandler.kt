@@ -6,8 +6,8 @@ import xx.projmap.scene.Event
 import xx.projmap.scene.KeyEvent
 import xx.projmap.simulation.api.Script
 
-const val DEFAULT_ACCELERATION = .001
-const val MAX_SPEED = .1
+internal const val DEFAULT_ACCELERATION = .05
+internal const val MAX_SPEED = 1.0
 
 class ZoomHandler(private val camera: Camera) : Script {
 
@@ -24,7 +24,7 @@ class ZoomHandler(private val camera: Camera) : Script {
         }
 
         if (speed != 0.0) {
-            camera.region.scale(Math.pow(10.0, direction * speed))
+            camera.region.scale(Math.pow(10.0, direction * speed * dt))
         }
     }
 

@@ -8,6 +8,10 @@ class Simulation(states: List<StateConstructor>, private val startState: String?
 
     val scene: Scene = Scene(eventQueue)
 
+    private var frameCounter = 0
+    private var lastFrameCounter = 0
+    private var last = System.currentTimeMillis()
+
     private val simulationManager: SimulationManager = SimulationManager(scene, states)
 
     private var running: Boolean = true
@@ -49,6 +53,13 @@ class Simulation(states: List<StateConstructor>, private val startState: String?
 
             if (fpsLimit != null) {
                 Thread.sleep(1000 / fpsLimit)
+            }
+
+            frameCounter++
+            if (System.currentTimeMillis() - last >= 1000) {
+                println("[simulation] FPS: ${frameCounter - lastFrameCounter}")
+                last = System.currentTimeMillis()
+                frameCounter = lastFrameCounter
             }
         }
     }

@@ -11,11 +11,9 @@ import java.awt.Color
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
-import java.awt.event.InputEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.image.BufferedImage
-import java.util.*
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
 
@@ -23,8 +21,6 @@ class ProjectionPanel(val eventQueue: EventQueue) : JPanel(), Viewport {
     private var bufferedImage: BufferedImage = BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR)
     private var frameCounter = 0
     private var last = System.currentTimeMillis()
-
-    private val events: Deque<InputEvent> = LinkedList()
 
     override val graphicsAdapter: Graphics2DImpl
     override var drawBorder: Boolean = true

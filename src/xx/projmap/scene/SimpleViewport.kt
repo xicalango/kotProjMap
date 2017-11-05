@@ -24,6 +24,11 @@ interface Viewport {
     fun finish() {
         graphicsAdapter.resetClip()
     }
+
+    fun createSubViewport(subRegion: GeoRect): Viewport {
+        assert(region.containsFully(subRegion))
+        return SimpleViewport(subRegion.toMutable(), graphicsAdapter)
+    }
 }
 
 class SimpleViewport(override val region: MutRect, override val graphicsAdapter: GraphicsAdapter) : Viewport {

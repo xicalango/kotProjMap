@@ -27,7 +27,7 @@ class CalibrationState(simulationManager: SimulationManager, scene: Scene) : Sim
         scene.world.entities += calibrationScript.calibrationPoints
 
         scripts += ZoomHandler(calibrationCamera)
-        scripts += CameraTranslationScript(calibrationCamera)
+        scripts += CameraTranslationHandler(calibrationCamera)
         scripts += calibrationScript
     }
 

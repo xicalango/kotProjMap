@@ -6,7 +6,7 @@ import xx.projmap.scene.Event
 import xx.projmap.scene.KeyEvent
 import xx.projmap.simulation.api.Script
 
-class CameraTranslationScript(private val camera: Camera) : Script {
+class CameraTranslationHandler(private val camera: Camera) : Script {
 
     override fun update(dt: Double) {
     }

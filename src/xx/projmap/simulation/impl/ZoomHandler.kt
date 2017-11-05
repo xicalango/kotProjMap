@@ -15,6 +15,8 @@ class ZoomHandler(private val camera: Camera) : Script {
     private var acceleration = 0.0
     private var direction = 0.0
 
+    private val originalRegion = camera.region.toImmutable()
+
     override fun update(dt: Double) {
         if (acceleration >= 0.0 && speed < MAX_SPEED) {
             speed += acceleration * dt
@@ -38,6 +40,9 @@ class ZoomHandler(private val camera: Camera) : Script {
             acceleration = 0.0
             speed = 0.0
             direction = 0.0
+            if (event.keyChar == 'r') {
+                camera.region.updateFrom(originalRegion)
+            }
         } else {
             acceleration = DEFAULT_ACCELERATION
             when (event.keyChar) {

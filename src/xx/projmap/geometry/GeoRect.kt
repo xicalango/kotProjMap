@@ -62,6 +62,13 @@ data class MutRect(override var x: Double, override var y: Double, override var 
         w += dw
         h += dh
     }
+
+    fun updateFrom(other: GeoRect) {
+        x = other.x
+        y = other.y
+        w = other.w
+        h = other.h
+    }
 }
 
 data class Rect(override val x: Double, override val y: Double, override val w: Double, override val h: Double) : GeoRect {

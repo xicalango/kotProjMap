@@ -57,9 +57,9 @@ class Simulation(states: List<StateConstructor>, private val startState: String?
 
             frameCounter++
             if (System.currentTimeMillis() - last >= 1000) {
-                println("[simulation] FPS: ${frameCounter - lastFrameCounter}")
+                println("[simulation] FPS: ${frameCounter - lastFrameCounter}, totalFrames: $frameCounter, dt: $dt")
                 last = System.currentTimeMillis()
-                frameCounter = lastFrameCounter
+                lastFrameCounter = frameCounter
             }
         }
     }

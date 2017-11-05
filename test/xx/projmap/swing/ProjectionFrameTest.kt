@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test
 import xx.projmap.geometry.MutPoint
 import xx.projmap.geometry.MutRect
 import xx.projmap.scene.Camera
+import xx.projmap.scene.EventQueue
 import xx.projmap.scene.RectEntity
 import xx.projmap.scene.Scene
 
@@ -11,19 +12,19 @@ internal class ProjectionFrameTest {
 
     @Test
     internal fun testProjectionFrame() {
-        val scene = Scene()
+        val eventQueue = EventQueue()
+        val scene = Scene(eventQueue)
         val world = scene.world
         world.entities += RectEntity(MutPoint(100.0, 100.0), 20.0, 20.0)
 
-        val panel = ProjectionPanel(scene.eventQueue)
-        scene.cameras += Camera(MutRect(0.0, 0.0, 320.0, 240.0), panel)
+        val projectionFrame = ProjectionFrame(eventQueue)
+        scene.cameras += Camera(MutRect(0.0, 0.0, 320.0, 240.0), projectionFrame.mainViewport)
 
-        val projectionFrame = ProjectionFrame(scene.eventQueue, panel)
-        projectionFrame.isVisible = true
+        projectionFrame.showFrame()
 
         while (true) {
             scene.render()
-            panel.render()
+            projectionFrame.mainViewport.render()
             Thread.sleep(1000)
         }
     }

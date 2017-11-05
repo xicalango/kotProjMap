@@ -2,16 +2,14 @@ package xx.projmap.scene
 
 import xx.projmap.geometry.*
 
-class Camera(private val region: GeoRect, val viewport: Viewport, private val transform: Transform = IdentityTransform(), val id: String? = null) {
+class Camera(val region: GeoRect, val viewport: Viewport, private val transform: Transform = IdentityTransform(), val id: String? = null) {
 
     private val graphicsAdapter = viewport.graphicsAdapter
 
     var visible = true
 
     fun render(world: World) {
-        if (!visible) {
-            return
-        }
+        assert(visible)
 
         viewport.initialize()
 

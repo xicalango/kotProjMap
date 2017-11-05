@@ -2,12 +2,22 @@ package xx.projmap.swing
 
 import xx.projmap.scene.EventQueue
 import xx.projmap.scene.KeyEvent
+import xx.projmap.scene.MainFrame
+import xx.projmap.scene.Viewport
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.awt.event.KeyAdapter
 import javax.swing.JFrame
 
-class ProjectionFrame(private val eventQueue: EventQueue, private val projectionPanel: ProjectionPanel) : JFrame() {
+class ProjectionFrame(private val eventQueue: EventQueue) : JFrame(), MainFrame {
+
+    private val projectionPanel: ProjectionPanel = ProjectionPanel(eventQueue)
+
+    override val mainViewport: Viewport = projectionPanel
+
+    override fun showFrame() {
+        isVisible = true
+    }
 
     init {
         addComponentListener(object : ComponentAdapter() {
@@ -29,8 +39,8 @@ class ProjectionFrame(private val eventQueue: EventQueue, private val projection
 
         add(projectionPanel)
         pack()
-        defaultCloseOperation = JFrame.EXIT_ON_CLOSE
 
+        defaultCloseOperation = JFrame.EXIT_ON_CLOSE
     }
 
 }

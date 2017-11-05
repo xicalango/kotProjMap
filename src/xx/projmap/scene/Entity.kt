@@ -3,9 +3,16 @@ package xx.projmap.scene
 import xx.projmap.geometry.MutPoint
 import xx.projmap.geometry.Transform
 
-open class Entity(protected val origin: MutPoint = MutPoint()) {
+open class Entity(val origin: MutPoint = MutPoint(), val visible: Boolean = true) {
 
-    open fun render(graphicsAdapter: GraphicsAdapter, transform: Transform) {
+    fun render(graphicsAdapter: GraphicsAdapter, transform: Transform) {
+        if (!visible) {
+            return
+        }
+        renderInternal(graphicsAdapter, transform)
+    }
+
+    protected open fun renderInternal(graphicsAdapter: GraphicsAdapter, transform: Transform) {
     }
 
     fun move(dx: Double = 0.0, dy: Double = 0.0) {

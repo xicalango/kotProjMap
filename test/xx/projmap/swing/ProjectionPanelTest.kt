@@ -12,7 +12,8 @@ internal class ProjectionPanelTest {
 
     @Test
     internal fun testProjectionPanel() {
-        val scene = Scene()
+        val eventQueue = EventQueue()
+        val scene = Scene(eventQueue)
         val world = scene.world
         val entity = PointEntity(MutPoint(310.0, 110.0))
         val rectEntity = RectEntity(MutPoint(100.0, 100.0), 20.0, 20.0)

@@ -1,13 +1,16 @@
 package xx.projmap.scene
 
-import xx.projmap.geometry.*
+import xx.projmap.geometry.MutPoint
+import xx.projmap.geometry.Rect
+import xx.projmap.geometry.Transform
+import xx.projmap.geometry.toPointArray
 import java.awt.Color
 
 class RectEntity(origin: MutPoint = MutPoint(), private val w: Double = 0.0, private val h: Double = 0.0) : Entity(origin) {
 
     private val dstPointArray: Array<MutPoint> = Array(4, { MutPoint() })
 
-    override fun render(graphicsAdapter: GraphicsAdapter, transform: Transform) {
+    override fun renderInternal(graphicsAdapter: GraphicsAdapter, transform: Transform) {
         graphicsAdapter.color = Color.GREEN
         graphicsAdapter.backgroundColor = Color.RED
 

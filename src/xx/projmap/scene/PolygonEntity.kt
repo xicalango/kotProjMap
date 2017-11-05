@@ -9,7 +9,7 @@ class PolygonEntity(origin: MutPoint, vararg points: GeoPoint) : Entity(origin) 
     private val polygon: Array<GeoPoint> = arrayOf<GeoPoint>(origin) + points
     private val dstPolygon: Array<MutPoint> = Array(points.size + 1, { MutPoint() })
 
-    override fun render(graphicsAdapter: GraphicsAdapter, transform: Transform) {
+    override fun renderInternal(graphicsAdapter: GraphicsAdapter, transform: Transform) {
         polygon.forEachIndexed { index, point ->
             transform.srcToDst(point, dstPolygon[index])
         }

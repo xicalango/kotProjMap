@@ -5,7 +5,8 @@ import java.util.concurrent.ConcurrentLinkedDeque
 
 enum class EventType {
     MOUSE_CLICK_EVENT,
-    KEY_PRESS_EVENT
+    KEY_PRESS_EVENT,
+    QUIT_EVENT
 }
 
 enum class MouseButton {
@@ -27,6 +28,11 @@ data class MouseClickEvent(val point: GeoPoint, val button: MouseButton, overrid
 data class KeyEvent(val keyChar: Char, override val origin: Any) : Event {
     override val eventType: EventType
         get() = EventType.KEY_PRESS_EVENT
+}
+
+data class QuitEvent(override val origin: Any = Unit) : Event {
+    override val eventType: EventType
+        get() = EventType.QUIT_EVENT
 }
 
 class EventQueue {

@@ -3,6 +3,9 @@ package xx.projmap.simulation
 import org.junit.jupiter.api.Test
 import xx.projmap.geometry.Rect
 import xx.projmap.scene.createViewport
+import xx.projmap.simulation.api.Simulation
+import xx.projmap.simulation.impl.CalibrationState
+import xx.projmap.simulation.impl.MainState
 import xx.projmap.swing.ProjectionFrame
 
 internal class SimulationTest {

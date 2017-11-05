@@ -1,9 +1,10 @@
-package xx.projmap.simulation
+package xx.projmap.simulation.impl
 
 import xx.projmap.scene.Camera
 import xx.projmap.scene.Direction
 import xx.projmap.scene.Event
 import xx.projmap.scene.KeyEvent
+import xx.projmap.simulation.api.Script
 
 const val DEFAULT_ACCELERATION = .001
 const val MAX_SPEED = .1

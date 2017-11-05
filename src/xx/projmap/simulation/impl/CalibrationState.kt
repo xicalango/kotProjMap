@@ -1,9 +1,12 @@
-package xx.projmap.simulation
+package xx.projmap.simulation.impl
 
 import xx.projmap.geometry.Transformation
 import xx.projmap.geometry.createQuadFromPoints
 import xx.projmap.geometry.toQuad
 import xx.projmap.scene.*
+import xx.projmap.simulation.api.Script
+import xx.projmap.simulation.api.SimulationManager
+import xx.projmap.simulation.api.SimulationState
 import java.awt.Color
 
 class CalibrationState(simulationManager: SimulationManager, scene: Scene) : SimulationState(simulationManager, scene) {

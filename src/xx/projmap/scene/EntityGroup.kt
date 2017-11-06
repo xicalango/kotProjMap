@@ -9,4 +9,7 @@ class EntityGroup(visible: Boolean = true) : Entity(visible = visible) {
     override fun renderInternal(graphicsAdapter: GraphicsAdapter, transform: Transform) {
         entities.forEach { it.render(graphicsAdapter, transform) }
     }
+
+    override val childEntities: List<Entity>
+        get() = super.childEntities + entities
 }

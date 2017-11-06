@@ -1,6 +1,7 @@
 package xx.projmap.app
 
 import xx.projmap.geometry.Rect
+import xx.projmap.scene.RectEntity
 import xx.projmap.simulation.api.Simulation
 import xx.projmap.simulation.impl.CalibrationState
 import xx.projmap.simulation.impl.MainState
@@ -42,6 +43,11 @@ fun main(args: Array<String>) {
     frame.showFrame()
 
     simulation.run(frame.mainViewport, mapOf(Pair("debug", viewport2)))
+
+    simulation.scene.world["key"].forEach { keyEntity ->
+        val entity = keyEntity as RectEntity
+        println("${entity.translatedRect}")
+    }
 
     System.exit(0)
 }

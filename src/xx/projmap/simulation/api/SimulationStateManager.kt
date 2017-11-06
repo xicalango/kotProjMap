@@ -4,9 +4,9 @@ import xx.projmap.scene.Event
 import xx.projmap.scene.Scene
 import xx.projmap.scene.Viewport
 
-typealias StateConstructor = (SimulationManager, Scene) -> SimulationState
+typealias StateConstructor = (SimulationStateManager, Scene) -> SimulationState
 
-class SimulationManager(val scene: Scene, stateConstructors: List<StateConstructor>) {
+class SimulationStateManager(val scene: Scene, stateConstructors: List<StateConstructor>) {
 
     private val states: MutableMap<String, SimulationState> = stateConstructors.fold(HashMap(), { acc, simulationStateConstructor ->
         val simulationState = simulationStateConstructor(this, scene)
@@ -38,6 +38,7 @@ class SimulationManager(val scene: Scene, stateConstructors: List<StateConstruct
         if (nextState != null) {
             val lastState = currentState
             currentState = nextState as SimulationState
+            lastState.onDeactivation()
             currentState.onActivation(lastState, nextStateArgs!!)
             nextState = null
             nextStateArgs = null

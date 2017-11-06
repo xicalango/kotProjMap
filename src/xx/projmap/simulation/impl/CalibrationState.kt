@@ -2,14 +2,15 @@ package xx.projmap.simulation.impl
 
 import xx.projmap.geometry.Transformation
 import xx.projmap.geometry.createQuadFromPoints
+import xx.projmap.geometry.toPointArray
 import xx.projmap.geometry.toQuad
 import xx.projmap.scene.*
 import xx.projmap.simulation.api.Script
-import xx.projmap.simulation.api.SimulationManager
 import xx.projmap.simulation.api.SimulationState
+import xx.projmap.simulation.api.SimulationStateManager
 import java.awt.Color
 
-class CalibrationState(simulationManager: SimulationManager, scene: Scene) : SimulationState(simulationManager, scene) {
+class CalibrationState(simulationStateManager: SimulationStateManager, scene: Scene) : SimulationState(simulationStateManager, scene) {
 
     private lateinit var calibrationScript: CalibrationPointsScript
     private lateinit var calibrationCamera: Camera
@@ -18,8 +19,8 @@ class CalibrationState(simulationManager: SimulationManager, scene: Scene) : Sim
         get() = "calibration"
 
     override fun initialize() {
-        val viewport = simulationManager.mainViewport
-        calibrationCamera = Camera(viewport.region, simulationManager.mainViewport, id = "calibration")
+        val viewport = simulationStateManager.mainViewport
+        calibrationCamera = Camera(viewport.region, simulationStateManager.mainViewport, id = "calibration")
         scene.cameras += calibrationCamera
 
         calibrationScript = CalibrationPointsScript(calibrationCamera)
@@ -33,6 +34,7 @@ class CalibrationState(simulationManager: SimulationManager, scene: Scene) : Sim
 
     override fun onActivation(previousState: SimulationState, parameters: Array<out Any>) {
         calibrationScript.reset()
+        calibrationScript.showCalibrationPoints()
         scene.hideAllCameras()
         scene.showCamera("calibration")
     }
@@ -43,7 +45,7 @@ class CalibrationState(simulationManager: SimulationManager, scene: Scene) : Sim
 
     override fun update(dt: Double) {
         if (calibrationScript.curPoint == 4) {
-            simulationManager.changeState("main", calibrationScript.createTransformation(), calibrationCamera)
+            simulationStateManager.changeState("main", calibrationScript.createTransformation(), calibrationCamera)
         }
     }
 
@@ -54,13 +56,22 @@ class CalibrationState(simulationManager: SimulationManager, scene: Scene) : Sim
 
 private class CalibrationPointsScript(private val camera: Camera) : Script {
 
-    val calibrationPoints: Array<PointEntity> = Array(4, { PointEntity() })
+    val calibrationPoints: Array<PointEntity>
     var curPoint = 0
         private set
+
+    init {
+        val pointArray = camera.region.toPointArray()
+        calibrationPoints = Array(4, { PointEntity(origin = pointArray[it].toMutable(), tag = "calibrationPoint") })
+    }
 
     fun reset() {
         curPoint = 0
         calibrationPoints[0].color = Color.RED
+    }
+
+    fun showCalibrationPoints() {
+        calibrationPoints.forEach { it.visible = true }
     }
 
     fun hideCalibrationPoints() {

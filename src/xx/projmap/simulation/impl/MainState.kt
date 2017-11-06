@@ -5,11 +5,11 @@ import xx.projmap.geometry.MutRect
 import xx.projmap.geometry.Transform
 import xx.projmap.scene.*
 import xx.projmap.simulation.api.Script
-import xx.projmap.simulation.api.SimulationManager
 import xx.projmap.simulation.api.SimulationState
+import xx.projmap.simulation.api.SimulationStateManager
 import java.awt.Color
 
-class MainState(simulationManager: SimulationManager, scene: Scene) : SimulationState(simulationManager, scene) {
+class MainState(simulationStateManager: SimulationStateManager, scene: Scene) : SimulationState(simulationStateManager, scene) {
 
     private val keyEntityHandler: KeyEntityHandler = KeyEntityHandler()
     private lateinit var transformCamera: Camera
@@ -30,13 +30,19 @@ class MainState(simulationManager: SimulationManager, scene: Scene) : Simulation
         setupCameras(calibrationCamera, transform)
 
         keyEntityHandler.camera = transformCamera
+        keyEntityHandler.entityGroup.visible = true
+    }
+
+    override fun onDeactivation() {
+        keyEntityHandler.entityGroup.visible = false
     }
 
     private fun setupCameras(calibrationCamera: Camera, transform: Transform) {
+        scene.hideAllCameras()
         scene.cameras.removeIf { it.id == "transform" || it.id == "debug" }
-        transformCamera = Camera(calibrationCamera.region, simulationManager.mainViewport, transform, id = "transform")
+        transformCamera = Camera(calibrationCamera.region, simulationStateManager.mainViewport, transform, id = "transform")
 
-        val debugViewport = simulationManager.viewports["debug"]
+        val debugViewport = simulationStateManager.viewports["debug"]
 
         if (debugViewport != null) {
             debugCamera = Camera(calibrationCamera.region, debugViewport, id = "debug")
@@ -60,7 +66,7 @@ class MainState(simulationManager: SimulationManager, scene: Scene) : Simulation
         }
         when (event.keyChar) {
             '2' -> debugCamera.visible = !debugCamera.visible
-            'c' -> simulationManager.changeState("calibration")
+            'c' -> simulationStateManager.changeState("calibration")
         }
     }
 
@@ -95,16 +101,28 @@ class KeyEntityHandler(keys: List<GeoRect> = emptyList()) : Script {
         if (event.direction == Direction.RELEASED) {
             when (event.keyChar) {
                 'r' -> removeCurrentKey()
-                'w' -> resizeRect(dh = -1.0)
-                's' -> resizeRect(dh = 1.0)
-                'a' -> resizeRect(dw = -1.0)
-                'd' -> resizeRect(dw = 1.0)
-                'W' -> resizeRect(dh = -10.0)
-                'S' -> resizeRect(dh = 10.0)
-                'A' -> resizeRect(dw = -10.0)
-                'D' -> resizeRect(dw = 10.0)
+                'u' -> resizeRect(dh = -1.0)
+                'j' -> resizeRect(dh = 1.0)
+                'h' -> resizeRect(dw = -1.0)
+                'k' -> resizeRect(dw = 1.0)
+                'U' -> resizeRect(dh = -10.0)
+                'J' -> resizeRect(dh = 10.0)
+                'H' -> resizeRect(dw = -10.0)
+                'K' -> resizeRect(dw = 10.0)
+                'w' -> moveCurrentRect(dy = -1.0)
+                's' -> moveCurrentRect(dy = 1.0)
+                'a' -> moveCurrentRect(dx = -1.0)
+                'd' -> moveCurrentRect(dx = 1.0)
+                'W' -> moveCurrentRect(dy = -10.0)
+                'S' -> moveCurrentRect(dy = 10.0)
+                'A' -> moveCurrentRect(dx = -10.0)
+                'D' -> moveCurrentRect(dx = 10.0)
             }
         }
+    }
+
+    fun moveCurrentRect(dx: Double = 0.0, dy: Double = 0.0) {
+        currentKey?.rect?.move(dx, dy)
     }
 
     private fun resizeRect(dw: Double = 0.0, dh: Double = 0.0) {
@@ -130,7 +148,7 @@ class KeyEntityHandler(keys: List<GeoRect> = emptyList()) : Script {
         val worldPoint = camera?.viewportToWorld(mouseClickEvent.point) ?: return
 
         val clickedKey = keys
-                .filter { it is RectEntity }
+                .filter { it.tag == "key" }
                 .map { it as RectEntity }
                 .find { key -> worldPoint in key.translatedRect }
 
@@ -138,7 +156,7 @@ class KeyEntityHandler(keys: List<GeoRect> = emptyList()) : Script {
             return updateCurrentKey(clickedKey)
         }
 
-        val newKey = RectEntity(defaultRect.copy(), origin = worldPoint.copy())
+        val newKey = RectEntity(defaultRect.copy(), origin = worldPoint.copy(), tag = "key")
         keys += newKey
         updateCurrentKey(newKey)
     }

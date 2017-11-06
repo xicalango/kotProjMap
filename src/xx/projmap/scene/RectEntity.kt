@@ -5,7 +5,7 @@ import xx.projmap.geometry.MutPoint
 import xx.projmap.geometry.Transform
 import xx.projmap.geometry.toPointArray
 
-class RectEntity(rect: GeoRect, origin: MutPoint = MutPoint()) : Entity(origin) {
+class RectEntity(rect: GeoRect, origin: MutPoint = MutPoint(), visible: Boolean = true, tag: String? = null) : Entity(origin, visible, tag) {
 
     val rect = rect.toMutable()
 

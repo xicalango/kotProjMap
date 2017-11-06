@@ -3,7 +3,7 @@ package xx.projmap.simulation.api
 import xx.projmap.scene.Event
 import xx.projmap.scene.Scene
 
-abstract class SimulationState(val simulationManager: SimulationManager, val scene: Scene) {
+abstract class SimulationState(val simulationStateManager: SimulationStateManager, val scene: Scene) {
 
     abstract val id: String
 
@@ -26,7 +26,7 @@ abstract class SimulationState(val simulationManager: SimulationManager, val sce
 
 }
 
-class NoState(simulationManager: SimulationManager, scene: Scene) : SimulationState(simulationManager, scene) {
+class NoState(simulationStateManager: SimulationStateManager, scene: Scene) : SimulationState(simulationStateManager, scene) {
     override val id: String
         get() = "__none"
 

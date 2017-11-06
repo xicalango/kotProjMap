@@ -13,27 +13,27 @@ class Simulation(states: List<StateConstructor>, private val startState: String?
     private var lastFrameCounter = 0
     private var last = System.currentTimeMillis()
 
-    private val simulationManager: SimulationManager = SimulationManager(scene, states)
+    private val simulationStateManager: SimulationStateManager = SimulationStateManager(scene, states)
 
     private var running: Boolean = true
 
     fun run(mainViewport: Viewport, additionalViewports: Map<String, Viewport> = emptyMap()) {
 
-        simulationManager.viewports.clear()
-        simulationManager.viewports += additionalViewports
-        simulationManager.viewports["main"] = mainViewport
+        simulationStateManager.viewports.clear()
+        simulationStateManager.viewports += additionalViewports
+        simulationStateManager.viewports["main"] = mainViewport
 
-        simulationManager.initialize()
+        simulationStateManager.initialize()
 
         if (startState != null) {
-            simulationManager.changeState(startState)
+            simulationStateManager.changeState(startState)
         }
 
         var lastTimestamp = System.nanoTime()
 
         thread {
             while (running) {
-                simulationManager.render(scene)
+                simulationStateManager.render(scene)
                 if (graphicsFpsLimit != null) {
                     Thread.sleep(1000 / graphicsFpsLimit.toLong())
                 }
@@ -54,10 +54,10 @@ class Simulation(states: List<StateConstructor>, private val startState: String?
                         eventQueue.addEvent(QuitEvent)
                     }
                 }
-                simulationManager.handleEvent(event)
+                simulationStateManager.handleEvent(event)
             }
 
-            simulationManager.update(dt)
+            simulationStateManager.update(dt)
             if (simulationFpsLimit != null) {
                 Thread.sleep(1000 / simulationFpsLimit.toLong())
             }

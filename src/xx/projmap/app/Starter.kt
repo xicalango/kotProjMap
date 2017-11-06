@@ -1,6 +1,7 @@
 package xx.projmap.app
 
 import xx.projmap.geometry.GeoRect
+import xx.projmap.geometry.Point
 import xx.projmap.geometry.Rect
 import xx.projmap.scene.EventQueue
 import xx.projmap.scene.Scene
@@ -34,18 +35,20 @@ fun main(args: Array<String>) {
     val simulationFpsLimit = properties.getProperty(SIMULATION_FPS_LIMIT_KEY).toInt()
 
     val keys = loadKeys()
+    val calibrationPoints = loadCalibration()
 
-    runSimulation(graphicsFpsLimit, simulationFpsLimit, keys)
+    runSimulation(graphicsFpsLimit, simulationFpsLimit, keys, calibrationPoints)
 
     System.exit(0)
 }
 
-private fun runSimulation(graphicsFpsLimit: Int, simulationFpsLimit: Int, keys: List<GeoRect>?): Simulation {
+
+private fun runSimulation(graphicsFpsLimit: Int, simulationFpsLimit: Int, keys: List<GeoRect>?, calibrationPoints: Array<Point>?): Simulation {
     val eventQueue = EventQueue()
     val scene = Scene(eventQueue)
 
     val stateManager = SimulationStateManager(scene)
-    val calibrationState = CalibrationState(stateManager, scene)
+    val calibrationState = CalibrationState(stateManager, scene, calibrationPoints)
     val keyEditingState = KeyEditingState(stateManager, scene, keys)
 
     stateManager.addState(calibrationState)
@@ -96,4 +99,25 @@ private fun loadKeys(): List<GeoRect>? {
     return keys
 }
 
+fun loadCalibration(): Array<Point>? {
+    val pointPropertiesFile = Paths.get("calibrationPoints.properties")
+    if (Files.exists(pointPropertiesFile).not()) {
+        return null
+    }
+
+    val properties = Properties()
+    Files.newInputStream(pointPropertiesFile).use(properties::load)
+
+    val points: MutableList<Point> = ArrayList()
+
+    properties.forEach { _, propObj ->
+        val propString = propObj as? String ?: return@forEach
+
+        val pointData = propString.split(",", limit = 2).map { it.toDouble() }
+
+        points += Point(pointData[0], pointData[1])
+    }
+
+    return points.toTypedArray()
+}
 

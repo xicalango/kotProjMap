@@ -8,21 +8,23 @@ import xx.projmap.scene.*
 import xx.projmap.simulation.api.Script
 import xx.projmap.simulation.api.SimulationState
 import xx.projmap.simulation.api.SimulationStateManager
+import xx.projmap.storeProperties
 import java.awt.Color
-import java.nio.file.Files
 import java.nio.file.Paths
-import java.nio.file.StandardOpenOption
-import java.util.*
 
 class KeyEditingState(simulationStateManager: SimulationStateManager, scene: Scene, keys: List<GeoRect>? = null) : SimulationState(simulationStateManager, scene) {
 
     private val keyEntityHandler: KeyEntityHandler = KeyEntityHandler(keys ?: emptyList())
     private lateinit var transformCamera: Camera
     private lateinit var debugCamera: Camera
-    private val headLineEntity = TextEntity("Key editing", origin = MutPoint(500.0, -150.0), visible = false)
+    private val headLineEntity = TextEntity("Key editing", origin = MutPoint(500.0, -800.0), visible = false)
 
     override val id: String
         get() = "keyEditing"
+
+    init {
+        headLineEntity.yPointSpacing = 20.0
+    }
 
     override fun initialize() {
         scene.world.entities += keyEntityHandler.entityGroup
@@ -137,19 +139,14 @@ class KeyEntityHandler(keys: List<GeoRect> = emptyList()) : Script {
     }
 
     private fun persist() {
-        val keyProperties = Properties()
-        keys.sortedBy { it.origin.x }.forEachIndexed { index, keyEntity ->
-            if (keyEntity is RectEntity) {
-                val translatedRect = keyEntity.translatedRect
-                keyProperties.setProperty("key" + index, "${translatedRect.x},${translatedRect.y},${translatedRect.w},${translatedRect.h}")
+        storeProperties(Paths.get("keysFile.properties"), {
+            this@KeyEntityHandler.keys.sortedBy { it.origin.x }.forEachIndexed { index, keyEntity ->
+                if (keyEntity is RectEntity) {
+                    val translatedRect = keyEntity.translatedRect
+                    setProperty("key" + index, "${translatedRect.x},${translatedRect.y},${translatedRect.w},${translatedRect.h}")
+                }
             }
-        }
-
-        val keysFile = Paths.get("keysFile.properties")
-        Files.newOutputStream(keysFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING).use { stream ->
-            keyProperties.store(stream, System.currentTimeMillis().toString())
-        }
-        println("Persisted keys to: $keysFile")
+        })
     }
 
     private fun clear() {

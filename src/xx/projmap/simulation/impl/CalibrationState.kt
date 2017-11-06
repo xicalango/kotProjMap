@@ -1,16 +1,15 @@
 package xx.projmap.simulation.impl
 
-import xx.projmap.geometry.Transformation
-import xx.projmap.geometry.createQuadFromPoints
-import xx.projmap.geometry.toPointArray
-import xx.projmap.geometry.toQuad
+import xx.projmap.geometry.*
 import xx.projmap.scene.*
 import xx.projmap.simulation.api.Script
 import xx.projmap.simulation.api.SimulationState
 import xx.projmap.simulation.api.SimulationStateManager
+import xx.projmap.storeProperties
 import java.awt.Color
+import java.nio.file.Paths
 
-class CalibrationState(simulationStateManager: SimulationStateManager, scene: Scene) : SimulationState(simulationStateManager, scene) {
+class CalibrationState(simulationStateManager: SimulationStateManager, scene: Scene, private val calibrationPoints: Array<Point>? = null) : SimulationState(simulationStateManager, scene) {
 
     private lateinit var calibrationScript: CalibrationPointsScript
     private lateinit var calibrationCamera: Camera
@@ -23,7 +22,7 @@ class CalibrationState(simulationStateManager: SimulationStateManager, scene: Sc
         calibrationCamera = Camera(viewport.region.toNormalized(), simulationStateManager.mainViewport, id = "calibration")
         scene.cameras += calibrationCamera
 
-        calibrationScript = CalibrationPointsScript(calibrationCamera)
+        calibrationScript = CalibrationPointsScript(calibrationCamera, calibrationPoints)
 
         scene.world.entities += calibrationScript.calibrationPoints
 
@@ -50,11 +49,24 @@ class CalibrationState(simulationStateManager: SimulationStateManager, scene: Sc
     }
 
     override fun handleEvent(event: Event) {
+        if (event is KeyEvent) {
+            if (event.direction == Direction.RELEASED && event.keyChar == 'p') {
+                persistCalibration()
+            }
+        }
+    }
+
+    private fun persistCalibration() {
+        storeProperties(Paths.get("calibrationPoints.properties"), {
+            calibrationScript.calibrationPoints.forEachIndexed { index, point ->
+                setProperty("point" + index, "${point.origin.x},${point.origin.y}")
+            }
+        })
     }
 
 }
 
-private class CalibrationPointsScript(private val camera: Camera) : Script {
+private class CalibrationPointsScript(private val camera: Camera, calibrationPoints: Array<Point>? = null) : Script {
 
     val calibrationPoints: Array<PointEntity>
     var curPoint = 0
@@ -62,7 +74,12 @@ private class CalibrationPointsScript(private val camera: Camera) : Script {
 
     init {
         val pointArray = camera.region.toPointArray()
-        calibrationPoints = Array(4, { PointEntity(origin = pointArray[it].toMutable(), tag = "calibrationPoint") })
+        if (calibrationPoints != null) {
+            assert(calibrationPoints.size == 4)
+            this.calibrationPoints = calibrationPoints.map { PointEntity(origin = it.toMutable(), tag = "calibrationPoint") }.toTypedArray()
+        } else {
+            this.calibrationPoints = Array(4, { PointEntity(origin = pointArray[it].toMutable(), tag = "calibrationPoint") })
+        }
     }
 
     fun reset() {

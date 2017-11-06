@@ -74,7 +74,7 @@ class KeyEditingState(simulationStateManager: SimulationStateManager, scene: Sce
 
 class KeyEntityHandler(keys: List<GeoRect> = emptyList()) : Script {
 
-    val entityGroup = EntityGroup()
+    val entityGroup = EntityGroup(visible = false)
     private val keys: MutableList<Entity> = entityGroup.entities
 
     private val defaultRect = MutRect(0.0, 0.0, 10.0, 10.0)
@@ -162,9 +162,7 @@ class KeyEntityHandler(keys: List<GeoRect> = emptyList()) : Script {
     }
 
     private fun updateCurrentKey(clickedKey: RectEntity?) {
-        println("$currentKey, ${currentKey?.color}")
         currentKey?.color = Color.WHITE
-        println("$currentKey, ${currentKey?.color}")
         clickedKey?.color = Color.RED
         currentKey = clickedKey
     }

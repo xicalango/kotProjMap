@@ -45,7 +45,7 @@ class CalibrationState(simulationStateManager: SimulationStateManager, scene: Sc
 
     override fun update(dt: Double) {
         if (calibrationScript.curPoint == 4) {
-            simulationStateManager.changeState("main", calibrationScript.createTransformation(), calibrationCamera)
+            simulationStateManager.changeState("keyEditing", calibrationScript.createTransformation(), calibrationCamera.region)
         }
     }
 

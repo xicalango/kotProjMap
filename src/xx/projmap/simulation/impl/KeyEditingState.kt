@@ -9,14 +9,14 @@ import xx.projmap.simulation.api.SimulationState
 import xx.projmap.simulation.api.SimulationStateManager
 import java.awt.Color
 
-class MainState(simulationStateManager: SimulationStateManager, scene: Scene) : SimulationState(simulationStateManager, scene) {
+class KeyEditingState(simulationStateManager: SimulationStateManager, scene: Scene) : SimulationState(simulationStateManager, scene) {
 
     private val keyEntityHandler: KeyEntityHandler = KeyEntityHandler()
     private lateinit var transformCamera: Camera
     private lateinit var debugCamera: Camera
 
     override val id: String
-        get() = "main"
+        get() = "keyEditing"
 
     override fun initialize() {
         scene.world.entities += keyEntityHandler.entityGroup
@@ -25,9 +25,9 @@ class MainState(simulationStateManager: SimulationStateManager, scene: Scene) : 
 
     override fun onActivation(previousState: SimulationState, parameters: Array<out Any>) {
         val transform = parameters.getOrNull(0) as? Transform ?: throw IllegalArgumentException("need transform")
-        val calibrationCamera = parameters.getOrNull(1) as? Camera ?: throw IllegalArgumentException("need camera")
+        val region = parameters.getOrNull(1) as? GeoRect ?: throw IllegalArgumentException("need srcRegion")
 
-        setupCameras(calibrationCamera, transform)
+        setupCameras(region, transform)
 
         keyEntityHandler.camera = transformCamera
         keyEntityHandler.entityGroup.visible = true
@@ -37,15 +37,15 @@ class MainState(simulationStateManager: SimulationStateManager, scene: Scene) : 
         keyEntityHandler.entityGroup.visible = false
     }
 
-    private fun setupCameras(calibrationCamera: Camera, transform: Transform) {
+    private fun setupCameras(region: GeoRect, transform: Transform) {
         scene.hideAllCameras()
         scene.cameras.removeIf { it.id == "transform" || it.id == "debug" }
-        transformCamera = Camera(calibrationCamera.region, simulationStateManager.mainViewport, transform, id = "transform")
+        transformCamera = Camera(region, simulationStateManager.mainViewport, transform, id = "transform")
 
         val debugViewport = simulationStateManager.viewports["debug"]
 
         if (debugViewport != null) {
-            debugCamera = Camera(calibrationCamera.region, debugViewport, id = "debug")
+            debugCamera = Camera(region, debugViewport, id = "debug")
         }
 
         scene.cameras += transformCamera

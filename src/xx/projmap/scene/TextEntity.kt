@@ -9,13 +9,13 @@ class TextEntity(text: String, origin: MutPoint = MutPoint(), visible: Boolean =
     private var pointArray: Array<Point> = emptyArray()
     private var dstPointArray: Array<MutPoint> = emptyArray()
 
-    var xPointSpacing: Double = 5.0
+    var xPointSpacing: Double = 10.0
         set(value) {
             field = value
             resetPointArray()
         }
 
-    var yPointSpacing: Double = 5.0
+    var yPointSpacing: Double = 10.0
         set(value) {
             field = value
             resetPointArray()

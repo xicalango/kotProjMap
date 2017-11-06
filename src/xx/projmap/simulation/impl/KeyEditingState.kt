@@ -1,6 +1,7 @@
 package xx.projmap.simulation.impl
 
 import xx.projmap.geometry.GeoRect
+import xx.projmap.geometry.MutPoint
 import xx.projmap.geometry.MutRect
 import xx.projmap.geometry.Transform
 import xx.projmap.scene.*
@@ -18,6 +19,7 @@ class KeyEditingState(simulationStateManager: SimulationStateManager, scene: Sce
     private val keyEntityHandler: KeyEntityHandler = KeyEntityHandler(keys ?: emptyList())
     private lateinit var transformCamera: Camera
     private lateinit var debugCamera: Camera
+    private val headLineEntity = TextEntity("Key editing", origin = MutPoint(500.0, 0.0), visible = false)
 
     override val id: String
         get() = "keyEditing"
@@ -25,6 +27,7 @@ class KeyEditingState(simulationStateManager: SimulationStateManager, scene: Sce
     override fun initialize() {
         scene.world.entities += keyEntityHandler.entityGroup
         scripts += keyEntityHandler
+        scene.world.entities += headLineEntity
     }
 
     override fun onActivation(previousState: SimulationState, parameters: Array<out Any>) {
@@ -35,10 +38,12 @@ class KeyEditingState(simulationStateManager: SimulationStateManager, scene: Sce
 
         keyEntityHandler.camera = transformCamera
         keyEntityHandler.entityGroup.visible = true
+        headLineEntity.visible = true
     }
 
     override fun onDeactivation() {
         keyEntityHandler.entityGroup.visible = false
+        headLineEntity.visible = false
     }
 
     private fun setupCameras(region: GeoRect, transform: Transform) {

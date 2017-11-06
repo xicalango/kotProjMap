@@ -1,7 +1,7 @@
 package xx.projmap.simulation.impl
 
 import xx.projmap.geometry.GeoRect
-import xx.projmap.geometry.Rect
+import xx.projmap.geometry.MutRect
 import xx.projmap.geometry.Transform
 import xx.projmap.scene.*
 import xx.projmap.simulation.api.Script
@@ -71,6 +71,8 @@ class KeyEntityHandler(keys: List<GeoRect> = emptyList()) : Script {
     val entityGroup = EntityGroup()
     private val keys: MutableList<Entity> = entityGroup.entities
 
+    private val defaultRect = MutRect(0.0, 0.0, 10.0, 10.0)
+
     var camera: Camera? = null
 
     private var currentKey: RectEntity? = null
@@ -93,8 +95,21 @@ class KeyEntityHandler(keys: List<GeoRect> = emptyList()) : Script {
         if (event.direction == Direction.RELEASED) {
             when (event.keyChar) {
                 'r' -> removeCurrentKey()
+                'w' -> resizeRect(dh = -1.0)
+                's' -> resizeRect(dh = 1.0)
+                'a' -> resizeRect(dw = -1.0)
+                'd' -> resizeRect(dw = 1.0)
+                'W' -> resizeRect(dh = -10.0)
+                'S' -> resizeRect(dh = 10.0)
+                'A' -> resizeRect(dw = -10.0)
+                'D' -> resizeRect(dw = 10.0)
             }
         }
+    }
+
+    private fun resizeRect(dw: Double = 0.0, dh: Double = 0.0) {
+        defaultRect.resize(dw, dh)
+        currentKey?.rect?.resize(dw, dh)
     }
 
     private fun KeyEntityHandler.removeCurrentKey() {
@@ -123,7 +138,7 @@ class KeyEntityHandler(keys: List<GeoRect> = emptyList()) : Script {
             return updateCurrentKey(clickedKey)
         }
 
-        val newKey = RectEntity(Rect(0.0, 0.0, 100.0, 100.0), origin = worldPoint.copy())
+        val newKey = RectEntity(defaultRect.copy(), origin = worldPoint.copy())
         keys += newKey
         updateCurrentKey(newKey)
     }

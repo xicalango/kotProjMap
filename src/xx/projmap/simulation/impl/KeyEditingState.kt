@@ -19,7 +19,7 @@ class KeyEditingState(simulationStateManager: SimulationStateManager, scene: Sce
     private val keyEntityHandler: KeyEntityHandler = KeyEntityHandler(keys ?: emptyList())
     private lateinit var transformCamera: Camera
     private lateinit var debugCamera: Camera
-    private val headLineEntity = TextEntity("Key editing", origin = MutPoint(500.0, 0.0), visible = false)
+    private val headLineEntity = TextEntity("Key editing", origin = MutPoint(500.0, -150.0), visible = false)
 
     override val id: String
         get() = "keyEditing"

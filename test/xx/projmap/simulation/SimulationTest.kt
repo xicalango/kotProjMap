@@ -11,7 +11,7 @@ internal class SimulationTest {
 
     @Test
     internal fun testSimulation() {
-        val simulation = Simulation(listOf(::CalibrationState, ::MainState), "calibration", graphicsFpsLimit = 30)
+        val simulation = Simulation(listOf(::CalibrationState, ::MainState), "calibration")
         val frame = ProjectionFrame(simulation.eventQueue)
         val viewport2 = frame.mainViewport.createSubViewport(Rect(0.0, 0.0, 200.0, 150.0))
 

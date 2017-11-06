@@ -11,11 +11,17 @@ import java.awt.Color
 
 class MainState(simulationManager: SimulationManager, scene: Scene) : SimulationState(simulationManager, scene) {
 
+    private val keyEntityHandler: KeyEntityHandler = KeyEntityHandler()
     private lateinit var transformCamera: Camera
     private lateinit var debugCamera: Camera
 
     override val id: String
         get() = "main"
+
+    override fun initialize() {
+        scene.world.entities += keyEntityHandler.entityGroup
+        scripts += keyEntityHandler
+    }
 
     override fun onActivation(previousState: SimulationState, parameters: Array<out Any>) {
         val transform = parameters.getOrNull(0) as? Transform ?: throw IllegalArgumentException("need transform")
@@ -23,12 +29,7 @@ class MainState(simulationManager: SimulationManager, scene: Scene) : Simulation
 
         setupCameras(calibrationCamera, transform)
 
-        val keyEntityHandler = KeyEntityHandler(transformCamera)
-
-        scripts.clear()
-        scripts += keyEntityHandler
-
-        scene.world.entities += keyEntityHandler.entityGroup
+        keyEntityHandler.camera = transformCamera
     }
 
     private fun setupCameras(calibrationCamera: Camera, transform: Transform) {
@@ -65,10 +66,12 @@ class MainState(simulationManager: SimulationManager, scene: Scene) : Simulation
 
 }
 
-class KeyEntityHandler(private val camera: Camera, keys: List<GeoRect> = emptyList()) : Script {
+class KeyEntityHandler(keys: List<GeoRect> = emptyList()) : Script {
 
     val entityGroup = EntityGroup()
     private val keys: MutableList<Entity> = entityGroup.entities
+
+    var camera: Camera? = null
 
     private var currentKey: RectEntity? = null
 
@@ -109,7 +112,7 @@ class KeyEntityHandler(private val camera: Camera, keys: List<GeoRect> = emptyLi
 
     private fun handleMouseClick(mouseClickEvent: MouseClickEvent) {
 
-        val worldPoint = camera.viewportToWorld(mouseClickEvent.point)
+        val worldPoint = camera?.viewportToWorld(mouseClickEvent.point) ?: return
 
         val clickedKey = keys
                 .filter { it is RectEntity }

@@ -4,7 +4,7 @@ import xx.projmap.scene.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
-class Simulation(states: List<StateConstructor>, private val startState: String? = null, private val graphicsFpsLimit: Long? = 60, private val simulationFpsLimit: Long? = 100) {
+class Simulation(states: List<StateConstructor>, private val startState: String? = null, private val graphicsFpsLimit: Int? = 60, private val simulationFpsLimit: Int? = 100) {
     val eventQueue: EventQueue = EventQueue()
 
     val scene: Scene = Scene(eventQueue)
@@ -35,7 +35,7 @@ class Simulation(states: List<StateConstructor>, private val startState: String?
             while (running) {
                 simulationManager.render(scene)
                 if (graphicsFpsLimit != null) {
-                    Thread.sleep(1000 / graphicsFpsLimit)
+                    Thread.sleep(1000 / graphicsFpsLimit.toLong())
                 }
             }
         }
@@ -59,7 +59,7 @@ class Simulation(states: List<StateConstructor>, private val startState: String?
 
             simulationManager.update(dt)
             if (simulationFpsLimit != null) {
-                Thread.sleep(1000 / simulationFpsLimit)
+                Thread.sleep(1000 / simulationFpsLimit.toLong())
             }
 
             frameCounter++

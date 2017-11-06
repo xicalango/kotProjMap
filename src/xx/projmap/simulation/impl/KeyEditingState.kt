@@ -8,6 +8,10 @@ import xx.projmap.simulation.api.Script
 import xx.projmap.simulation.api.SimulationState
 import xx.projmap.simulation.api.SimulationStateManager
 import java.awt.Color
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
+import java.util.*
 
 class KeyEditingState(simulationStateManager: SimulationStateManager, scene: Scene, keys: List<GeoRect>? = null) : SimulationState(simulationStateManager, scene) {
 
@@ -105,6 +109,7 @@ class KeyEntityHandler(keys: List<GeoRect> = emptyList()) : Script {
         if (event.direction == Direction.RELEASED) {
             when (event.keyChar) {
                 'r' -> removeCurrentKey()
+                'C' -> clear()
                 'u' -> resizeRect(dh = -1.0)
                 'j' -> resizeRect(dh = 1.0)
                 'h' -> resizeRect(dw = -1.0)
@@ -121,8 +126,30 @@ class KeyEntityHandler(keys: List<GeoRect> = emptyList()) : Script {
                 'S' -> moveCurrentRect(dy = 10.0)
                 'A' -> moveCurrentRect(dx = -10.0)
                 'D' -> moveCurrentRect(dx = 10.0)
+                'p' -> persist()
             }
         }
+    }
+
+    private fun persist() {
+        val keyProperties = Properties()
+        keys.forEachIndexed { index, keyEntity ->
+            if (keyEntity is RectEntity) {
+                val translatedRect = keyEntity.translatedRect
+                keyProperties.setProperty("key" + index, "${translatedRect.x},${translatedRect.y},${translatedRect.w},${translatedRect.h}")
+            }
+        }
+
+        val keysFile = Paths.get("keysFile.properties")
+        Files.newOutputStream(keysFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING).use { stream ->
+            keyProperties.store(stream, System.currentTimeMillis().toString())
+        }
+        println("Persisted keys to: $keysFile")
+    }
+
+    private fun clear() {
+        currentKey = null
+        keys.clear()
     }
 
     fun moveCurrentRect(dx: Double = 0.0, dy: Double = 0.0) {

@@ -3,9 +3,7 @@ package xx.projmap.app
 import xx.projmap.geometry.GeoRect
 import xx.projmap.geometry.Rect
 import xx.projmap.scene.EventQueue
-import xx.projmap.scene.RectEntity
 import xx.projmap.scene.Scene
-import xx.projmap.scene.World
 import xx.projmap.simulation.api.Simulation
 import xx.projmap.simulation.api.SimulationStateManager
 import xx.projmap.simulation.impl.CalibrationState
@@ -13,7 +11,6 @@ import xx.projmap.simulation.impl.KeyEditingState
 import xx.projmap.swing.ProjectionFrame
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.nio.file.StandardOpenOption
 import java.util.*
 import javax.swing.JFrame
 import kotlin.collections.ArrayList
@@ -38,26 +35,9 @@ fun main(args: Array<String>) {
 
     val keys = loadKeys()
 
-    val simulation = runSimulation(graphicsFpsLimit, simulationFpsLimit, keys)
-
-    storeKeys(simulation.scene.world)
+    runSimulation(graphicsFpsLimit, simulationFpsLimit, keys)
 
     System.exit(0)
-}
-
-private fun storeKeys(world: World) {
-    val keyProperties = Properties()
-    world["key"].forEachIndexed { index, keyEntity ->
-        if (keyEntity is RectEntity) {
-            val translatedRect = keyEntity.translatedRect
-            keyProperties.setProperty("key" + index, "${translatedRect.x},${translatedRect.y},${translatedRect.w},${translatedRect.h}")
-        }
-    }
-
-    val keysFile = Paths.get("keysFile.properties")
-    Files.newOutputStream(keysFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING).use { stream ->
-        keyProperties.store(stream, System.currentTimeMillis().toString())
-    }
 }
 
 private fun runSimulation(graphicsFpsLimit: Int, simulationFpsLimit: Int, keys: List<GeoRect>?): Simulation {

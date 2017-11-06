@@ -5,6 +5,7 @@ import xx.projmap.geometry.Rect
 import xx.projmap.scene.EventQueue
 import xx.projmap.scene.RectEntity
 import xx.projmap.scene.Scene
+import xx.projmap.scene.World
 import xx.projmap.simulation.api.Simulation
 import xx.projmap.simulation.api.SimulationStateManager
 import xx.projmap.simulation.impl.CalibrationState
@@ -39,14 +40,14 @@ fun main(args: Array<String>) {
 
     val simulation = runSimulation(graphicsFpsLimit, simulationFpsLimit, keys)
 
-    storeKeys(simulation)
+    storeKeys(simulation.scene.world)
 
     System.exit(0)
 }
 
-private fun storeKeys(simulation: Simulation) {
+private fun storeKeys(world: World) {
     val keyProperties = Properties()
-    simulation.scene.world["key"].forEachIndexed { index, keyEntity ->
+    world["key"].forEachIndexed { index, keyEntity ->
         if (keyEntity is RectEntity) {
             val translatedRect = keyEntity.translatedRect
             keyProperties.setProperty("key" + index, "${translatedRect.x},${translatedRect.y},${translatedRect.w},${translatedRect.h}")

@@ -34,6 +34,8 @@ interface GeoRect : GeoEntity<Rect, MutRect> {
         return dst
     }
 
+    fun toNormalized(): GeoRect = Rect(0.0, 0.0, 1000.0, 1000.0 * (h / w))
+
     operator fun contains(other: GeoRect): Boolean = other.x >= x && other.y >= y && other.w <= w && other.h <= h
 
     operator fun contains(point: GeoPoint): Boolean = point.x >= x && point.y >= y && point.x <= x + w && point.y <= y + h

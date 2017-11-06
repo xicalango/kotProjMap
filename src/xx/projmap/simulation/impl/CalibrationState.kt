@@ -20,7 +20,7 @@ class CalibrationState(simulationStateManager: SimulationStateManager, scene: Sc
 
     override fun initialize() {
         val viewport = simulationStateManager.mainViewport
-        calibrationCamera = Camera(viewport.region, simulationStateManager.mainViewport, id = "calibration")
+        calibrationCamera = Camera(viewport.region.toNormalized(), simulationStateManager.mainViewport, id = "calibration")
         scene.cameras += calibrationCamera
 
         calibrationScript = CalibrationPointsScript(calibrationCamera)

@@ -84,7 +84,11 @@ class KeyEntityHandler(keys: List<GeoRect> = emptyList()) : Script {
     private var currentKey: RectEntity? = null
 
     init {
-        this.keys += keys.map { it.toTranslatedEntity(tag = "key") }
+        this.keys += keys.map {
+            val newKey = it.toTranslatedEntity(tag = "key")
+            println("initialized with $it = ${newKey.rect} @${newKey.origin} = ${newKey.translatedRect}")
+            newKey
+        }
     }
 
     override fun update(dt: Double) {
@@ -157,6 +161,7 @@ class KeyEntityHandler(keys: List<GeoRect> = emptyList()) : Script {
         }
 
         val newKey = RectEntity(defaultRect.copy(), origin = worldPoint.copy(), tag = "key")
+        println("added new rect: ${newKey.rect} @${newKey.origin} = ${newKey.translatedRect}")
         keys += newKey
         updateCurrentKey(newKey)
     }

@@ -1,6 +1,7 @@
 package xx.projmap.scene
 
 import xx.projmap.geometry.MutPoint
+import xx.projmap.geometry.Point
 import kotlin.experimental.and
 
 // taken from https://hackaday.io/project/6309-vga-graphics-over-spi-and-serial-vgatonic/log/20759-a-tiny-4x6-pixel-font-that-will-fit-on-almost-any-microcontroller-license-mit
@@ -133,18 +134,34 @@ private fun getFontLine(char: Char, lineNum: Int): Byte {
     return (pixel and 0xE).toByte()
 }
 
-fun GraphicsAdapter.render4x6(x: Double, y: Double, text: String, xPointSpacing: Double = 10.0, yPointSpacing: Double = 10.0, xLetterSpacingFactor: Double = 4.0) {
-    val mutPoint = MutPoint()
+fun render4x6ToLambda(text: String, x: Double = 0.0, y: Double = 0.0, xPointSpacing: Double = 10.0, yPointSpacing: Double = 10.0, xLetterSpacingFactor: Double = 4.0, callback: (Double, Double) -> Unit) {
     text.forEachIndexed { index, char ->
         (0..5).forEach { line ->
             val fontLine = getFontLine(char, line)
             (3 downTo 0).map { (1 shl it).toByte() }.forEachIndexed { pixelIndex, pixelPos ->
                 if (fontLine and pixelPos == pixelPos) {
-                    mutPoint.x = x + ((index * xPointSpacing * xLetterSpacingFactor) + pixelIndex * xPointSpacing)
-                    mutPoint.y = y + (line * yPointSpacing)
-                    drawPoint(mutPoint)
+                    val px = x + ((index * xPointSpacing * xLetterSpacingFactor) + pixelIndex * xPointSpacing)
+                    val py = y + (line * yPointSpacing)
+                    callback(px, py)
                 }
             }
         }
     }
+}
+
+fun render4x6ToPoints(text: String, x: Double = 0.0, y: Double = 0.0, xPointSpacing: Double = 10.0, yPointSpacing: Double = 10.0, xLetterSpacingFactor: Double = 4.0): List<Point> {
+    val list = ArrayList<Point>()
+    render4x6ToLambda(text, x, y, xPointSpacing, yPointSpacing, xLetterSpacingFactor, { px, py ->
+        list += Point(px, py)
+    })
+    return list
+}
+
+fun GraphicsAdapter.render4x6(x: Double, y: Double, text: String, xPointSpacing: Double = 10.0, yPointSpacing: Double = 10.0, xLetterSpacingFactor: Double = 4.0) {
+    val mutPoint = MutPoint()
+    render4x6ToLambda(text, x, y, xPointSpacing, yPointSpacing, xLetterSpacingFactor, { px, py ->
+        mutPoint.x = px
+        mutPoint.y = py
+        drawPoint(mutPoint)
+    })
 }

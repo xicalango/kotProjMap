@@ -52,8 +52,8 @@ class SimulationManager(val scene: Scene, stateConstructors: List<StateConstruct
         currentState.scripts.forEach { it.handleEvent(event) }
     }
 
-    fun render() {
-        viewports.values.forEach(Viewport::render)
+    fun render(scene: Scene) {
+        viewports.values.forEach { it.render(scene) }
     }
 
 }

@@ -9,7 +9,7 @@ import javax.swing.JFrame
 
 fun main(args: Array<String>) {
 
-    val simulation = Simulation(listOf(::CalibrationState, ::MainState), "calibration", fpsLimit = 30)
+    val simulation = Simulation(listOf(::CalibrationState, ::MainState), "calibration", graphicsFpsLimit = 30)
     val frame = ProjectionFrame(simulation.eventQueue)
     val viewport2 = frame.mainViewport.createSubViewport(Rect(0.0, 0.0, 200.0, 150.0))
 

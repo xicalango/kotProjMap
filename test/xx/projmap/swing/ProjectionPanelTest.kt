@@ -68,8 +68,7 @@ internal class ProjectionPanelTest {
                 }
             }
             entity.move(dx = 0.1)
-            scene.render()
-            panel.render()
+            panel.render(scene)
             Thread.sleep(1000 / 30)
         }
     }

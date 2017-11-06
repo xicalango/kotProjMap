@@ -2,8 +2,9 @@ package xx.projmap.simulation.api
 
 import xx.projmap.scene.*
 import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
 
-class Simulation(states: List<StateConstructor>, private val startState: String? = null, private val fpsLimit: Long? = 30) {
+class Simulation(states: List<StateConstructor>, private val startState: String? = null, private val graphicsFpsLimit: Long? = 60, private val simulationFpsLimit: Long? = 100) {
     val eventQueue: EventQueue = EventQueue()
 
     val scene: Scene = Scene(eventQueue)
@@ -30,6 +31,15 @@ class Simulation(states: List<StateConstructor>, private val startState: String?
 
         var lastTimestamp = System.nanoTime()
 
+        thread {
+            while (running) {
+                simulationManager.render(scene)
+                if (graphicsFpsLimit != null) {
+                    Thread.sleep(1000 / graphicsFpsLimit)
+                }
+            }
+        }
+
         while (running) {
             val now = System.nanoTime()
             val dt = (now - lastTimestamp) / TimeUnit.SECONDS.toNanos(1).toDouble()
@@ -48,11 +58,8 @@ class Simulation(states: List<StateConstructor>, private val startState: String?
             }
 
             simulationManager.update(dt)
-            scene.render()
-            simulationManager.render()
-
-            if (fpsLimit != null) {
-                Thread.sleep(1000 / fpsLimit)
+            if (simulationFpsLimit != null) {
+                Thread.sleep(1000 / simulationFpsLimit)
             }
 
             frameCounter++

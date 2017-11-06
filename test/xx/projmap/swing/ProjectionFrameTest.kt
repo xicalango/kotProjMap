@@ -23,8 +23,7 @@ internal class ProjectionFrameTest {
         projectionFrame.showFrame()
 
         while (true) {
-            scene.render()
-            projectionFrame.mainViewport.render()
+            projectionFrame.mainViewport.render(scene)
             Thread.sleep(1000)
         }
     }

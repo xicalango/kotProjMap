@@ -1,9 +1,6 @@
 package xx.projmap.scene
 
-import xx.projmap.geometry.GeoRect
-import xx.projmap.geometry.MutPoint
-import xx.projmap.geometry.Transform
-import xx.projmap.geometry.toPointArray
+import xx.projmap.geometry.*
 
 class RectEntity(rect: GeoRect, origin: MutPoint = MutPoint(), visible: Boolean = true, tag: String? = null) : Entity(origin, visible, tag) {
 
@@ -27,4 +24,4 @@ class RectEntity(rect: GeoRect, origin: MutPoint = MutPoint(), visible: Boolean 
     }
 }
 
-fun GeoRect.toEntity() = RectEntity(this)
+fun GeoRect.toTranslatedEntity(tag: String? = null) = RectEntity(Rect(0.0, 0.0, w, h), origin = MutPoint(x, y), tag = tag)

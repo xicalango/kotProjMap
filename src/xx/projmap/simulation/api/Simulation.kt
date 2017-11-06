@@ -4,16 +4,13 @@ import xx.projmap.scene.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
-class Simulation(states: List<StateConstructor>, private val startState: String? = null, private val graphicsFpsLimit: Int? = 60, private val simulationFpsLimit: Int? = 100) {
-    val eventQueue: EventQueue = EventQueue()
-
-    val scene: Scene = Scene(eventQueue)
+class Simulation(val simulationStateManager: SimulationStateManager, private val startState: String? = null, private val graphicsFpsLimit: Int? = 60, private val simulationFpsLimit: Int? = 100) {
+    val eventQueue: EventQueue = simulationStateManager.scene.eventQueue
+    val scene: Scene = simulationStateManager.scene
 
     private var frameCounter = 0
     private var lastFrameCounter = 0
     private var last = System.currentTimeMillis()
-
-    private val simulationStateManager: SimulationStateManager = SimulationStateManager(scene, states)
 
     private var running: Boolean = true
 

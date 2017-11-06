@@ -1,15 +1,21 @@
 package xx.projmap.app
 
+import xx.projmap.geometry.GeoRect
 import xx.projmap.geometry.Rect
+import xx.projmap.scene.EventQueue
 import xx.projmap.scene.RectEntity
+import xx.projmap.scene.Scene
 import xx.projmap.simulation.api.Simulation
+import xx.projmap.simulation.api.SimulationStateManager
 import xx.projmap.simulation.impl.CalibrationState
 import xx.projmap.simulation.impl.KeyEditingState
 import xx.projmap.swing.ProjectionFrame
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
 import java.util.*
 import javax.swing.JFrame
+import kotlin.collections.ArrayList
 
 const val GRAPHICS_FPS_LIMIT_KEY = "graphicsFpsLimit"
 const val SIMULATION_FPS_LIMIT_KEY = "graphicsFpsLimit"
@@ -24,31 +30,89 @@ private val defaultProperties: Properties
 
 fun main(args: Array<String>) {
 
-    val properties = Properties(defaultProperties)
-
-    val propertiesFile = Paths.get("kotProjMap.properties")
-    if (Files.exists(propertiesFile)) {
-        val inputStream = Files.newInputStream(propertiesFile)
-        properties.load(inputStream)
-    }
+    val properties = loadProperties()
 
     val graphicsFpsLimit = properties.getProperty(GRAPHICS_FPS_LIMIT_KEY).toInt()
     val simulationFpsLimit = properties.getProperty(SIMULATION_FPS_LIMIT_KEY).toInt()
 
-    val simulation = Simulation(listOf(::CalibrationState, ::KeyEditingState), "calibration", graphicsFpsLimit = graphicsFpsLimit, simulationFpsLimit = simulationFpsLimit)
-    val frame = ProjectionFrame(simulation.eventQueue)
+    val keys = loadKeys()
+
+    val simulation = runSimulation(graphicsFpsLimit, simulationFpsLimit, keys)
+
+    storeKeys(simulation)
+
+    System.exit(0)
+}
+
+private fun storeKeys(simulation: Simulation) {
+    val keyProperties = Properties()
+    simulation.scene.world["key"].forEachIndexed { index, keyEntity ->
+        if (keyEntity is RectEntity) {
+            val translatedRect = keyEntity.translatedRect
+            keyProperties.setProperty("key" + index, "${translatedRect.x},${translatedRect.y},${translatedRect.w},${translatedRect.h}")
+        }
+    }
+
+    val keysFile = Paths.get("keysFile.properties")
+    Files.newOutputStream(keysFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING).use { stream ->
+        keyProperties.store(stream, System.currentTimeMillis().toString())
+    }
+}
+
+private fun runSimulation(graphicsFpsLimit: Int, simulationFpsLimit: Int, keys: List<GeoRect>?): Simulation {
+    val eventQueue = EventQueue()
+    val scene = Scene(eventQueue)
+
+    val stateManager = SimulationStateManager(scene)
+    val calibrationState = CalibrationState(stateManager, scene)
+    val keyEditingState = KeyEditingState(stateManager, scene, keys)
+
+    stateManager.addState(calibrationState)
+    stateManager.addState(keyEditingState)
+
+    val simulation = Simulation(stateManager, "calibration", graphicsFpsLimit = graphicsFpsLimit, simulationFpsLimit = simulationFpsLimit)
+    val frame = ProjectionFrame(eventQueue)
     val viewport2 = frame.mainViewport.createSubViewport(Rect(0.0, 0.0, 200.0, 150.0))
+
+
 
     frame.extendedState = JFrame.MAXIMIZED_BOTH
     frame.showFrame()
 
     simulation.run(frame.mainViewport, mapOf(Pair("debug", viewport2)))
+    return simulation
+}
 
-    simulation.scene.world["key"].forEach { keyEntity ->
-        val entity = keyEntity as RectEntity
-        println("${entity.translatedRect}")
+private fun loadProperties(): Properties {
+    val properties = Properties(defaultProperties)
+
+    val propertiesFile = Paths.get("kotProjMap.properties")
+    if (Files.exists(propertiesFile)) {
+        Files.newInputStream(propertiesFile).use(properties::load)
+    }
+    return properties
+}
+
+private fun loadKeys(): List<GeoRect>? {
+    val keyPropertiesFile = Paths.get("keysFile.properties")
+    if (Files.exists(keyPropertiesFile).not()) {
+        return null
     }
 
-    System.exit(0)
+    val properties = Properties()
+    Files.newInputStream(keyPropertiesFile).use(properties::load)
+
+    val keys: MutableList<GeoRect> = ArrayList()
+
+    properties.forEach { _, propObj ->
+        val propString = propObj as? String ?: return@forEach
+
+        val keyData = propString.split(",", limit = 4).map { it.toDouble() }
+
+        keys += Rect(keyData[0], keyData[1], keyData[2], keyData[3])
+    }
+
+    return keys
 }
+
 

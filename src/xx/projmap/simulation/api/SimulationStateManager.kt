@@ -6,13 +6,8 @@ import xx.projmap.scene.Viewport
 
 typealias StateConstructor = (SimulationStateManager, Scene) -> SimulationState
 
-class SimulationStateManager(val scene: Scene, stateConstructors: List<StateConstructor>) {
-
-    private val states: MutableMap<String, SimulationState> = stateConstructors.fold(HashMap(), { acc, simulationStateConstructor ->
-        val simulationState = simulationStateConstructor(this, scene)
-        acc.put(simulationState.id, simulationState)
-        acc
-    })
+class SimulationStateManager(val scene: Scene) {
+    private val states: MutableMap<String, SimulationState> = HashMap()
 
     private var currentState: SimulationState = NoState(this, scene)
     private var nextState: SimulationState? = null
@@ -22,6 +17,10 @@ class SimulationStateManager(val scene: Scene, stateConstructors: List<StateCons
 
     val mainViewport: Viewport
         get() = viewports["main"]!!
+
+    fun addState(simulationState: SimulationState) {
+        states += simulationState.id to simulationState
+    }
 
     fun initialize() {
         states.values.forEach(SimulationState::initialize)
@@ -58,3 +57,5 @@ class SimulationStateManager(val scene: Scene, stateConstructors: List<StateCons
     }
 
 }
+
+operator fun SimulationStateManager.plusAssign(simulationState: SimulationState) = addState(simulationState)

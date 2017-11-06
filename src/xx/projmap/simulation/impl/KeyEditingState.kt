@@ -9,9 +9,9 @@ import xx.projmap.simulation.api.SimulationState
 import xx.projmap.simulation.api.SimulationStateManager
 import java.awt.Color
 
-class KeyEditingState(simulationStateManager: SimulationStateManager, scene: Scene) : SimulationState(simulationStateManager, scene) {
+class KeyEditingState(simulationStateManager: SimulationStateManager, scene: Scene, keys: List<GeoRect>? = null) : SimulationState(simulationStateManager, scene) {
 
-    private val keyEntityHandler: KeyEntityHandler = KeyEntityHandler()
+    private val keyEntityHandler: KeyEntityHandler = KeyEntityHandler(keys ?: emptyList())
     private lateinit var transformCamera: Camera
     private lateinit var debugCamera: Camera
 
@@ -84,7 +84,7 @@ class KeyEntityHandler(keys: List<GeoRect> = emptyList()) : Script {
     private var currentKey: RectEntity? = null
 
     init {
-        this.keys += keys.map { it.toEntity() }
+        this.keys += keys.map { it.toTranslatedEntity(tag = "key") }
     }
 
     override fun update(dt: Double) {

@@ -133,7 +133,7 @@ class KeyEntityHandler(keys: List<GeoRect> = emptyList()) : Script {
 
     private fun persist() {
         val keyProperties = Properties()
-        keys.forEachIndexed { index, keyEntity ->
+        keys.sortedBy { it.origin.x }.forEachIndexed { index, keyEntity ->
             if (keyEntity is RectEntity) {
                 val translatedRect = keyEntity.translatedRect
                 keyProperties.setProperty("key" + index, "${translatedRect.x},${translatedRect.y},${translatedRect.w},${translatedRect.h}")

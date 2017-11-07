@@ -41,6 +41,8 @@ interface GeoRect : GeoEntity<Rect, MutRect> {
     operator fun contains(point: GeoPoint): Boolean = point.x >= x && point.y >= y && point.x <= x + w && point.y <= y + h
 
     override fun translated(point: GeoPoint): GeoRect
+
+    operator fun plus(point: GeoPoint): GeoRect = translated(point)
 }
 
 data class MutRect(override var x: Double, override var y: Double, override var w: Double, override var h: Double) : GeoRect {

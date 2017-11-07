@@ -18,8 +18,8 @@ class Camera(region: GeoRect, val viewport: Viewport, private val transform: Tra
         viewport.initialize()
 
         graphicsAdapter.push()
-        graphicsAdapter.scale(viewportRegion.w / region.w, viewportRegion.h / region.h)
         graphicsAdapter.translate(viewportRegion.x - region.x, viewportRegion.y - region.y)
+        graphicsAdapter.scale(viewportRegion.w / region.w, viewportRegion.h / region.h)
 
         world.entities.filter { it.visible }.forEach { it.render(graphicsAdapter, transform) }
 

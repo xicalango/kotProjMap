@@ -9,7 +9,7 @@ class PointRenderable : Renderable() {
     private val transformedPoint = MutPoint()
 
     override fun renderInternal(graphicsAdapter: GraphicsAdapter, transform: Transform) {
-        transform.srcToDst(entity.origin.origin, transformedPoint)
+        transform.srcToDst(entity.position, transformedPoint)
         graphicsAdapter.drawPoint(transformedPoint)
     }
 

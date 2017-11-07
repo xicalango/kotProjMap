@@ -51,7 +51,7 @@ class TextRenderable(text: String) : Renderable() {
 
     private fun transform(transform: Transform) {
         pointArray.forEachIndexed { index, point ->
-            transform.srcToDst(point.translated(entity.origin.origin), dstPointArray[index])
+            transform.srcToDst(point + entity.position, dstPointArray[index])
         }
     }
 

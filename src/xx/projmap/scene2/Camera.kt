@@ -11,20 +11,20 @@ class Camera(region: GeoRect, val viewport: Viewport, var transform: Transform =
 
     val region: MutRect = region.toMutable()
 
-    override fun render(graphicsAdapter: GraphicsAdapter) {
+    fun render(graphicsAdapter: GraphicsAdapter) {
         val viewportRegion = viewport.region
 
-        val translatedRegion = region + entity.origin.origin
+        val translatedRegion = region + entity.origin
 
         viewport.initialize()
 
         graphicsAdapter.push()
-        graphicsAdapter.scale(viewportRegion.w / translatedRegion.w, viewportRegion.h / translatedRegion.h)
         graphicsAdapter.translate(viewportRegion.x - translatedRegion.x, viewportRegion.y - translatedRegion.y)
+        graphicsAdapter.scale(viewportRegion.w / translatedRegion.w, viewportRegion.h / translatedRegion.h)
 
         entity.sceneFacade.allEntities
                 .flatMap { it.getComponentsByType<Renderable>() }
-                .filter(Component::enabled)
+                .isEnabled()
                 .forEach { it.render(graphicsAdapter, transform) }
 
         graphicsAdapter.pop()

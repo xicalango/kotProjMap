@@ -1,7 +1,6 @@
 package xx.projmap.scene2
 
 import xx.projmap.scene.GraphicsAdapter
-import xx.projmap.scene.Viewport
 
 interface RenderFacade {
     fun render(graphicsAdapter: GraphicsAdapter)
@@ -9,19 +8,12 @@ interface RenderFacade {
 
 interface SceneFacade {
     val entities: List<Entity>
-    val viewports: MutableMap<String, Viewport>
-    val tags: Map<String, Tag>
-
     val allEntities: List<Entity>
 
     fun addEntity(entity: Entity)
-
-    fun getTag(name: String): Tag
 }
 
 class Scene : SceneFacade, RenderFacade {
-    override val tags: MutableMap<String, Tag> = HashMap()
-    override val viewports: MutableMap<String, Viewport> = HashMap()
     override val entities: MutableList<Entity> = ArrayList()
 
     override val allEntities: List<Entity>
@@ -32,8 +24,12 @@ class Scene : SceneFacade, RenderFacade {
         entities += entity
     }
 
-    override fun getTag(name: String): Tag {
-        return tags.computeIfAbsent(name, ::Tag)
+    fun initialize() {
+        entities.forEach { it.initialize() }
+    }
+
+    fun update(dt: Double) {
+        allEntities.forEach { it.update(dt) }
     }
 
     override fun render(graphicsAdapter: GraphicsAdapter) {

@@ -25,7 +25,7 @@ interface Viewport {
         graphicsAdapter.resetClip()
     }
 
-    fun createSubViewport(subRegion: GeoRect): Viewport {
+    fun createSubViewport(subRegion: GeoRect): SimpleViewport {
         assert(subRegion in region)
         return SimpleViewport(subRegion.toMutable(), graphicsAdapter)
     }

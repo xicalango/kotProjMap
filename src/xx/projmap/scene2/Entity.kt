@@ -1,14 +1,26 @@
 package xx.projmap.scene2
 
-import xx.projmap.scene.GraphicsAdapter
+import xx.projmap.geometry.GeoPoint
+import xx.projmap.geometry.MutPoint
+import xx.projmap.geometry.Point
 
-open class Entity(val name: String = "entity") {
+open class Entity(val name: String = "entity", origin: GeoPoint = Point()) {
 
     lateinit var sceneFacade: SceneFacade
-    val children: MutableList<Entity> = ArrayList()
+    private val children: MutableList<Entity> = ArrayList()
+    var parent: Entity? = null
     var tag: Tag? = null
     protected val components: MutableList<Component> = ArrayList()
-    val origin: Origin = Origin()
+    val origin: MutPoint = MutPoint()
+    val position: GeoPoint
+        get() {
+            val par = parent
+            return if (par == null) {
+                origin
+            } else {
+                origin + par.position
+            }
+        }
 
     val enabledComponents: List<Component>
         get() = components.filter(Component::enabled)
@@ -20,18 +32,35 @@ open class Entity(val name: String = "entity") {
         get() = listOf(this) + children
 
     init {
-        addComponent(origin)
+        this.origin.updateFrom(origin)
     }
 
     fun addComponent(component: Component) {
         component.entity = this
         components += component
-        component.setup()
     }
 
     fun removeComponent(component: Component) {
         components -= component
-        component.teardown()
+    }
+
+    fun addChild(entity: Entity) {
+        entity.parent = this
+        children += entity
+    }
+
+    fun moveChild(child: Entity, destination: Entity?) {
+        children -= child
+
+        if (destination == null) {
+            child.parent = null
+        } else {
+            destination.addChild(child)
+        }
+    }
+
+    fun initialize() {
+        components.forEach { it.initialize() }
     }
 
     internal inline fun <reified T : Component> getComponentsByType(): List<T> = components.filterIsInstance<T>()
@@ -39,10 +68,6 @@ open class Entity(val name: String = "entity") {
 
     fun update(dt: Double) {
         enabledComponents.forEach { it.update(dt) }
-    }
-
-    fun render(graphicsAdapter: GraphicsAdapter) {
-        enabledComponents.forEach { it.render(graphicsAdapter) }
     }
 
 }

@@ -1,24 +1,24 @@
 package xx.projmap.scene2
 
-import xx.projmap.scene.GraphicsAdapter
-
 abstract class Component(var enabled: Boolean = true) {
 
     internal lateinit var entity: Entity
 
-    open fun setup() {
+    private var initialized: Boolean = false
 
+    fun initializeComponent() {
+        if (initialized) {
+            return
+        }
+        initialize()
+        initialized = true
     }
 
-    open fun teardown() {
+    open fun initialize() {
 
     }
 
     open fun update(dt: Double) {
-
-    }
-
-    open fun render(graphicsAdapter: GraphicsAdapter) {
 
     }
 

@@ -5,6 +5,6 @@ import xx.projmap.geometry.MutPoint
 
 class Origin(origin: GeoPoint = MutPoint()) : Component() {
 
-    val origin: MutPoint = origin.toMutable()
+    val point: MutPoint = origin.toMutable()
 
 }

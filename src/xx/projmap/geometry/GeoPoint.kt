@@ -19,6 +19,8 @@ interface GeoPoint : GeoEntity<Point, MutPoint> {
     }
 
     override fun translated(point: GeoPoint): GeoPoint
+
+    operator fun plus(point: GeoPoint) = translated(point)
 }
 
 data class Point(override val x: Double = 0.0, override val y: Double = 0.0) : GeoPoint {
@@ -42,7 +44,7 @@ data class MutPoint(override var x: Double = 0.0, override var y: Double = 0.0) 
         return this
     }
 
-    fun move(dx: Double, dy: Double) {
+    fun move(dx: Double = 0.0, dy: Double = 0.0) {
         x += dx
         y += dy
     }

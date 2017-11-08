@@ -3,6 +3,8 @@ package xx.projmap.scene
 import xx.projmap.geometry.MutPoint
 import xx.projmap.geometry.Point
 import xx.projmap.geometry.Transform
+import xx.projmap.graphics.GraphicsAdapter
+import xx.projmap.graphics.render4x6ToPoints
 
 class TextEntity(text: String, origin: MutPoint = MutPoint(), visible: Boolean = true, tag: String? = null) : Entity(origin, visible, tag) {
 

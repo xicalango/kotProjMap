@@ -1,7 +1,7 @@
 package xx.projmap.scene2
 
 import xx.projmap.geometry.*
-import xx.projmap.scene.GraphicsAdapter
+import xx.projmap.graphics.GraphicsAdapter
 
 class RectRenderable(rect: GeoRect) : Renderable() {
 

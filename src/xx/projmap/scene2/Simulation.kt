@@ -4,6 +4,7 @@ import xx.projmap.events.Event
 import xx.projmap.events.EventQueue
 import xx.projmap.events.KeyEvent
 import xx.projmap.events.QuitEvent
+import xx.projmap.graphics.Renderer
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 

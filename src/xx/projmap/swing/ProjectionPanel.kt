@@ -6,10 +6,11 @@ import xx.projmap.events.MouseClickEvent
 import xx.projmap.geometry.GeoRect
 import xx.projmap.geometry.Point
 import xx.projmap.geometry.Rect
+import xx.projmap.graphics.RenderDestination
+import xx.projmap.graphics.RenderableScene
+import xx.projmap.graphics.Renderer
 import xx.projmap.scene.Scene
 import xx.projmap.scene.Viewport
-import xx.projmap.scene2.RenderableScene
-import xx.projmap.scene2.Renderer
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.Graphics
@@ -20,7 +21,7 @@ import java.awt.image.BufferedImage
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
 
-class ProjectionPanel(val eventQueue: EventQueue) : JPanel(), Viewport, Renderer {
+class ProjectionPanel(val eventQueue: EventQueue) : JPanel(), Viewport, RenderDestination, Renderer {
     private var bufferedImage: BufferedImage = BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR)
     private var frameCounter = 0
     private var last = System.currentTimeMillis()
@@ -55,8 +56,8 @@ class ProjectionPanel(val eventQueue: EventQueue) : JPanel(), Viewport, Renderer
         repaint()
     }
 
-    override fun render(renderableScene: RenderableScene) {
-        this.renderableScene = renderableScene
+    override fun render(scene: RenderableScene) {
+        this.renderableScene = scene
         repaint()
     }
 

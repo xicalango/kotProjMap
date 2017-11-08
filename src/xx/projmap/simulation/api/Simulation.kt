@@ -46,7 +46,7 @@ class Simulation(val simulationStateManager: SimulationStateManager, private val
             val dt = (now - lastTimestamp) / TimeUnit.SECONDS.toNanos(1).toDouble()
             lastTimestamp = now
 
-            eventQueue.getCurrentEvents().forEach { event ->
+            eventQueue.currentEvents.forEach { event ->
                 if (event is QuitEvent) {
                     running = false
                 }

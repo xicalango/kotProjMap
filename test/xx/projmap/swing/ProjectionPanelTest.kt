@@ -6,7 +6,11 @@ import xx.projmap.events.EventQueue
 import xx.projmap.events.KeyEvent
 import xx.projmap.events.MouseClickEvent
 import xx.projmap.geometry.*
-import xx.projmap.scene.*
+import xx.projmap.graphics.createViewport
+import xx.projmap.scene.Camera
+import xx.projmap.scene.PointEntity
+import xx.projmap.scene.RectEntity
+import xx.projmap.scene.Scene
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.awt.event.KeyAdapter
@@ -65,10 +69,11 @@ internal class ProjectionPanelTest {
         frame.isVisible = true
 
         while (true) {
-            scene.eventQueue.getCurrentEvents().forEach { event ->
+            scene.eventQueue.currentEvents.forEach { event ->
                 when (event) {
                     is MouseClickEvent -> handleMouseClick(scene, event)
                     is KeyEvent -> handleKey(scene, event)
+                    else -> Unit
                 }
             }
             entity.move(dx = 0.1)

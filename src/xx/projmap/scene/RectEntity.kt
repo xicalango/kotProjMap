@@ -1,6 +1,7 @@
 package xx.projmap.scene
 
 import xx.projmap.geometry.*
+import xx.projmap.graphics.GraphicsAdapter
 
 class RectEntity(rect: GeoRect, origin: MutPoint = MutPoint(), visible: Boolean = true, tag: String? = null) : Entity(origin, visible, tag) {
 

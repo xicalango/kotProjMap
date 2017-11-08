@@ -2,7 +2,7 @@ package xx.projmap.scene2
 
 import xx.projmap.geometry.MutPoint
 import xx.projmap.geometry.Transform
-import xx.projmap.scene.GraphicsAdapter
+import xx.projmap.graphics.GraphicsAdapter
 
 class PointRenderable : Renderable() {
 

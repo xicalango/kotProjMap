@@ -85,3 +85,8 @@ data class Rect(override val x: Double, override val y: Double, override val w: 
     override fun toMutable(): MutRect = MutRect(x, y, w, h)
 }
 
+
+fun <T> ((Double, Double, Double, Double) -> T).callWithRect(rect: GeoRect): T {
+    return this(rect.x, rect.y, rect.w, rect.h)
+}
+

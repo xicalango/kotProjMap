@@ -1,9 +1,10 @@
-package xx.projmap.scene
+package xx.projmap.graphics
 
 import xx.projmap.geometry.GeoPoint
 import xx.projmap.geometry.GeoRect
 import xx.projmap.geometry.SimpleGeoEntity
 import xx.projmap.geometry.toPointArray
+import xx.projmap.scene.SimpleViewport
 import java.awt.Color
 
 enum class DrawStyle {
@@ -12,6 +13,7 @@ enum class DrawStyle {
 }
 
 interface GraphicsAdapter {
+
     fun clear(x: Double, y: Double, w: Double, h: Double)
     fun clip(x: Double, y: Double, w: Double, h: Double)
     fun resetClip()
@@ -33,7 +35,7 @@ interface GraphicsAdapter {
 
 fun GraphicsAdapter.createViewport(region: GeoRect) = SimpleViewport(region.toMutable(), this)
 
-inline fun GraphicsAdapter.withColor(color: Color, block: (GraphicsAdapter) -> Unit) {
+inline fun GraphicsAdapter.withColor(color: Color, block: GraphicsAdapter.() -> Unit) {
     val currentColor = this.color
     this.color = color
     block(this)

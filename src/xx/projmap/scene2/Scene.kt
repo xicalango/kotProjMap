@@ -1,11 +1,8 @@
 package xx.projmap.scene2
 
 import xx.projmap.events.Event
-import xx.projmap.scene.GraphicsAdapter
-
-interface RenderableScene {
-    fun render(graphicsAdapter: GraphicsAdapter)
-}
+import xx.projmap.graphics.GraphicsAdapter
+import xx.projmap.graphics.RenderableScene
 
 interface SceneFacade {
     val entities: List<Entity>

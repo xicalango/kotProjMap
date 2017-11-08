@@ -7,6 +7,7 @@ import xx.projmap.geometry.Quad
 import xx.projmap.geometry.Rect
 import xx.projmap.geometry.Transformation
 import xx.projmap.geometry.toQuad
+import xx.projmap.graphics.toRenderDestination
 import xx.projmap.swing.ProjectionFrame
 import javax.swing.JFrame
 
@@ -24,7 +25,7 @@ internal class Scene2Test {
         val eventQueue = EventQueue()
 
         val frame = ProjectionFrame(eventQueue)
-        val subViewport = frame.projectionPanel.createSubViewport(Rect(50.0, 100.0, 100.0, 100.0))
+        val subViewport = Rect(50.0, 100.0, 100.0, 100.0).toRenderDestination()
 
         val scene = Scene()
 

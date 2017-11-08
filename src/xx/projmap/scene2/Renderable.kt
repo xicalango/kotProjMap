@@ -1,8 +1,8 @@
 package xx.projmap.scene2
 
 import xx.projmap.geometry.Transform
-import xx.projmap.scene.GraphicsAdapter
-import xx.projmap.scene.withColor
+import xx.projmap.graphics.GraphicsAdapter
+import xx.projmap.graphics.withColor
 import java.awt.Color
 
 abstract class Renderable(val color: Color = Color.WHITE) : Component() {

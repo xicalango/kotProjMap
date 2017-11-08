@@ -2,6 +2,7 @@ package xx.projmap.scene
 
 import xx.projmap.geometry.MutPoint
 import xx.projmap.geometry.Transform
+import xx.projmap.graphics.GraphicsAdapter
 
 class PointEntity(origin: MutPoint = MutPoint(), visible: Boolean = true, tag: String? = null) : Entity(origin, visible, tag) {
 

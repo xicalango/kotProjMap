@@ -3,8 +3,8 @@ package xx.projmap.scene2
 import xx.projmap.geometry.MutPoint
 import xx.projmap.geometry.Point
 import xx.projmap.geometry.Transform
-import xx.projmap.scene.GraphicsAdapter
-import xx.projmap.scene.render4x6ToPoints
+import xx.projmap.graphics.GraphicsAdapter
+import xx.projmap.graphics.render4x6ToPoints
 
 class TextRenderable(text: String) : Renderable() {
 

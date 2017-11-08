@@ -1,6 +1,7 @@
 package xx.projmap.scene
 
 import xx.projmap.geometry.Transform
+import xx.projmap.graphics.GraphicsAdapter
 
 class EntityGroup(visible: Boolean = true) : Entity(visible = visible) {
 

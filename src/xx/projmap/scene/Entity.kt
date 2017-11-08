@@ -2,6 +2,8 @@ package xx.projmap.scene
 
 import xx.projmap.geometry.MutPoint
 import xx.projmap.geometry.Transform
+import xx.projmap.graphics.GraphicsAdapter
+import xx.projmap.graphics.withColor
 import java.awt.Color
 
 open class Entity(val origin: MutPoint = MutPoint(), var visible: Boolean = true, val tag: String? = null) {
@@ -13,9 +15,9 @@ open class Entity(val origin: MutPoint = MutPoint(), var visible: Boolean = true
 
     fun render(graphicsAdapter: GraphicsAdapter, transform: Transform) {
         assert(visible)
-        graphicsAdapter.withColor(color, { adapter ->
-            renderInternal(adapter, transform)
-        })
+        graphicsAdapter.withColor(color) {
+            renderInternal(this, transform)
+        }
     }
 
     protected open fun renderInternal(graphicsAdapter: GraphicsAdapter, transform: Transform) {

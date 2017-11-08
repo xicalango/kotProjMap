@@ -3,6 +3,8 @@ package xx.projmap.scene
 import xx.projmap.geometry.GeoRect
 import xx.projmap.geometry.MutRect
 import xx.projmap.geometry.toPointArray
+import xx.projmap.graphics.DrawStyle
+import xx.projmap.graphics.GraphicsAdapter
 
 interface Viewport {
     val graphicsAdapter: GraphicsAdapter

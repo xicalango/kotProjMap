@@ -1,14 +1,15 @@
 package xx.projmap.swing
 
 import xx.projmap.geometry.GeoPoint
-import xx.projmap.scene.DrawStyle
-import xx.projmap.scene.GraphicsAdapter
+import xx.projmap.graphics.DrawStyle
+import xx.projmap.graphics.GraphicsAdapter
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.geom.AffineTransform
 import java.util.*
 
 class Graphics2DImpl(var graphics2D: Graphics2D) : GraphicsAdapter {
+
     private val matrixStack: Stack<AffineTransform> = Stack()
 
     override var color: Color

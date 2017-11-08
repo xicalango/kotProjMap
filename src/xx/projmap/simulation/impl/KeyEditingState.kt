@@ -1,5 +1,9 @@
 package xx.projmap.simulation.impl
 
+import xx.projmap.events.Direction
+import xx.projmap.events.Event
+import xx.projmap.events.KeyEvent
+import xx.projmap.events.MouseClickEvent
 import xx.projmap.geometry.GeoRect
 import xx.projmap.geometry.MutPoint
 import xx.projmap.geometry.MutRect

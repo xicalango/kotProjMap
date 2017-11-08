@@ -1,7 +1,13 @@
 package xx.projmap.simulation.impl
 
+import xx.projmap.events.Direction
+import xx.projmap.events.Event
+import xx.projmap.events.KeyEvent
+import xx.projmap.events.MouseClickEvent
 import xx.projmap.geometry.*
-import xx.projmap.scene.*
+import xx.projmap.scene.Camera
+import xx.projmap.scene.PointEntity
+import xx.projmap.scene.Scene
 import xx.projmap.simulation.api.Script
 import xx.projmap.simulation.api.SimulationState
 import xx.projmap.simulation.api.SimulationStateManager

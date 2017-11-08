@@ -1,10 +1,14 @@
 package xx.projmap.swing
 
 import org.junit.jupiter.api.Test
+import xx.projmap.events.EventQueue
 import xx.projmap.geometry.MutPoint
 import xx.projmap.geometry.MutRect
 import xx.projmap.geometry.Rect
-import xx.projmap.scene.*
+import xx.projmap.scene.Camera
+import xx.projmap.scene.RectEntity
+import xx.projmap.scene.Scene
+import xx.projmap.scene.TextEntity
 import javax.swing.JFrame
 
 internal class ProjectionFrameTest {

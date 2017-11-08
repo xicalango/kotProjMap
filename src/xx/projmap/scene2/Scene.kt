@@ -1,6 +1,6 @@
 package xx.projmap.scene2
 
-import xx.projmap.scene.EventQueue
+import xx.projmap.events.EventQueue
 import xx.projmap.scene.GraphicsAdapter
 
 interface RenderFacade {

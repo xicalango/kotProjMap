@@ -1,8 +1,8 @@
 package xx.projmap.simulation
 
 import org.junit.jupiter.api.Test
+import xx.projmap.events.EventQueue
 import xx.projmap.geometry.Rect
-import xx.projmap.scene.EventQueue
 import xx.projmap.scene.Scene
 import xx.projmap.simulation.api.Simulation
 import xx.projmap.simulation.api.SimulationStateManager

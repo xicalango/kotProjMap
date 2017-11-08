@@ -1,6 +1,6 @@
 package xx.projmap.simulation.api
 
-import xx.projmap.scene.Event
+import xx.projmap.events.Event
 import xx.projmap.scene.Scene
 
 abstract class SimulationState(val simulationStateManager: SimulationStateManager, val scene: Scene) {

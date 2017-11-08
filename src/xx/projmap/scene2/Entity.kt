@@ -1,12 +1,12 @@
 package xx.projmap.scene2
 
+import xx.projmap.events.Direction
+import xx.projmap.events.Event
+import xx.projmap.events.KeyEvent
+import xx.projmap.events.MouseClickEvent
 import xx.projmap.geometry.GeoPoint
 import xx.projmap.geometry.MutPoint
 import xx.projmap.geometry.Point
-import xx.projmap.scene.Direction
-import xx.projmap.scene.Event
-import xx.projmap.scene.KeyEvent
-import xx.projmap.scene.MouseClickEvent
 
 open class Entity(var name: String = "entity", origin: GeoPoint = Point()) {
 

@@ -1,7 +1,7 @@
-package xx.projmap.scene
+package xx.projmap.events
 
 import xx.projmap.geometry.GeoPoint
-import java.util.concurrent.ConcurrentLinkedDeque
+import xx.projmap.scene.Viewport
 
 enum class MouseButton {
     LEFT,
@@ -25,18 +25,3 @@ object QuitEvent : Event() {
         get() = Unit
 }
 
-class EventQueue {
-
-    private val events = ConcurrentLinkedDeque<Event>()
-
-    fun addEvent(event: Event) {
-        events.push(event)
-    }
-
-    fun getCurrentEvents(): List<Event> {
-        val currentEvents = events.toList()
-        events.clear()
-        return currentEvents
-    }
-
-}

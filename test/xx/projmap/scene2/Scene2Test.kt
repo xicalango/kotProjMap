@@ -1,12 +1,12 @@
 package xx.projmap.scene2
 
 import org.junit.jupiter.api.Test
+import xx.projmap.events.EventQueue
+import xx.projmap.events.MouseClickEvent
 import xx.projmap.geometry.Quad
 import xx.projmap.geometry.Rect
 import xx.projmap.geometry.Transformation
 import xx.projmap.geometry.toQuad
-import xx.projmap.scene.EventQueue
-import xx.projmap.scene.MouseClickEvent
 import xx.projmap.swing.ProjectionFrame
 import javax.swing.JFrame
 

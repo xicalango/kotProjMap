@@ -1,6 +1,6 @@
 package xx.projmap.simulation.api
 
-import xx.projmap.scene.Event
+import xx.projmap.events.Event
 import xx.projmap.scene.Scene
 import xx.projmap.scene.Viewport
 

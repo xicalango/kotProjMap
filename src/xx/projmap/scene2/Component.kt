@@ -1,7 +1,7 @@
 package xx.projmap.scene2
 
-import xx.projmap.scene.KeyEvent
-import xx.projmap.scene.MouseClickEvent
+import xx.projmap.events.KeyEvent
+import xx.projmap.events.MouseClickEvent
 
 abstract class Component(var enabled: Boolean = true) {
 

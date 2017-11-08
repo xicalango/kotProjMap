@@ -1,6 +1,10 @@
 package xx.projmap.swing
 
 import org.junit.jupiter.api.Test
+import xx.projmap.events.Direction
+import xx.projmap.events.EventQueue
+import xx.projmap.events.KeyEvent
+import xx.projmap.events.MouseClickEvent
 import xx.projmap.geometry.*
 import xx.projmap.scene.*
 import java.awt.event.ComponentAdapter

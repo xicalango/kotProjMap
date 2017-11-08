@@ -1,9 +1,9 @@
 package xx.projmap.app
 
+import xx.projmap.events.EventQueue
 import xx.projmap.geometry.GeoRect
 import xx.projmap.geometry.Point
 import xx.projmap.geometry.Rect
-import xx.projmap.scene.EventQueue
 import xx.projmap.scene.Scene
 import xx.projmap.simulation.api.Simulation
 import xx.projmap.simulation.api.SimulationStateManager

@@ -1,8 +1,8 @@
 package xx.projmap.swing
 
 import org.junit.jupiter.api.Test
+import xx.projmap.events.EventQueue
 import xx.projmap.geometry.Point
-import xx.projmap.scene.EventQueue
 import xx.projmap.scene.render4x6
 import xx.projmap.scene.withColor
 import java.awt.Color

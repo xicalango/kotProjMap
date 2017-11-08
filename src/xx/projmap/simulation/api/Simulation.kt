@@ -1,6 +1,10 @@
 package xx.projmap.simulation.api
 
-import xx.projmap.scene.*
+import xx.projmap.events.EventQueue
+import xx.projmap.events.KeyEvent
+import xx.projmap.events.QuitEvent
+import xx.projmap.scene.Scene
+import xx.projmap.scene.Viewport
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 

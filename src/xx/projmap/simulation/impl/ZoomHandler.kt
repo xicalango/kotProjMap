@@ -1,9 +1,9 @@
 package xx.projmap.simulation.impl
 
+import xx.projmap.events.Direction
+import xx.projmap.events.Event
+import xx.projmap.events.KeyEvent
 import xx.projmap.scene.Camera
-import xx.projmap.scene.Direction
-import xx.projmap.scene.Event
-import xx.projmap.scene.KeyEvent
 import xx.projmap.simulation.api.Script
 
 internal const val DEFAULT_ACCELERATION = .05

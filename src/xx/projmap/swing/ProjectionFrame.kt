@@ -1,6 +1,11 @@
 package xx.projmap.swing
 
-import xx.projmap.scene.*
+import xx.projmap.events.Direction
+import xx.projmap.events.EventQueue
+import xx.projmap.events.KeyEvent
+import xx.projmap.events.QuitEvent
+import xx.projmap.scene.MainFrame
+import xx.projmap.scene.Viewport
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.awt.event.KeyAdapter

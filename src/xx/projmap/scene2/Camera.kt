@@ -1,9 +1,6 @@
 package xx.projmap.scene2
 
-import xx.projmap.geometry.GeoRect
-import xx.projmap.geometry.IdentityTransform
-import xx.projmap.geometry.MutRect
-import xx.projmap.geometry.Transform
+import xx.projmap.geometry.*
 import xx.projmap.scene.GraphicsAdapter
 import xx.projmap.scene.Viewport
 
@@ -30,5 +27,13 @@ class Camera(region: GeoRect, val viewport: Viewport, var transform: Transform =
         graphicsAdapter.pop()
 
         viewport.finish()
+    }
+
+    fun viewportToCamera(srcPoint: GeoPoint, dstPoint: MutPoint = MutPoint()): MutPoint =
+            viewport.region.transformTo(region, srcPoint, dstPoint)
+
+    fun viewportToWorld(srcPoint: GeoPoint, dstPoint: MutPoint = MutPoint()): MutPoint {
+        val cameraPoint = viewportToCamera(srcPoint, dstPoint)
+        return transform.dstToSrc(cameraPoint, cameraPoint)
     }
 }

@@ -1,5 +1,7 @@
 package xx.projmap.geometry
 
+const val NORMALIZATION_VALUE = 1000.0
+
 interface GeoRect : GeoEntity<Rect, MutRect> {
 
     val x: Double
@@ -34,7 +36,7 @@ interface GeoRect : GeoEntity<Rect, MutRect> {
         return dst
     }
 
-    fun toNormalized(): GeoRect = Rect(0.0, 0.0, 1000.0, 1000.0 * (h / w))
+    fun toNormalized(): GeoRect = Rect(0.0, 0.0, NORMALIZATION_VALUE, NORMALIZATION_VALUE * (h / w))
 
     operator fun contains(other: GeoRect): Boolean = other.x >= x && other.y >= y && other.w <= w && other.h <= h
 

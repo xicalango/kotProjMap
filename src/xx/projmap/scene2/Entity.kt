@@ -3,15 +3,27 @@ package xx.projmap.scene2
 import xx.projmap.geometry.GeoPoint
 import xx.projmap.geometry.MutPoint
 import xx.projmap.geometry.Point
+import xx.projmap.scene.Direction
+import xx.projmap.scene.Event
+import xx.projmap.scene.KeyEvent
+import xx.projmap.scene.MouseClickEvent
 
-open class Entity(val name: String = "entity", origin: GeoPoint = Point()) {
+open class Entity(var name: String = "entity", origin: GeoPoint = Point()) {
 
     lateinit var sceneFacade: SceneFacade
+
     private val children: MutableList<Entity> = ArrayList()
+
     var parent: Entity? = null
+
     var tag: Tag? = null
+
     protected val components: MutableList<Component> = ArrayList()
+
     val origin: MutPoint = MutPoint()
+
+    private var initialized: Boolean = false
+
     val position: GeoPoint
         get() {
             val par = parent
@@ -59,14 +71,26 @@ open class Entity(val name: String = "entity", origin: GeoPoint = Point()) {
         }
     }
 
-    fun initialize() {
-        components.forEach { it.initialize() }
+    fun handleEvent(event: Event) {
+        enabledComponents.forEach { component ->
+            when (event) {
+                is MouseClickEvent -> component.onMouseClicked(event)
+                is KeyEvent -> when (event.direction) {
+                    Direction.PRESSED -> component.onKeyPressed(event)
+                    Direction.RELEASED -> component.onKeyReleased(event)
+                }
+            }
+        }
     }
 
     internal inline fun <reified T : Component> getComponentsByType(): List<T> = components.filterIsInstance<T>()
     internal inline fun <reified T : Component> getComponentByType(): T? = getComponentsByType<T>().firstOrNull()
 
     fun update(dt: Double) {
+        if (!initialized) {
+            allComponents.forEach { it.setup() }
+            initialized = true
+        }
         enabledComponents.forEach { it.update(dt) }
     }
 

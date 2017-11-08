@@ -67,7 +67,10 @@ open class Entity(var name: String = "entity", origin: GeoPoint = Point()) {
     }
 
     fun moveChild(child: Entity, destination: Entity?) {
-        children -= child
+        synchronized(children) {
+            // TODO wah
+            children -= child
+        }
 
         if (destination == null) {
             child.parent = null
@@ -89,7 +92,7 @@ open class Entity(var name: String = "entity", origin: GeoPoint = Point()) {
         children.forEach { it.handleEvent(event) }
     }
 
-    internal inline fun <reified T : Entity> findChild(): T? = children.filterIsInstance<T>().firstOrNull()
+    internal inline fun <reified T : Entity> findChild(): T? = findChildren<T>().firstOrNull()
     internal inline fun <reified T : Entity> findChildren(): List<T> = children.filterIsInstance<T>()
 
     internal inline fun <reified T : Component> findComponent(): T? = findComponents<T>().firstOrNull()

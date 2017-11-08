@@ -1,10 +1,7 @@
 package xx.projmap.scene2
 
 import xx.projmap.geometry.*
-import xx.projmap.graphics.DrawStyle
-import xx.projmap.graphics.GraphicsAdapter
-import xx.projmap.graphics.RenderDestination
-import xx.projmap.graphics.withColor
+import xx.projmap.graphics.*
 import java.awt.Color
 
 class Camera(region: GeoRect, private val renderDestination: RenderDestination, var transform: Transform = IdentityTransform()) : Component() {
@@ -16,12 +13,13 @@ class Camera(region: GeoRect, private val renderDestination: RenderDestination, 
     fun render(graphicsAdapter: GraphicsAdapter) {
         startFrame(graphicsAdapter)
 
-        entity.sceneFacade.allEntities
-                .flatMap { it.getComponentsByType<Renderable>() }
-                .isEnabled()
-                .forEach { it.render(graphicsAdapter, transform) }
-
-        finishFrame(graphicsAdapter)
+        try {
+            synchronized(sceneFacade.entities) {
+                sceneFacade.entities.forEach { it.render(graphicsAdapter, transform) }
+            }
+        } finally {
+            finishFrame(graphicsAdapter)
+        }
     }
 
     private fun startFrame(graphicsAdapter: GraphicsAdapter) {
@@ -33,7 +31,8 @@ class Camera(region: GeoRect, private val renderDestination: RenderDestination, 
                 drawGeoEntity(renderRegion, DrawStyle.LINE)
             }
         }
-        graphicsAdapter::clip.callWithRect(region)
+        graphicsAdapter::clip.callWithRect(renderRegion)
+        graphicsAdapter.render4x6(renderRegion.x + 5, renderRegion.y + 5, "camera", xPointSpacing = 5.0, yPointSpacing = 5.0)
 
         graphicsAdapter.push()
         graphicsAdapter.translate(renderRegion.x - cameraRegion.x, renderRegion.y - cameraRegion.y)

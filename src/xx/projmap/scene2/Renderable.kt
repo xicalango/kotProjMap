@@ -5,7 +5,7 @@ import xx.projmap.graphics.GraphicsAdapter
 import xx.projmap.graphics.withColor
 import java.awt.Color
 
-abstract class Renderable(val color: Color = Color.WHITE) : Component() {
+abstract class Renderable(var color: Color = Color.WHITE) : Component() {
 
     fun render(graphicsAdapter: GraphicsAdapter, transform: Transform) {
         graphicsAdapter.withColor(color, {

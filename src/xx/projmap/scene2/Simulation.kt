@@ -10,7 +10,7 @@ import kotlin.concurrent.thread
 
 class Simulation(private val graphicsFpsLimit: Int? = 60, private val simulationFpsLimit: Int? = 100) {
 
-    private val eventQueue: EventQueue = EventQueue()
+    val eventQueue: EventQueue = EventQueue()
     val scene: Scene = Scene()
 
     private var frameCounter = 0

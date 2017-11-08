@@ -29,65 +29,59 @@ internal class Scene2Test {
 
         val scene = Scene()
 
-        val myEntity = object : Entity("myEntity") {
-            init {
-                origin.x = 10.0
-                origin.y = 10.0
+        scene.createEntity({
+            object : Entity("myEntity") {
+                init {
+                    origin.x = 10.0
+                    origin.y = 10.0
 
-                addComponent(RectRenderable(Rect(0.0, 0.0, 10.0, 10.0)))
-                addComponent(object : Behavior() {
+                    addComponent(RectRenderable(Rect(0.0, 0.0, 10.0, 10.0)))
+                    addComponent(object : Behavior() {
 
-                    lateinit var camera: Camera
-                    lateinit var subCamera: Camera
+                        lateinit var camera: Camera
+                        lateinit var subCamera: Camera
 
-                    init {
-                        enabled = true
-                    }
+                        init {
+                            enabled = true
+                        }
 
-                    override fun setup() {
-                        camera = sceneFacade.cameras.find { it.name == "mainCamera" }?.camera!!
-                        subCamera = sceneFacade.cameras.find { it.name == "subCamera" }?.camera!!
-                    }
+                        override fun setup() {
+                            camera = sceneFacade.getCameras().find { it.name == "mainCamera" }?.camera!!
+                            subCamera = sceneFacade.getCameras().find { it.name == "subCamera" }?.camera!!
+                        }
 
-                    override fun update(dt: Double) {
-                        entity.origin.move(dx = 0.1)
-                    }
+                        override fun update(dt: Double) {
+                            entity.origin.move(dx = 0.1)
+                        }
 
-                    override fun onMouseClicked(event: MouseClickEvent) {
-                        println("$event")
+                        override fun onMouseClicked(event: MouseClickEvent) {
+                            println("$event")
 
-                        val mainCam = camera.viewportToCamera(event.point)
-                        val mainWorld = camera.viewportToWorld(event.point)
-                        val subCam = subCamera.viewportToCamera(event.point)
-                        val subWorld = subCamera.viewportToWorld(event.point)
+                            val mainCam = camera.viewportToCamera(event.point)
+                            val mainWorld = camera.viewportToWorld(event.point)
+                            val subCam = subCamera.viewportToCamera(event.point)
+                            val subWorld = subCamera.viewportToWorld(event.point)
 
-                        println("mainCam: $mainCam")
-                        println("mainWorld: $mainWorld")
-                        println("subCam: $subCam")
-                        println("subWorld: $subWorld")
+                            println("mainCam: $mainCam")
+                            println("mainWorld: $mainWorld")
+                            println("subCam: $subCam")
+                            println("subWorld: $subWorld")
 
-                        val rectEntity = RectEntity()
-                        rectEntity.origin.updateFrom(subWorld)
-                        entity.sceneFacade.addEntity(rectEntity)
-
-                    }
-                })
+                            val rectEntity = entity.sceneFacade.createEntity(::RectEntity)
+                            rectEntity.origin.updateFrom(subWorld)
+                        }
+                    })
+                }
             }
-        }
+        })
 
         val origin = Rect(0.0, 0.0, 100.0, 75.0).toQuad()
         val dest = Quad(0.0, 0.0, 100.0, 10.0, 20.0, 210.0, 40.0, 100.0)
 
         val transformation = Transformation(origin, dest)
 
-        val camera = CameraEntity(Rect(0.0, 0.0, 640.0, 480.0), frame.projectionPanel)
-        camera.name = "mainCamera"
-        val camera2 = CameraEntity(Rect(0.0, 0.0, 640.0, 480.0), subViewport)
-        camera2.name = "subCamera"
-
-        scene.addEntity(myEntity)
-        scene.addEntity(camera)
-        scene.addEntity(camera2)
+        scene.createEntity({ CameraEntity(Rect(0.0, 0.0, 640.0, 480.0), frame.projectionPanel) }, name = "mainCamera")
+        scene.createEntity({ CameraEntity(Rect(0.0, 0.0, 640.0, 480.0), subViewport) }, name = "subCamera")
 
         frame.isVisible = true
         frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE

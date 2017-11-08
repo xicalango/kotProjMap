@@ -7,12 +7,14 @@ import xx.projmap.events.MouseClickEvent
 import xx.projmap.geometry.GeoPoint
 import xx.projmap.geometry.MutPoint
 import xx.projmap.geometry.Point
+import xx.projmap.geometry.Transform
+import xx.projmap.graphics.GraphicsAdapter
 
 open class Entity(var name: String = "entity", origin: GeoPoint = Point()) {
 
     lateinit var sceneFacade: SceneFacade
 
-    private val children: MutableList<Entity> = ArrayList()
+    protected val children: MutableList<Entity> = ArrayList()
 
     var parent: Entity? = null
 
@@ -58,7 +60,10 @@ open class Entity(var name: String = "entity", origin: GeoPoint = Point()) {
 
     fun addChild(entity: Entity) {
         entity.parent = this
-        children += entity
+        synchronized(children) {
+            // TODO wah
+            children += entity
+        }
     }
 
     fun moveChild(child: Entity, destination: Entity?) {
@@ -81,19 +86,35 @@ open class Entity(var name: String = "entity", origin: GeoPoint = Point()) {
                 }
             }
         }
+        children.forEach { it.handleEvent(event) }
     }
 
-    internal inline fun <reified T : Component> getComponentsByType(): List<T> = components.filterIsInstance<T>()
-    internal inline fun <reified T : Component> getComponentByType(): T? = getComponentsByType<T>().firstOrNull()
+    internal inline fun <reified T : Entity> findChild(): T? = children.filterIsInstance<T>().firstOrNull()
+    internal inline fun <reified T : Entity> findChildren(): List<T> = children.filterIsInstance<T>()
+
+    internal inline fun <reified T : Component> findComponent(): T? = findComponents<T>().firstOrNull()
+    internal inline fun <reified T : Component> findComponents(): List<T> = components.filterIsInstance<T>()
 
     fun update(dt: Double) {
         if (!initialized) {
+            children.forEach { it.sceneFacade = sceneFacade }
             allComponents.forEach { it.setup() }
             initialized = true
         }
         enabledComponents.forEach { it.update(dt) }
+        children.forEach { it.update(dt) }
+    }
+
+    internal fun render(graphicsAdapter: GraphicsAdapter, transform: Transform) {
+        components.forEach { component ->
+            if (component.enabled && component is Renderable) {
+                component.render(graphicsAdapter, transform)
+            }
+        }
+
+        synchronized(children) {
+            children.forEach { it.render(graphicsAdapter, transform) }
+        }
     }
 
 }
-
-fun <T : Component> Collection<T>.isEnabled() = filter { it.enabled }

@@ -8,7 +8,8 @@ import xx.projmap.geometry.Point
 import xx.projmap.geometry.Rect
 import xx.projmap.scene.Scene
 import xx.projmap.scene.Viewport
-import xx.projmap.scene2.RenderFacade
+import xx.projmap.scene2.RenderableScene
+import xx.projmap.scene2.Renderer
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.Graphics
@@ -19,12 +20,12 @@ import java.awt.image.BufferedImage
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
 
-class ProjectionPanel(val eventQueue: EventQueue) : JPanel(), Viewport {
+class ProjectionPanel(val eventQueue: EventQueue) : JPanel(), Viewport, Renderer {
     private var bufferedImage: BufferedImage = BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR)
     private var frameCounter = 0
     private var last = System.currentTimeMillis()
 
-    private var renderFacade: RenderFacade? = null
+    private var renderableScene: RenderableScene? = null
     private var scene: Scene? = null
 
     override val graphicsAdapter: Graphics2DImpl
@@ -54,8 +55,8 @@ class ProjectionPanel(val eventQueue: EventQueue) : JPanel(), Viewport {
         repaint()
     }
 
-    fun render(renderFacade: RenderFacade) {
-        this.renderFacade = renderFacade
+    override fun render(renderableScene: RenderableScene) {
+        this.renderableScene = renderableScene
         repaint()
     }
 
@@ -70,7 +71,7 @@ class ProjectionPanel(val eventQueue: EventQueue) : JPanel(), Viewport {
     override fun paintComponent(g: Graphics?) {
         super.paintComponent(g)
 
-        renderFacade?.render(graphicsAdapter)
+        renderableScene?.render(graphicsAdapter)
         scene?.render()
 
         g?.drawImage(bufferedImage, 0, 0, this)

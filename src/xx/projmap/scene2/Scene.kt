@@ -1,9 +1,9 @@
 package xx.projmap.scene2
 
-import xx.projmap.events.EventQueue
+import xx.projmap.events.Event
 import xx.projmap.scene.GraphicsAdapter
 
-interface RenderFacade {
+interface RenderableScene {
     fun render(graphicsAdapter: GraphicsAdapter)
 }
 
@@ -17,7 +17,7 @@ interface SceneFacade {
     fun addEntity(entity: Entity)
 }
 
-class Scene : SceneFacade, RenderFacade {
+class Scene : SceneFacade, RenderableScene {
     override val entities: MutableList<Entity> = ArrayList()
 
     private val addEntities: MutableList<Entity> = ArrayList()
@@ -39,8 +39,8 @@ class Scene : SceneFacade, RenderFacade {
         allEntities.forEach { it.update(dt) }
     }
 
-    fun handleEvents(eventQueue: EventQueue) {
-        eventQueue.getCurrentEvents().forEach { event ->
+    fun handleEvents(events: List<Event>) {
+        events.forEach { event ->
             allEntities.forEach { entity ->
                 entity.handleEvent(event)
             }

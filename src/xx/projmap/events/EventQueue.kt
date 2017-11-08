@@ -6,14 +6,15 @@ class EventQueue {
 
     private val events = ConcurrentLinkedDeque<Event>()
 
+    val currentEvents: List<Event>
+        get() {
+            val currentEvents = events.toList()
+            events.clear()
+            return currentEvents
+        }
+
     fun addEvent(event: Event) {
         events.push(event)
-    }
-
-    fun getCurrentEvents(): List<Event> {
-        val currentEvents = events.toList()
-        events.clear()
-        return currentEvents
     }
 
 }

@@ -94,7 +94,7 @@ internal class Scene2Test {
         while (true) {
             scene.startFrame()
             scene.update(0.0)
-            scene.handleEvents(eventQueue)
+            scene.handleEvents(eventQueue.currentEvents)
             frame.projectionPanel.render(scene)
             Thread.sleep(1000 / 30)
         }

@@ -68,7 +68,7 @@ internal class Scene2Test {
                             println("subWorld: $subWorld")
 
                             val rectEntity = entity.sceneFacade.createEntity(::RectEntity)
-                            rectEntity.origin.updateFrom(subWorld)
+                            rectEntity.origin.set(subWorld)
                         }
                     })
                 }

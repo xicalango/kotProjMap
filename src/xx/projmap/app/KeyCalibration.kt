@@ -27,13 +27,24 @@ class KeyCalibration : Entity("keyCalibration") {
     }
 }
 
+private const val CREATION_DELAY_VARIATION = 0.2
+private const val MIN_CREATION_DELAY = 0.5
+
 class KeyCalibrationBehavior : Behavior() {
 
-    private lateinit var camera: CameraEntity
+    private val random = Random()
+
+    private lateinit var camera: Camera
     private lateinit var cameraCalibration: CameraCalibrationState
 
+    private var counter = random.nextDouble() * CREATION_DELAY_VARIATION
+
+    private fun resetCounter() {
+        counter = MIN_CREATION_DELAY + (random.nextDouble() * CREATION_DELAY_VARIATION)
+    }
+
     override fun setup() {
-        camera = sceneFacade.getMainCamera()
+        camera = sceneFacade.getMainCamera().camera
         cameraCalibration = sceneFacade.findEntity<StateManager>()?.findChild()!!
         enabled = false
     }
@@ -48,18 +59,30 @@ class KeyCalibrationBehavior : Behavior() {
         entity.findChildren<KeyEntity>().flatMap { it.findComponents<Renderable>() }.forEach { it.enabled = false }
     }
 
+    override fun update(dt: Double) {
+        counter -= dt
+        if (counter <= 0) {
+            val point = random.randomPointIn(camera.renderRegion).toMutable()
+            camera.viewportToWorld(point, point)
+            val entity = sceneFacade.createEntity(::KeyEntity, parent = entity)
+            entity.findComponent<Renderable>()?.color = Color(random.nextInt())
+            entity.origin.set(point)
+            resetCounter()
+        }
+    }
+
     private fun updateTransform(calibrationPoints: List<MutPoint>) {
         assert(calibrationPoints.size == 4)
-        val srcQuad = camera.camera.region.toQuad()
+        val srcQuad = camera.region.toQuad()
         val dstQuad = createQuadFromPoints(calibrationPoints.toTypedArray())
         val transformation = Transformation(srcQuad, dstQuad)
-        camera.camera.transform = transformation
+        camera.transform = transformation
     }
 
     override fun onMouseClicked(event: MouseClickEvent) {
         val entity = sceneFacade.createEntity(::KeyEntity, parent = entity)
-        entity.findComponent<Renderable>()?.color = Color(Random().nextInt())
-        camera.camera.viewportToWorld(event.point, entity.origin)
+        entity.findComponent<Renderable>()?.color = Color(random.nextInt())
+        camera.viewportToWorld(event.point, entity.origin)
     }
 
 

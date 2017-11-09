@@ -6,6 +6,6 @@ interface Transform {
 }
 
 class IdentityTransform : Transform {
-    override fun srcToDst(srcPoint: GeoPoint, dstPoint: MutPoint): MutPoint = dstPoint.updateFrom(srcPoint)
-    override fun dstToSrc(srcPoint: GeoPoint, dstPoint: MutPoint): MutPoint = dstPoint.updateFrom(srcPoint)
+    override fun srcToDst(srcPoint: GeoPoint, dstPoint: MutPoint): MutPoint = dstPoint.set(srcPoint)
+    override fun dstToSrc(srcPoint: GeoPoint, dstPoint: MutPoint): MutPoint = dstPoint.set(srcPoint)
 }

@@ -8,6 +8,9 @@ class Camera(region: GeoRect, private val renderDestination: RenderDestination, 
 
     val region: MutRect = region.toMutable()
 
+    val renderRegion
+        get() = renderDestination.region
+
     var drawBorder: Boolean = true
 
     fun render(graphicsAdapter: GraphicsAdapter) {
@@ -24,7 +27,6 @@ class Camera(region: GeoRect, private val renderDestination: RenderDestination, 
 
     private fun startFrame(graphicsAdapter: GraphicsAdapter) {
         val cameraRegion = region + entity.origin
-        val renderRegion = renderDestination.region
         graphicsAdapter::clear.callWithRect(renderRegion)
         if (drawBorder) {
             graphicsAdapter.withColor(Color.WHITE) {

@@ -25,7 +25,7 @@ fun SceneFacade.getCameras(): List<CameraEntity> {
     }
 }
 
-fun SceneFacade.getMainCamera(): CameraEntity = getCameras().find { it.name == "main" } ?: getCameras().first()
+fun SceneFacade.getMainCamera(): CameraEntity = getCameras().find { it.name == "mainCamera" } ?: getCameras().first()
 
 fun SceneFacade.createCamera(region: GeoRect, renderDestination: RenderDestination, transform: Transform = IdentityTransform(), name: String = "camera"): CameraEntity =
         createEntity({ CameraEntity(region, renderDestination, transform) }, name = name)

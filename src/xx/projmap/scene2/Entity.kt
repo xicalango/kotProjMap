@@ -46,7 +46,7 @@ open class Entity(var name: String = "entity", origin: GeoPoint = Point()) {
         get() = listOf(this) + children
 
     init {
-        this.origin.updateFrom(origin)
+        this.origin.set(origin)
     }
 
     fun addComponent(component: Component) {

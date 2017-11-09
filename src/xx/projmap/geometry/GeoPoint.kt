@@ -1,5 +1,7 @@
 package xx.projmap.geometry
 
+import java.util.*
+
 interface GeoPoint : GeoEntity<Point, MutPoint> {
 
     val x: Double
@@ -38,7 +40,7 @@ data class MutPoint(override var x: Double = 0.0, override var y: Double = 0.0) 
 
     override fun toImmutable() = Point(x, y)
 
-    fun updateFrom(point: GeoPoint): MutPoint {
+    fun set(point: GeoPoint): MutPoint {
         x = point.x
         y = point.y
         return this
@@ -48,5 +50,12 @@ data class MutPoint(override var x: Double = 0.0, override var y: Double = 0.0) 
         x += dx
         y += dy
     }
+}
+
+fun Random.randomPoint(maxX: Double, maxY: Double): GeoPoint = Point(nextDouble() * maxX, nextDouble() * maxY)
+fun Random.randomPointIn(rect: GeoRect): GeoPoint {
+    val x = (nextDouble() * rect.w) + rect.x
+    val y = (nextDouble() * rect.h) + rect.y
+    return Point(x, y)
 }
 

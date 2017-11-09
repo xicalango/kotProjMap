@@ -10,6 +10,6 @@ fun GeoRect.toRenderDestination() = object : RenderDestination {
     override val region: GeoRect = this@toRenderDestination
 }
 
-fun RenderDestination.createSubViewport(rect: GeoRect) = object : RenderDestination {
+fun RenderDestination.createSubRenderDestination(rect: GeoRect) = object : RenderDestination {
     override val region: GeoRect = rect
 }

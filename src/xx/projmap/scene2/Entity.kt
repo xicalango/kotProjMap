@@ -18,7 +18,7 @@ open class Entity(var name: String = "entity", origin: GeoPoint = Point()) {
 
     var parent: Entity? = null
 
-    var tag: Tag? = null
+    var tag: String? = null
 
     protected val components: MutableList<Component> = ArrayList()
 
@@ -66,6 +66,8 @@ open class Entity(var name: String = "entity", origin: GeoPoint = Point()) {
         }
     }
 
+    fun removeChild(child: Entity) = moveChild(child, null)
+
     fun moveChild(child: Entity, destination: Entity?) {
         synchronized(children) {
             // TODO wah
@@ -87,6 +89,7 @@ open class Entity(var name: String = "entity", origin: GeoPoint = Point()) {
                     Direction.PRESSED -> component.onKeyPressed(event)
                     Direction.RELEASED -> component.onKeyReleased(event)
                 }
+                else -> Unit
             }
         }
         children.forEach { it.handleEvent(event) }

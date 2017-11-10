@@ -22,6 +22,8 @@ inline fun <reified T> SceneFacade.findEntity(): T? = entities.filterIsInstance<
 
 inline fun <reified T> SceneFacade.findEntities(): List<T> = entities.filterIsInstance<T>()
 
+fun SceneFacade.findEntityByTag(tag: String): List<Entity> = entities.filter { it.tag == tag }
+
 fun SceneFacade.getCameras(): List<CameraEntity> {
     return synchronized(entities) {
         entities.filterIsInstance<CameraEntity>()

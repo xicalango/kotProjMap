@@ -20,8 +20,16 @@ class KeyCalibration : Entity("keyCalibration") {
         addChild(TextLineEntity(Point(0.0, -275.0)))
         addChild(TextLineEntity(Point(0.0, -250.0)))
         addChild(TextLineEntity(Point(0.0, -225.0)))
+        addChild(TextLineEntity(Point(0.0, -200.0)))
+        addChild(TextLineEntity(Point(0.0, -175.0)))
         addComponent(KeyCalibrationBehavior())
     }
+}
+
+private enum class KeyEnterMode {
+    COMMAND,
+    KEY_CHAR_ENTER,
+    FIND_KEY
 }
 
 class KeyCalibrationBehavior : Behavior() {
@@ -38,6 +46,8 @@ class KeyCalibrationBehavior : Behavior() {
     private val keyRect = MutRect()
 
     private var currentKey: KeyEntity? = null
+
+    private var keyEnterMode = KeyEnterMode.COMMAND
 
 
     override fun initialize() {
@@ -80,9 +90,6 @@ class KeyCalibrationBehavior : Behavior() {
         }
     }
 
-    override fun onDeactivation() {
-    }
-
     private fun updateTransform(calibrationPoints: List<MutPoint>) {
         assert(calibrationPoints.size == 4)
         val dstQuad = createQuadFromPoints(calibrationPoints.toTypedArray())
@@ -120,11 +127,41 @@ class KeyCalibrationBehavior : Behavior() {
             textLines[1].findComponent<TextRenderable>()?.text = "y: ${key.origin.y}"
             textLines[2].findComponent<TextRenderable>()?.text = "w: ${key.findComponent<RectRenderable>()?.rect?.w}"
             textLines[3].findComponent<TextRenderable>()?.text = "h: ${key.findComponent<RectRenderable>()?.rect?.h}"
-
+            textLines[4].findComponent<TextRenderable>()?.text = "key: ${key.findComponent<KeyBehavior>()?.keyChar ?: ' '}"
+            textLines[5].findComponent<TextRenderable>()?.text = "mode: $keyEnterMode"
         }
     }
 
     override fun onKeyReleased(event: KeyEvent) {
+        when (keyEnterMode) {
+            KeyEnterMode.COMMAND -> handleCommand(event)
+            KeyEnterMode.KEY_CHAR_ENTER -> handleKeyCharInput(event)
+            KeyEnterMode.FIND_KEY -> findKey(event)
+        }
+    }
+
+    private fun findKey(event: KeyEvent) {
+        val key = keyboardEntity.findChildren<KeyEntity>().find { it.findComponent<KeyBehavior>()?.keyChar == event.keyChar }
+        if (key != null) {
+            selectKey(key)
+            keyEnterMode = KeyEnterMode.COMMAND
+            updateText()
+        }
+    }
+
+    private fun handleKeyCharInput(event: KeyEvent) {
+        currentKey.let { key ->
+            if (key == null) {
+                return
+            }
+
+            key.findComponent<KeyBehavior>()?.keyChar = event.keyChar
+            keyEnterMode = KeyEnterMode.COMMAND
+            updateText()
+        }
+    }
+
+    private fun handleCommand(event: KeyEvent) {
         when (event.keyChar) {
             'c' -> stateManager.nextState = State.CAMERA_CALIBRATION
             'w' -> moveKey(dy = -1.0)
@@ -143,8 +180,15 @@ class KeyCalibrationBehavior : Behavior() {
             'J' -> scaleKey(dh = 10.0)
             'H' -> scaleKey(dw = -10.0)
             'K' -> scaleKey(dw = 10.0)
-            'n' -> stateManager.nextState = State.COLOR_CYCLER
             'r' -> removeKey()
+            't' -> {
+                keyEnterMode = KeyEnterMode.KEY_CHAR_ENTER
+                updateText()
+            }
+            'f' -> {
+                keyEnterMode = KeyEnterMode.FIND_KEY
+                updateText()
+            }
             'p' -> {
                 storeConfig()
                 keyboardBehavior.storeKeys()

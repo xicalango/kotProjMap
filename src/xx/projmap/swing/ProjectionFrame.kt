@@ -30,13 +30,13 @@ class ProjectionFrame(private val eventQueue: EventQueue) : JFrame() {
         addKeyListener(object : KeyAdapter() {
             override fun keyPressed(e: java.awt.event.KeyEvent?) {
                 if (e != null) {
-                    eventQueue.addEvent(KeyEvent(e.keyChar, Direction.PRESSED, this@ProjectionFrame))
+                    eventQueue.addEvent(KeyEvent(e.keyChar, e.keyCode, Direction.PRESSED, this@ProjectionFrame))
                 }
             }
 
             override fun keyReleased(e: java.awt.event.KeyEvent?) {
                 if (e != null) {
-                    eventQueue.addEvent(KeyEvent(e.keyChar, Direction.RELEASED, this@ProjectionFrame))
+                    eventQueue.addEvent(KeyEvent(e.keyChar, e.keyCode, Direction.RELEASED, this@ProjectionFrame))
                 }
             }
         })

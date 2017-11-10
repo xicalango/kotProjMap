@@ -61,7 +61,7 @@ class Simulation(config: Properties = Properties()) {
     }
 
     private fun handleInternalEvents(events: List<Event>) {
-        if (events.filterIsInstance<KeyEvent>().any { it.keyChar == 'q' } || events.filterIsInstance<QuitEvent>().any()) {
+        if (events.filterIsInstance<KeyEvent>().any { it.keyCode == 27 } || events.filterIsInstance<QuitEvent>().any()) {
             running = false
         }
     }

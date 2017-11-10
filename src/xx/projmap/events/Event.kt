@@ -19,7 +19,7 @@ sealed class Event {
 }
 
 data class MouseClickEvent(val point: GeoPoint, val button: MouseButton, override val origin: RenderDestination) : Event()
-data class KeyEvent(val keyChar: Char, val direction: Direction, override val origin: Any) : Event()
+data class KeyEvent(val keyChar: Char, val keyCode: Int, val direction: Direction, override val origin: Any) : Event()
 object QuitEvent : Event() {
     override val origin: Any
         get() = Unit

@@ -39,13 +39,11 @@ internal class FontTest {
 
         var xpos = 10.0
         while (true) {
-            panel.initialize()
             panel.graphicsAdapter.withColor(Color.WHITE) {
                 drawPoint(Point(100.0, 100.0))
                 render4x6(xpos, xpos, "The quick brown fox jumps over", xPointSpacing = 5.0, yPointSpacing = 5.0)
                 render4x6(xpos, xpos + 40.0, "the lazy old dog. 1234567890", xPointSpacing = 5.0, yPointSpacing = 5.0)
             }
-            panel.finish()
 
             panel.repaint()
 

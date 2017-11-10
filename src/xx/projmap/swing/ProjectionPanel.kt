@@ -9,28 +9,23 @@ import xx.projmap.geometry.Rect
 import xx.projmap.graphics.RenderDestination
 import xx.projmap.graphics.RenderableScene
 import xx.projmap.graphics.Renderer
-import xx.projmap.scene.Scene
-import xx.projmap.scene.Viewport
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.Graphics
-import java.awt.Graphics2D
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.image.BufferedImage
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
 
-class ProjectionPanel(val eventQueue: EventQueue) : JPanel(), Viewport, RenderDestination, Renderer {
+class ProjectionPanel(val eventQueue: EventQueue) : JPanel(), RenderDestination, Renderer {
     private var bufferedImage: BufferedImage = BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR)
     private var frameCounter = 0
     private var last = System.currentTimeMillis()
 
     private var renderableScene: RenderableScene? = null
-    private var scene: Scene? = null
 
-    override val graphicsAdapter: Graphics2DImpl
-    override var drawBorder: Boolean = true
+    val graphicsAdapter: Graphics2DImpl
 
     override val region: GeoRect
         get() = Rect(0.0, 0.0, width.toDouble(), height.toDouble())
@@ -51,11 +46,6 @@ class ProjectionPanel(val eventQueue: EventQueue) : JPanel(), Viewport, RenderDe
         })
     }
 
-    override fun render(scene: Scene) {
-        this.scene = scene
-        repaint()
-    }
-
     override fun render(scene: RenderableScene) {
         this.renderableScene = scene
         repaint()
@@ -73,7 +63,6 @@ class ProjectionPanel(val eventQueue: EventQueue) : JPanel(), Viewport, RenderDe
         super.paintComponent(g)
 
         renderableScene?.render(graphicsAdapter)
-        scene?.render()
 
         g?.drawImage(bufferedImage, 0, 0, this)
 
@@ -85,20 +74,6 @@ class ProjectionPanel(val eventQueue: EventQueue) : JPanel(), Viewport, RenderDe
         }
     }
 
-    override fun clear() {
-        graphicsAdapter.graphics2D.withColor(Color.BLACK, {
-            it.fillRect(0, 0, width, height)
-        })
-    }
-
-}
-
-inline fun <R> Graphics2D.withColor(newColor: Color, body: (Graphics2D) -> R): R {
-    val oldColor = color
-    color = newColor
-    val result = body(this)
-    color = oldColor
-    return result
 }
 
 fun MouseEvent.toMouseButton(): MouseButton = when {

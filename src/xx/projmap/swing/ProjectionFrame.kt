@@ -4,7 +4,6 @@ import xx.projmap.events.Direction
 import xx.projmap.events.EventQueue
 import xx.projmap.events.KeyEvent
 import xx.projmap.events.QuitEvent
-import xx.projmap.scene.Viewport
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.awt.event.KeyAdapter
@@ -13,12 +12,6 @@ import javax.swing.JFrame
 class ProjectionFrame(private val eventQueue: EventQueue) : JFrame() {
 
     val projectionPanel: ProjectionPanel = ProjectionPanel(eventQueue)
-
-    val mainViewport: Viewport = projectionPanel
-
-    fun showFrame() {
-        isVisible = true
-    }
 
     init {
         addComponentListener(object : ComponentAdapter() {

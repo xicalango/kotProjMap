@@ -1,7 +1,7 @@
 package xx.projmap.events
 
 import xx.projmap.geometry.GeoPoint
-import xx.projmap.scene.Viewport
+import xx.projmap.graphics.RenderDestination
 
 enum class MouseButton {
     LEFT,
@@ -18,7 +18,7 @@ sealed class Event {
     abstract val origin: Any
 }
 
-data class MouseClickEvent(val point: GeoPoint, val button: MouseButton, override val origin: Viewport) : Event()
+data class MouseClickEvent(val point: GeoPoint, val button: MouseButton, override val origin: RenderDestination) : Event()
 data class KeyEvent(val keyChar: Char, val direction: Direction, override val origin: Any) : Event()
 object QuitEvent : Event() {
     override val origin: Any

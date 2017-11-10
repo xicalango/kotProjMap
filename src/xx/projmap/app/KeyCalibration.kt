@@ -25,10 +25,21 @@ class KeyBehavior : Behavior() {
 
 }
 
+class TextLineEntity(origin: GeoPoint) : Entity("text", origin) {
+    init {
+        val textRenderable = TextRenderable()
+        textRenderable.setSpacing(4.0)
+        addComponent(textRenderable)
+    }
+}
+
 class KeyCalibration : Entity("keyCalibration") {
     init {
+        addChild(TextLineEntity(Point(0.0, -300.0)))
+        addChild(TextLineEntity(Point(0.0, -275.0)))
+        addChild(TextLineEntity(Point(0.0, -250.0)))
+        addChild(TextLineEntity(Point(0.0, -225.0)))
         addComponent(KeyCalibrationBehavior())
-        addComponent(RandomRectAddBehavior())
     }
 }
 
@@ -70,6 +81,8 @@ class KeyCalibrationBehavior : Behavior() {
     private lateinit var cameraCalibration: CameraCalibrationState
     private lateinit var stateManager: StateManagerBehavior
 
+    private lateinit var textLines: List<TextLineEntity>
+
     private var keyPropertiesFile = "keyboard.properties"
 
     private val keyboardRect = MutRect()
@@ -80,6 +93,8 @@ class KeyCalibrationBehavior : Behavior() {
 
     override fun initialize() {
         loadConfig()
+
+        textLines = entity.findChildren<TextLineEntity>().sortedBy { it.origin.y }
         loadKeys()
     }
 
@@ -152,6 +167,22 @@ class KeyCalibrationBehavior : Behavior() {
         currentKey = keyEntity
 
         currentKey?.findComponent<ActiveColorChanger>()?.active = true
+
+        updateText()
+    }
+
+    private fun updateText() {
+        currentKey.let { key ->
+            if (key == null) {
+                return
+            }
+
+            textLines[0].findComponent<TextRenderable>()?.text = "x: ${key.origin.x}"
+            textLines[1].findComponent<TextRenderable>()?.text = "y: ${key.origin.x}"
+            textLines[2].findComponent<TextRenderable>()?.text = "w: ${key.findComponent<RectRenderable>()?.rect?.w}"
+            textLines[3].findComponent<TextRenderable>()?.text = "h: ${key.findComponent<RectRenderable>()?.rect?.h}"
+
+        }
     }
 
     override fun onKeyReleased(event: KeyEvent) {
@@ -249,11 +280,13 @@ class KeyCalibrationBehavior : Behavior() {
 
     private fun moveKey(dx: Double = 0.0, dy: Double = 0.0) {
         currentKey?.origin?.move(dx, dy)
+        updateText()
     }
 
     private fun scaleKey(dw: Double = 0.0, dh: Double = 0.0) {
         currentKey?.findComponent<RectRenderable>()?.rect?.resize(dw, dh)
         keyRect.resize(dw, dh)
+        updateText()
     }
 
 

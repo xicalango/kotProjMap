@@ -17,8 +17,9 @@ import java.util.*
 class KeyEntity : Entity("key") {
     val keyBehavior = KeyBehavior()
 
+    val rectRenderable = RectRenderable(MutRect(0.0, 0.0, 10.0, 10.0))
+
     init {
-        val rectRenderable = RectRenderable(MutRect(0.0, 0.0, 10.0, 10.0))
         addComponent(rectRenderable)
         addComponent(keyBehavior)
         addComponent(BoxCollider(rectRenderable))

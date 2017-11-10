@@ -2,6 +2,7 @@ package xx.projmap.app
 
 import xx.projmap.events.KeyEvent
 import xx.projmap.geometry.MutPoint
+import xx.projmap.geometry.MutRect
 import xx.projmap.graphics.DrawStyle
 import xx.projmap.scene2.*
 import java.awt.Color
@@ -21,7 +22,7 @@ class FlyingLetter : Entity("Flying letter") {
 
 class FlyingLetterBehavior(var velocity: Double = 100.0, val destination: MutPoint = MutPoint(0.0, -1000.0)) : Behavior() {
 
-    private val maxLiveTime = 20.0
+    private val maxLiveTime = 60.0
     private var liveTime = maxLiveTime
 
     var color: Float = 0.0f
@@ -57,6 +58,42 @@ class FlyingLetterBehavior(var velocity: Double = 100.0, val destination: MutPoi
 
 }
 
+class DecayingRect : Entity("decayingRect") {
+
+    val rectRenderable = RectRenderable(MutRect(0.0, 0.0, 0.0, 0.0))
+    val decayingRectBehavior = DecayingRectBehavior()
+
+    init {
+        addComponent(rectRenderable)
+        addComponent(decayingRectBehavior)
+    }
+
+}
+
+class DecayingRectBehavior : Behavior() {
+
+    private val maxLiveTime = 2.0
+    private var liveTime = maxLiveTime
+
+    var color: Float = 0.0f
+
+    private lateinit var rectRenderable: RectRenderable
+
+    override fun initialize() {
+        rectRenderable = entity.findComponent()!!
+    }
+
+    override fun update(dt: Double) {
+        liveTime -= dt
+
+        rectRenderable.color = Color.getHSBColor(color, 1.0f, (liveTime / maxLiveTime).toFloat())
+
+        if (liveTime <= 0) {
+            entity.destroy = true
+        }
+    }
+}
+
 class KeyShootEntity : Entity("shoot") {
 
     val keyShootBehavior = KeyShootBehavior()
@@ -79,7 +116,7 @@ class KeyShootBehavior : Behavior() {
 
     private var destinationX = minX
 
-    private val lineY = -300.0
+    private var lineY = -300.0
 
     override fun setup() {
         keyboardEntity = sceneFacade.findEntity()!!
@@ -100,14 +137,22 @@ class KeyShootBehavior : Behavior() {
             destinationX += 20.0
             if (destinationX >= maxX) {
                 destinationX = minX
+                lineY += 25.0
+                if (lineY >= -10.0) {
+                    lineY = -300.0
+                }
             }
 
-            flyingLetter.flyingLetterBehavior.velocity = -150.0 + random.nextInt(50)
+            flyingLetter.flyingLetterBehavior.velocity = -250.0 + random.nextInt(50)
             flyingLetter.textRenderable.text = keyEntity.keyBehavior.keyChar.toString()
 
             val color = random.nextFloat()
             flyingLetter.flyingLetterBehavior.color = color
-            flyingLetter.textRenderable.color = Color.getHSBColor(color, 1.0f, 1.0f)
+
+            val decayingRect = sceneFacade.createEntity(::DecayingRect, parent = entity, name = "decay_${keyEntity.keyBehavior.keyChar}")
+            decayingRect.origin.set(keyEntity.origin)
+            decayingRect.rectRenderable.rect.updateFrom(keyEntity.rectRenderable.rect)
+            decayingRect.decayingRectBehavior.color = color
         }
 
     }

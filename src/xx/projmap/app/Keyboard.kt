@@ -131,7 +131,7 @@ class KeyboardBehavior : Behavior() {
 
     fun findEntityByEvent(event: KeyEvent) = entity.findChildren<KeyEntity>().find {
         val keyBehavior = it.findComponent<KeyBehavior>()
-        keyBehavior?.keyChar == event.keyChar || keyBehavior?.keyCode == event.keyCode
+        keyBehavior?.keyCode == event.keyCode
     }
 
 }

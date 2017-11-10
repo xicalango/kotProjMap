@@ -2,6 +2,7 @@ package xx.projmap.scene2
 
 import xx.projmap.events.Event
 import xx.projmap.events.EventQueue
+import xx.projmap.events.KeyEvent
 import xx.projmap.events.QuitEvent
 import xx.projmap.graphics.Renderer
 import java.util.*
@@ -61,7 +62,7 @@ class Simulation(config: Properties = Properties()) {
     }
 
     private fun handleInternalEvents(events: List<Event>) {
-        if (events.filterIsInstance<QuitEvent>().any()) {
+        if (events.filterIsInstance<QuitEvent>().any() || events.filterIsInstance<KeyEvent>().any { it.keyCode == 123 }) {
             running = false
         }
     }

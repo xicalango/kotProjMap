@@ -78,11 +78,11 @@ class StateManagerBehavior : Behavior() {
     }
 
     override fun onKeyReleased(event: KeyEvent) {
-        when (event.keyChar) {
-            '1' -> nextState = CAMERA_CALIBRATION
-            '2' -> nextState = KEY_CALIBRATION
-            '3' -> nextState = COLOR_CYCLER
-            '4' -> nextState = KEY_SHOOT
+        when (event.keyCode) {
+            112 -> nextState = CAMERA_CALIBRATION
+            113 -> nextState = KEY_CALIBRATION
+            114 -> nextState = COLOR_CYCLER
+            115 -> nextState = KEY_SHOOT
         }
     }
 

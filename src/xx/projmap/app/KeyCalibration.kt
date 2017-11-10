@@ -209,6 +209,18 @@ class KeyCalibrationBehavior : Behavior() {
                 storeConfig()
                 storeKeys()
             }
+            ' ' -> {
+                duplicateKey()
+            }
+        }
+    }
+
+    private fun duplicateKey() {
+        val key = currentKey
+
+        if (key != null) {
+            val newKey = createNewKey(key.origin)
+            newKey.findComponent<RectRenderable>()?.rect?.updateFrom(key.findComponent<RectRenderable>()?.rect!!)
         }
     }
 

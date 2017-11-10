@@ -178,7 +178,7 @@ class KeyCalibrationBehavior : Behavior() {
             }
 
             textLines[0].findComponent<TextRenderable>()?.text = "x: ${key.origin.x}"
-            textLines[1].findComponent<TextRenderable>()?.text = "y: ${key.origin.x}"
+            textLines[1].findComponent<TextRenderable>()?.text = "y: ${key.origin.y}"
             textLines[2].findComponent<TextRenderable>()?.text = "w: ${key.findComponent<RectRenderable>()?.rect?.w}"
             textLines[3].findComponent<TextRenderable>()?.text = "h: ${key.findComponent<RectRenderable>()?.rect?.h}"
 

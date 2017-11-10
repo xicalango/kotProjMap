@@ -4,6 +4,7 @@ import xx.projmap.events.KeyEvent
 import xx.projmap.events.MouseClickEvent
 import xx.projmap.geometry.*
 import xx.projmap.scene2.*
+import java.awt.Color
 
 class TextLineEntity(origin: GeoPoint) : Entity("text", origin) {
     init {
@@ -73,11 +74,13 @@ class KeyCalibrationBehavior : Behavior() {
     override fun onActivation() {
         val calibrationPoints = cameraCalibration.findChildren<CameraCalibrationPoint>().map { it.origin }
         updateTransform(calibrationPoints)
-        keyboardEntity.findChildren<KeyEntity>().flatMap { it.findComponents<Renderable>() }.forEach { it.enabled = true }
+        keyboardEntity.findChildren<KeyEntity>().flatMap { it.findComponents<Renderable>() }.forEach {
+            it.color = Color.WHITE
+            it.enabled = true
+        }
     }
 
     override fun onDeactivation() {
-        keyboardEntity.findChildren<KeyEntity>().flatMap { it.findComponents<Renderable>() }.forEach { it.enabled = false }
     }
 
     private fun updateTransform(calibrationPoints: List<MutPoint>) {
@@ -140,6 +143,7 @@ class KeyCalibrationBehavior : Behavior() {
             'J' -> scaleKey(dh = 10.0)
             'H' -> scaleKey(dw = -10.0)
             'K' -> scaleKey(dw = 10.0)
+            'n' -> stateManager.nextState = State.COLOR_CYCLER
             'r' -> removeKey()
             'p' -> {
                 storeConfig()

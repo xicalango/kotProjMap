@@ -118,6 +118,7 @@ class CameraCalibrationBehavior : Behavior() {
         curPoint = 0
         getCurrentCalibrationPoint()?.active = true
         entity.findChildren<CameraCalibrationPoint>().flatMap { it.findComponents<Renderable>() }.forEach { it.enabled = true }
+        sceneFacade.findEntity<KeyboardEntity>()?.findChildren<KeyEntity>()?.flatMap { it.findComponents<Renderable>() }?.forEach { it.enabled = false }
         calibrationCamera.camera.transform = IdentityTransform()
     }
 

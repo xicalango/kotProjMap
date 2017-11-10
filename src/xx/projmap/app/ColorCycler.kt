@@ -16,7 +16,9 @@ class ColorCyclerBehavior : Behavior() {
     private lateinit var keyboardEntity: KeyboardEntity
 
     private var time = .1
-    private var offset = 0
+    private var current = 0
+
+    private val length = 20
 
     override fun setup() {
         keyboardEntity = sceneFacade.findEntity()!!
@@ -32,14 +34,24 @@ class ColorCyclerBehavior : Behavior() {
             val numKeys = keys.size
 
             keys.forEachIndexed { index, keyEntity ->
-                keyEntity.findComponent<RectRenderable>()?.color = Color.getHSBColor(((index + offset) % numKeys) / numKeys.toFloat(), 0.5f, 1.0f)
+                val actualIndex = (index + current) % numKeys
+                val color = if (actualIndex in 0..length) {
+                    Color.getHSBColor(index / numKeys.toFloat(), 1.0f, 1.0f - (actualIndex / length.toFloat()))
+                } else {
+                    Color.BLACK
+                }
+                keyEntity.findComponent<RectRenderable>()?.color = color
             }
-            offset++
+            current++
+            current %= numKeys
         }
     }
 
     override fun onActivation() {
-        keyboardEntity.findChildren<KeyEntity>().flatMap { it.findComponents<Renderable>() }.forEach { it.enabled = true }
+        keyboardEntity.findChildren<KeyEntity>().flatMap { it.findComponents<Renderable>() }.forEach {
+            it.color = Color.BLACK
+            it.enabled = true
+        }
     }
 
 

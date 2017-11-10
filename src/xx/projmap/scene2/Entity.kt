@@ -103,7 +103,6 @@ open class Entity(var name: String = "entity", origin: GeoPoint = Point()) {
 
     fun initialize(scene: SceneFacade) {
         this.sceneFacade = scene
-        println("initialize: $name")
         allComponents.forEach { it.initialize() }
         children.forEach { it.initialize(scene) }
     }

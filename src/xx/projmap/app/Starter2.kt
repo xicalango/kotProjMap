@@ -42,11 +42,12 @@ fun main(args: Array<String>) {
 
     val frame = ProjectionFrame(simulation.eventQueue)
 
+    simulation.scene.createEntity(::KeyboardEntity)
     simulation.scene.createEntity(::StateManager)
     val unitRect = frame.projectionPanel.region.toNormalized()
     simulation.scene.createCamera(unitRect, frame.projectionPanel, name = "mainCamera")
-    val subRenderDestination = frame.projectionPanel.createSubRenderDestination(Rect(0.0, 0.0, 100.0, 75.0))
-    simulation.scene.createCamera(unitRect, subRenderDestination, name = "debugCamera")
+    val subRenderDestination = frame.projectionPanel.createSubRenderDestination(Rect(0.0, 0.0, 150.0, 60.0))
+    simulation.scene.createCamera(Rect(0.0, 0.0, 500.0, 200.0), subRenderDestination, name = "debugCamera")
 
     frame.extendedState = JFrame.MAXIMIZED_BOTH
     frame.isVisible = true

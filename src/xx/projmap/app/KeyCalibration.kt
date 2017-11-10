@@ -4,26 +4,6 @@ import xx.projmap.events.KeyEvent
 import xx.projmap.events.MouseClickEvent
 import xx.projmap.geometry.*
 import xx.projmap.scene2.*
-import java.awt.Color
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.util.*
-
-class KeyEntity : Entity("key") {
-    init {
-        val rectRenderable = RectRenderable(MutRect(0.0, 0.0, 10.0, 10.0))
-        addComponent(rectRenderable)
-        addComponent(KeyBehavior())
-        addComponent(BoxCollider(rectRenderable))
-        addComponent(ActiveColorChanger())
-    }
-}
-
-class KeyBehavior : Behavior() {
-
-    var keyChar: Char? = null
-
-}
 
 class TextLineEntity(origin: GeoPoint) : Entity("text", origin) {
     init {
@@ -43,47 +23,15 @@ class KeyCalibration : Entity("keyCalibration") {
     }
 }
 
-private const val CREATION_DELAY_VARIATION = 0.2
-private const val MIN_CREATION_DELAY = 0.5
-
-class RandomRectAddBehavior : Behavior() {
-    private val random = Random()
-
-    private lateinit var camera: Camera
-
-    private var counter = random.nextDouble() * CREATION_DELAY_VARIATION
-
-    private fun resetCounter() {
-        counter = MIN_CREATION_DELAY + (random.nextDouble() * CREATION_DELAY_VARIATION)
-    }
-
-    override fun setup() {
-        camera = sceneFacade.getMainCamera().camera
-        enabled = false
-    }
-
-    override fun update(dt: Double) {
-        counter -= dt
-        if (counter <= 0) {
-            val point = random.randomPointIn(camera.renderRegion).toMutable()
-            camera.viewportToWorld(point, point)
-            val entity = sceneFacade.createEntity(::KeyEntity, parent = entity)
-            entity.findComponent<Renderable>()?.color = Color(random.nextInt())
-            entity.origin.set(point)
-            resetCounter()
-        }
-    }
-}
-
 class KeyCalibrationBehavior : Behavior() {
 
     private lateinit var camera: Camera
     private lateinit var cameraCalibration: CameraCalibrationState
     private lateinit var stateManager: StateManagerBehavior
+    private lateinit var keyboardEntity: KeyboardEntity
+    private lateinit var keyboardBehavior: KeyboardBehavior
 
     private lateinit var textLines: List<TextLineEntity>
-
-    private var keyPropertiesFile = "keyboard.properties"
 
     private val keyboardRect = MutRect()
     private val keyRect = MutRect()
@@ -95,7 +43,6 @@ class KeyCalibrationBehavior : Behavior() {
         loadConfig()
 
         textLines = entity.findChildren<TextLineEntity>().sortedBy { it.origin.y }
-        loadKeys()
     }
 
     override fun setup() {
@@ -103,6 +50,9 @@ class KeyCalibrationBehavior : Behavior() {
         val stateManagerEntity = sceneFacade.findEntity<StateManager>()!!
         stateManager = stateManagerEntity.findComponent()!!
         cameraCalibration = stateManagerEntity.findChild()!!
+
+        keyboardEntity = sceneFacade.findEntity()!!
+        keyboardBehavior = keyboardEntity.findComponent()!!
         enabled = false
     }
 
@@ -113,7 +63,6 @@ class KeyCalibrationBehavior : Behavior() {
         keyRect.w = config.getProperty("key.defaultWidth", "13").toDouble()
         keyRect.h = config.getProperty("key.defaultHeight", "13").toDouble()
 
-        keyPropertiesFile = config.getProperty("keyboard.properties.file", "keyboard.properties")
     }
 
     private fun storeConfig() {
@@ -124,11 +73,11 @@ class KeyCalibrationBehavior : Behavior() {
     override fun onActivation() {
         val calibrationPoints = cameraCalibration.findChildren<CameraCalibrationPoint>().map { it.origin }
         updateTransform(calibrationPoints)
-        entity.findChildren<KeyEntity>().flatMap { it.findComponents<Renderable>() }.forEach { it.enabled = true }
+        keyboardEntity.findChildren<KeyEntity>().flatMap { it.findComponents<Renderable>() }.forEach { it.enabled = true }
     }
 
     override fun onDeactivation() {
-        entity.findChildren<KeyEntity>().flatMap { it.findComponents<Renderable>() }.forEach { it.enabled = false }
+        keyboardEntity.findChildren<KeyEntity>().flatMap { it.findComponents<Renderable>() }.forEach { it.enabled = false }
     }
 
     private fun updateTransform(calibrationPoints: List<MutPoint>) {
@@ -141,24 +90,11 @@ class KeyCalibrationBehavior : Behavior() {
     override fun onMouseClicked(event: MouseClickEvent) {
         val worldPoint = camera.viewportToWorld(event.point)
 
-        val keyEntity = entity.findChildren<KeyEntity>().find { it.findComponent<BoxCollider>()?.collidesWith(worldPoint)!! }
+        val keyEntity = keyboardEntity.findChildren<KeyEntity>()
+                .find { it.findComponent<BoxCollider>()?.collidesWith(worldPoint)!! }
+                ?: keyboardBehavior.createNewKey(worldPoint, keyRect)
 
-        if (keyEntity != null) {
-            selectKey(keyEntity)
-        } else {
-            createNewKey(worldPoint)
-        }
-    }
-
-    private fun createNewKey(worldPoint: GeoPoint): KeyEntity {
-        val entity = sceneFacade.createEntity(::KeyEntity, parent = entity)
-        entity.origin.set(worldPoint)
-
-        val rect = entity.findComponent<RectRenderable>()
-        rect?.rect?.updateFrom(keyRect)
-
-        selectKey(keyEntity = entity)
-        return entity
+        selectKey(keyEntity)
     }
 
     private fun selectKey(keyEntity: KeyEntity) {
@@ -207,7 +143,7 @@ class KeyCalibrationBehavior : Behavior() {
             'r' -> removeKey()
             'p' -> {
                 storeConfig()
-                storeKeys()
+                keyboardBehavior.storeKeys()
             }
             ' ' -> {
                 duplicateKey()
@@ -219,68 +155,16 @@ class KeyCalibrationBehavior : Behavior() {
         val key = currentKey
 
         if (key != null) {
-            val newKey = createNewKey(key.origin)
-            newKey.findComponent<RectRenderable>()?.rect?.updateFrom(key.findComponent<RectRenderable>()?.rect!!)
+            val newKey = keyboardBehavior.createNewKey(key.origin, key.findComponent<RectRenderable>()?.rect!!)
+            selectKey(newKey)
         }
-    }
-
-    private fun loadKeys() {
-        val path = Paths.get(keyPropertiesFile)
-        if (!Files.exists(path)) {
-            return
-        }
-
-        val keyProperties = Properties()
-        Files.newInputStream(path).use(keyProperties::load)
-
-        val numKeys = keyProperties.getProperty("keys.count", "0").toInt()
-
-        val point = MutPoint()
-
-        (0 until numKeys).forEach { index ->
-
-            point.x = keyProperties.getProperty("key$index.x")?.toDouble()!!
-            point.y = keyProperties.getProperty("key$index.y")?.toDouble()!!
-
-            val newKey = createNewKey(point)
-            val rect = newKey.findComponent<RectRenderable>()?.rect!!
-
-            rect.w = keyProperties.getProperty("key$index.w")?.toDouble()!!
-            rect.h = keyProperties.getProperty("key$index.h")?.toDouble()!!
-
-            newKey.findComponent<KeyBehavior>()?.keyChar = keyProperties.getProperty("key$index.char")?.toCharArray()?.getOrNull(0)
-        }
-
-    }
-
-    private fun storeKeys() {
-        val keyProperties = Properties()
-
-        entity.findChildren<KeyEntity>().forEachIndexed { index, key ->
-            val collider = key.findComponent<BoxCollider>()!!
-            val boundingBox = collider.boundingBox
-            val keyBehavior = key.findComponent<KeyBehavior>()!!
-
-            keyProperties.setProperty("key$index.x", boundingBox.x.toString())
-            keyProperties.setProperty("key$index.y", boundingBox.y.toString())
-            keyProperties.setProperty("key$index.w", boundingBox.w.toString())
-            keyProperties.setProperty("key$index.h", boundingBox.h.toString())
-            if (keyBehavior.keyChar != null) {
-                keyProperties.setProperty("key$index.char", keyBehavior.keyChar?.toString())
-            }
-        }
-        keyProperties.setProperty("keys.count", entity.findChildren<KeyEntity>().size.toString())
-
-        val path = Paths.get(keyPropertiesFile)
-
-        Files.newOutputStream(path).use { keyProperties.store(it, keyPropertiesFile) }
     }
 
     private fun removeKey() {
         val currentKey = this.currentKey
         if (currentKey != null) {
-            entity.removeChild(currentKey)
-            entity.findChild<KeyEntity>().let {
+            keyboardEntity.removeChild(currentKey)
+            keyboardEntity.findChild<KeyEntity>().let {
                 if (it != null) {
                     selectKey(it)
                 } else {

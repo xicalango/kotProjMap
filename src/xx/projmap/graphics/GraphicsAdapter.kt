@@ -16,7 +16,7 @@ interface GraphicsAdapter {
     fun clip(x: Double, y: Double, w: Double, h: Double)
     fun resetClip()
 
-    fun drawPoint(point: GeoPoint)
+    fun drawPoint(point: GeoPoint, drawStyle: DrawStyle = DrawStyle.LINE)
     fun drawPointArray(pointArray: Array<out GeoPoint>, drawStyle: DrawStyle = DrawStyle.FILL)
 
     fun drawGeoEntity(geoEntity: SimpleGeoEntity, drawStyle: DrawStyle = DrawStyle.FILL) =

@@ -22,6 +22,7 @@ class ColorCyclerBehavior : Behavior() {
 
     override fun setup() {
         keyboardEntity = sceneFacade.findEntity()!!
+        enabled = false
     }
 
     override fun update(dt: Double) {

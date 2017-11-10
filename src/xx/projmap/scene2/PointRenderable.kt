@@ -14,7 +14,7 @@ class PointRenderable : Renderable() {
 
     override fun renderInternal(graphicsAdapter: GraphicsAdapter, transform: Transform) {
         transform.srcToDst(entity.position, transformedPoint)
-        graphicsAdapter.drawPoint(transformedPoint)
+        graphicsAdapter.drawPoint(transformedPoint, drawStyle)
     }
 
 }

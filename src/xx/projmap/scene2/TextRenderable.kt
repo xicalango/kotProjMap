@@ -53,7 +53,7 @@ class TextRenderable(text: String = "") : Renderable() {
 
     override fun renderInternal(graphicsAdapter: GraphicsAdapter, transform: Transform) {
         transform(transform)
-        dstPointArray.forEach(graphicsAdapter::drawPoint)
+        dstPointArray.forEach { graphicsAdapter.drawPoint(it, drawStyle) }
     }
 
     private fun transform(transform: Transform) {

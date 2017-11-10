@@ -75,6 +75,12 @@ class Scene(override val config: Properties = Properties()) : SceneFacade, Rende
 
     fun update(dt: Double) {
         entities.forEach { it.update(dt) }
+        val destroyEntities = entities.filter { it.destroy }
+        if (destroyEntities.isNotEmpty()) {
+            synchronized(entities) {
+                entities -= destroyEntities
+            }
+        }
     }
 
     fun handleEvents(events: List<Event>) {

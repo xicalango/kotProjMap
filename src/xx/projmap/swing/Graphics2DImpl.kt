@@ -57,8 +57,13 @@ class Graphics2DImpl(var graphics2D: Graphics2D) : GraphicsAdapter {
         graphics2D.clearRect(x.toInt(), y.toInt(), w.toInt(), h.toInt())
     }
 
-    override fun drawPoint(point: GeoPoint) {
-        graphics2D.drawOval(point.x.toInt() - 2, point.y.toInt() - 2, 4, 4)
+    override fun drawPoint(point: GeoPoint, drawStyle: DrawStyle) {
+        when (drawStyle) {
+            DrawStyle.LINE ->
+                graphics2D.drawOval(point.x.toInt() - 2, point.y.toInt() - 2, 4, 4)
+            DrawStyle.FILL ->
+                graphics2D.fillOval(point.x.toInt() - 2, point.y.toInt() - 2, 4, 4)
+        }
     }
 
     override fun drawPointArray(pointArray: Array<out GeoPoint>, drawStyle: DrawStyle) {

@@ -26,6 +26,8 @@ open class Entity(var name: String = "entity", origin: GeoPoint = Point()) {
 
     private var initialized: Boolean = false
 
+    var destroy: Boolean = false
+
     val position: GeoPoint
         get() {
             val par = parent
@@ -66,19 +68,13 @@ open class Entity(var name: String = "entity", origin: GeoPoint = Point()) {
         }
     }
 
-    fun removeChild(child: Entity) = moveChild(child, null)
-
-    fun moveChild(child: Entity, destination: Entity?) {
+    fun moveChild(child: Entity, destination: Entity) {
         synchronized(children) {
             // TODO wah
             children -= child
         }
 
-        if (destination == null) {
-            child.parent = null
-        } else {
-            destination.addChild(child)
-        }
+        destination.addChild(child)
     }
 
     fun handleEvent(event: Event) {
@@ -113,7 +109,15 @@ open class Entity(var name: String = "entity", origin: GeoPoint = Point()) {
             initialized = true
         }
         enabledComponents.forEach { it.update(dt) }
-        children.forEach { it.update(dt) }
+        children.forEach {
+            it.update(dt)
+        }
+        val destroyChildren = children.filter { it.destroy }
+        if (destroyChildren.isNotEmpty()) {
+            synchronized(children) {
+                children -= destroyChildren
+            }
+        }
     }
 
     internal fun render(graphicsAdapter: GraphicsAdapter, transform: Transform) {

@@ -88,6 +88,11 @@ class KeyCalibrationBehavior : Behavior() {
             it.color = Color.WHITE
             it.enabled = true
         }
+        textLines.flatMap { it.findComponents<Renderable>() }.forEach { it.enabled = true }
+    }
+
+    override fun onDeactivation() {
+        textLines.flatMap { it.findComponents<Renderable>() }.forEach { it.enabled = false }
     }
 
     private fun updateTransform(calibrationPoints: List<MutPoint>) {
@@ -131,32 +136,26 @@ class KeyCalibrationBehavior : Behavior() {
             textLines[2].findComponent<TextRenderable>()?.text = "w: ${keyRect?.w}"
             textLines[3].findComponent<TextRenderable>()?.text = "h: ${keyRect?.h}"
             textLines[4].findComponent<TextRenderable>()?.text = "key: ${keyBehavior?.keyChar ?: ' '} / ${keyBehavior?.keyCode ?: -1}"
-            textLines[5].findComponent<TextRenderable>()?.text = "mode: $keyEnterMode"
         }
+        textLines[5].findComponent<TextRenderable>()?.text = "mode: $keyEnterMode"
     }
 
     override fun onKeyReleased(event: KeyEvent) {
-        if (event.keyCode == 27) {
-            if (keyEnterMode == KeyEnterMode.KEY_CHAR_ENTER) {
-                handleKeyCharInput(event)
-            }
-            keyEnterMode = KeyEnterMode.COMMAND
-            updateText()
-            return
-        }
-
         when (keyEnterMode) {
             KeyEnterMode.COMMAND -> handleCommand(event)
             KeyEnterMode.KEY_CHAR_ENTER -> handleKeyCharInput(event)
             KeyEnterMode.FIND_KEY -> findKey(event)
         }
+
+        if (event.keyCode == 27) {
+            keyEnterMode = KeyEnterMode.COMMAND
+            updateText()
+            return
+        }
     }
 
     private fun findKey(event: KeyEvent) {
-        val key = keyboardEntity.findChildren<KeyEntity>().find {
-            val keyBehavior = it.findComponent<KeyBehavior>()
-            keyBehavior?.keyChar == event.keyChar || keyBehavior?.keyCode == event.keyCode
-        }
+        val key = keyboardBehavior.findEntityByEvent(event)
         if (key != null) {
             selectKey(key)
             updateText()
@@ -226,7 +225,7 @@ class KeyCalibrationBehavior : Behavior() {
     private fun removeKey() {
         val currentKey = this.currentKey
         if (currentKey != null) {
-            keyboardEntity.removeChild(currentKey)
+            currentKey.destroy = true
             keyboardEntity.findChild<KeyEntity>().let {
                 if (it != null) {
                     selectKey(it)

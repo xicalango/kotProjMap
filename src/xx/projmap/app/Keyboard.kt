@@ -1,5 +1,6 @@
 package xx.projmap.app
 
+import xx.projmap.events.KeyEvent
 import xx.projmap.geometry.GeoPoint
 import xx.projmap.geometry.GeoRect
 import xx.projmap.geometry.MutPoint
@@ -14,10 +15,12 @@ import java.util.*
 
 
 class KeyEntity : Entity("key") {
+    val keyBehavior = KeyBehavior()
+
     init {
         val rectRenderable = RectRenderable(MutRect(0.0, 0.0, 10.0, 10.0))
         addComponent(rectRenderable)
-        addComponent(KeyBehavior())
+        addComponent(keyBehavior)
         addComponent(BoxCollider(rectRenderable))
         addComponent(ActiveColorChanger())
     }
@@ -32,8 +35,10 @@ class KeyBehavior : Behavior() {
 
 class KeyboardEntity : Entity("keyboard") {
 
+    val keyboardBehavior = KeyboardBehavior()
+
     init {
-        addComponent(KeyboardBehavior())
+        addComponent(keyboardBehavior)
     }
 
 }
@@ -115,6 +120,18 @@ class KeyboardBehavior : Behavior() {
         return entity
     }
 
+    fun findEntityByChar(char: Char): KeyEntity? = entity.findChildren<KeyEntity>().find {
+        it.findComponent<KeyBehavior>()?.keyChar == char
+    }
+
+    fun findEntityByCode(code: Int): KeyEntity? = entity.findChildren<KeyEntity>().find {
+        it.findComponent<KeyBehavior>()?.keyCode == code
+    }
+
+    fun findEntityByEvent(event: KeyEvent) = entity.findChildren<KeyEntity>().find {
+        val keyBehavior = it.findComponent<KeyBehavior>()
+        keyBehavior?.keyChar == event.keyChar || keyBehavior?.keyCode == event.keyCode
+    }
 
 }
 

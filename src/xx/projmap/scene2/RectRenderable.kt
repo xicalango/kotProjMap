@@ -14,7 +14,7 @@ class RectRenderable(rect: GeoRect) : Renderable() {
 
     override fun renderInternal(graphicsAdapter: GraphicsAdapter, transform: Transform) {
         transformRect(transform, entity.position)
-        graphicsAdapter.drawPointArray(dstPointArray)
+        graphicsAdapter.drawPointArray(dstPointArray, drawStyle)
     }
 
     private fun transformRect(transform: Transform, origin: GeoPoint) {

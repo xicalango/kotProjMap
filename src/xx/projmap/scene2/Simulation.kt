@@ -1,6 +1,8 @@
 package xx.projmap.scene2
 
-import xx.projmap.events.*
+import xx.projmap.events.Event
+import xx.projmap.events.EventQueue
+import xx.projmap.events.QuitEvent
 import xx.projmap.graphics.Renderer
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -18,9 +20,6 @@ class Simulation(config: Properties = Properties()) {
     private var last = System.currentTimeMillis()
 
     private var running: Boolean = true
-
-    private var escPressedTimer: Double = 3.0
-    private var escPressed: Boolean = false
 
     fun run(renderer: Renderer) {
 
@@ -48,13 +47,6 @@ class Simulation(config: Properties = Properties()) {
             handleInternalEvents(events)
             scene.handleEvents(events)
 
-            if (escPressed) {
-                escPressedTimer -= dt
-                if (escPressedTimer <= 0) {
-                    running = false
-                }
-            }
-
             if (simulationConfig.simulationFpsLimit != null) {
                 Thread.sleep(1000 / simulationConfig.simulationFpsLimit.toLong())
             }
@@ -69,16 +61,6 @@ class Simulation(config: Properties = Properties()) {
     }
 
     private fun handleInternalEvents(events: List<Event>) {
-        events.filterIsInstance<KeyEvent>().forEach {
-            if (it.keyCode == 27) {
-                if (it.direction == Direction.PRESSED && !escPressed) {
-                    escPressed = true
-                    escPressedTimer = 3.0
-                } else if (it.direction == Direction.RELEASED) {
-                    escPressed = false
-                }
-            }
-        }
         if (events.filterIsInstance<QuitEvent>().any()) {
             running = false
         }

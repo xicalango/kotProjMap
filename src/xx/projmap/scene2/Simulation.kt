@@ -19,7 +19,7 @@ class Simulation(config: Properties = Properties()) {
 
     private var running: Boolean = true
 
-    private var escPressedTimer: Double = 2.0
+    private var escPressedTimer: Double = 3.0
     private var escPressed: Boolean = false
 
     fun run(renderer: Renderer) {
@@ -73,8 +73,8 @@ class Simulation(config: Properties = Properties()) {
             if (it.keyCode == 27) {
                 if (it.direction == Direction.PRESSED && !escPressed) {
                     escPressed = true
-                    escPressedTimer = 2.0
-                } else if (it.direction == Direction.RELEASED && escPressed) {
+                    escPressedTimer = 3.0
+                } else if (it.direction == Direction.RELEASED) {
                     escPressed = false
                 }
             }

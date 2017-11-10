@@ -8,8 +8,8 @@ data class SimulationConfig(
 )
 
 fun simulationConfigFromProperties(properties: Properties): SimulationConfig {
-    val graphicsFpsLimit = properties.getProperty("sim.${SimulationConfig::graphicsFpsLimit.name}")?.toInt()
-    val simulationFpsLimit = properties.getProperty("sim.${SimulationConfig::simulationFpsLimit.name}")?.toInt()
+    val graphicsFpsLimit = properties.getProperty("sim.${SimulationConfig::graphicsFpsLimit.name}", "60").toInt()
+    val simulationFpsLimit = properties.getProperty("sim.${SimulationConfig::simulationFpsLimit.name}", "100").toInt()
 
     return SimulationConfig(graphicsFpsLimit, simulationFpsLimit)
 }

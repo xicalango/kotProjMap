@@ -1,5 +1,6 @@
 package xx.projmap.app
 
+import xx.projmap.events.KeyEvent
 import xx.projmap.events.MouseClickEvent
 import xx.projmap.geometry.*
 import xx.projmap.scene2.*
@@ -8,11 +9,11 @@ import java.util.*
 
 class KeyEntity : Entity("key") {
     init {
-        addComponent(RectRenderable(MutRect(0.0, 0.0, 100.0, 20.0)))
-        val textRenderable = TextRenderable()
-        textRenderable.setSpacing(2.5)
-        addComponent(textRenderable)
+        val rectRenderable = RectRenderable(MutRect(0.0, 0.0, 10.0, 10.0))
+        addComponent(rectRenderable)
         addComponent(KeyBehavior())
+        addComponent(BoxCollider(rectRenderable))
+        addComponent(ActiveColorChanger())
     }
 }
 
@@ -63,15 +64,33 @@ class RandomRectAddBehavior : Behavior() {
 
 class KeyCalibrationBehavior : Behavior() {
 
-    private val random = Random()
-
     private lateinit var camera: Camera
     private lateinit var cameraCalibration: CameraCalibrationState
+    private lateinit var stateManager: StateManagerBehavior
+
+    private val keyboardRect = MutRect()
+    private val keyRect = MutRect()
+
+    private var currentKey: KeyEntity? = null
+
+    override fun initialize() {
+        loadConfig()
+    }
 
     override fun setup() {
         camera = sceneFacade.getMainCamera().camera
-        cameraCalibration = sceneFacade.findEntity<StateManager>()?.findChild()!!
+        val stateManagerEntity = sceneFacade.findEntity<StateManager>()!!
+        stateManager = stateManagerEntity.findComponent()!!
+        cameraCalibration = stateManagerEntity.findChild()!!
         enabled = false
+    }
+
+    private fun loadConfig() {
+        keyboardRect.w = sceneFacade.config.getProperty("keyboard.width", "460").toDouble()
+        keyboardRect.h = sceneFacade.config.getProperty("keyboard.height", "170").toDouble()
+
+        keyRect.w = config.getProperty("key.defaultWidth", "13").toDouble()
+        keyRect.h = config.getProperty("key.defaultHeight", "13").toDouble()
     }
 
     override fun onActivation() {
@@ -86,21 +105,45 @@ class KeyCalibrationBehavior : Behavior() {
 
     private fun updateTransform(calibrationPoints: List<MutPoint>) {
         assert(calibrationPoints.size == 4)
-        val srcQuad = Rect(0.0, 0.0, 470.0, 170.0).toQuad()
         val dstQuad = createQuadFromPoints(calibrationPoints.toTypedArray())
-        val transformation = Transformation(srcQuad, dstQuad)
+        val transformation = Transformation(keyboardRect.toQuad(), dstQuad)
         camera.transform = transformation
     }
 
     override fun onMouseClicked(event: MouseClickEvent) {
+        val worldPoint = camera.viewportToWorld(event.point)
+
+        val keyEntity = entity.findChildren<KeyEntity>().find { it.findComponent<BoxCollider>()?.collidesWith(worldPoint)!! }
+
+        return if (keyEntity != null) {
+            selectEntity(keyEntity)
+        } else {
+            createNewKey(worldPoint)
+        }
+    }
+
+    private fun createNewKey(worldPoint: MutPoint) {
         val entity = sceneFacade.createEntity(::KeyEntity, parent = entity)
-        val color = Color(random.nextInt())
-        val textRenderable = entity.findComponent<TextRenderable>()
-        textRenderable?.text = color.toString()
+        entity.origin.set(worldPoint)
+
         val rect = entity.findComponent<RectRenderable>()
-        rect?.color = color
-        rect?.rect?.updateFrom(textRenderable?.pointArray?.boundingBox!!)
-        camera.viewportToWorld(event.point, entity.origin)
+        rect?.rect?.updateFrom(keyRect)
+
+        selectEntity(keyEntity = entity)
+    }
+
+    private fun selectEntity(keyEntity: KeyEntity) {
+        currentKey?.findComponent<ActiveColorChanger>()?.active = false
+
+        currentKey = keyEntity
+
+        currentKey?.findComponent<ActiveColorChanger>()?.active = true
+    }
+
+    override fun onKeyReleased(event: KeyEvent) {
+        when (event.keyChar) {
+            'c' -> stateManager.nextState = State.CAMERA_CALIBRATION
+        }
     }
 
 }

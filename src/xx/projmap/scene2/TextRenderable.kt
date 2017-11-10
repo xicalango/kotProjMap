@@ -1,12 +1,12 @@
 package xx.projmap.scene2
 
-import xx.projmap.geometry.MutPoint
-import xx.projmap.geometry.Point
-import xx.projmap.geometry.Transform
+import xx.projmap.geometry.*
 import xx.projmap.graphics.GraphicsAdapter
 import xx.projmap.graphics.render4x6ToPoints
 
 class TextRenderable(text: String = "") : Renderable() {
+    override val boundingBox: GeoRect
+        get() = pointArray.boundingBox + entity.position
 
     var pointArray: Array<Point> = emptyArray()
         private set

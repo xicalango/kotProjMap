@@ -5,13 +5,16 @@ import xx.projmap.events.EventQueue
 import xx.projmap.events.KeyEvent
 import xx.projmap.events.QuitEvent
 import xx.projmap.graphics.Renderer
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
-class Simulation(private val graphicsFpsLimit: Int? = 60, private val simulationFpsLimit: Int? = 100) {
+class Simulation(config: Properties = Properties()) {
 
     val eventQueue: EventQueue = EventQueue()
-    val scene: Scene = Scene()
+    val scene: Scene = Scene(config = config)
+
+    private val simulationConfig: SimulationConfig = simulationConfigFromProperties(config)
 
     private var frameCounter = 0
     private var lastFrameCounter = 0
@@ -21,13 +24,15 @@ class Simulation(private val graphicsFpsLimit: Int? = 60, private val simulation
 
     fun run(renderer: Renderer) {
 
+        scene.initialize()
+
         var lastTimestamp = System.nanoTime()
 
         thread {
             while (running) {
                 renderer.render(scene)
-                if (graphicsFpsLimit != null) {
-                    Thread.sleep(1000 / graphicsFpsLimit.toLong())
+                if (simulationConfig.graphicsFpsLimit != null) {
+                    Thread.sleep(1000 / simulationConfig.graphicsFpsLimit.toLong())
                 }
             }
         }
@@ -42,8 +47,8 @@ class Simulation(private val graphicsFpsLimit: Int? = 60, private val simulation
             val events = eventQueue.currentEvents
             handleInternalEvents(events)
             scene.handleEvents(events)
-            if (simulationFpsLimit != null) {
-                Thread.sleep(1000 / simulationFpsLimit.toLong())
+            if (simulationConfig.simulationFpsLimit != null) {
+                Thread.sleep(1000 / simulationConfig.simulationFpsLimit.toLong())
             }
 
             frameCounter++

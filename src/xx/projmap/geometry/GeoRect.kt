@@ -49,7 +49,7 @@ interface GeoRect : GeoEntity<Rect, MutRect> {
     operator fun plus(point: GeoPoint): GeoRect = translated(point)
 }
 
-data class MutRect(override var x: Double, override var y: Double, override var w: Double, override var h: Double) : GeoRect {
+data class MutRect(override var x: Double = 0.0, override var y: Double = 0.0, override var w: Double = 0.0, override var h: Double = 0.0) : GeoRect {
     override fun translated(point: GeoPoint): MutRect = MutRect(x + point.x, y + point.y, w, h)
 
     override fun toImmutable(): Rect = Rect(x, y, w, h)

@@ -7,8 +7,8 @@ class RectRenderable(rect: GeoRect) : Renderable() {
 
     val rect = rect.toMutable()
 
-    val translatedRect: GeoRect
-        get() = rect.translated(entity.origin)
+    override val boundingBox: GeoRect
+        get() = (rect + entity.position).boundingBox()
 
     private val dstPointArray: Array<MutPoint> = Array(4, { MutPoint() })
 

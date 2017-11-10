@@ -98,9 +98,15 @@ open class Entity(var name: String = "entity", origin: GeoPoint = Point()) {
     internal inline fun <reified T : Component> findComponent(): T? = findComponents<T>().firstOrNull()
     internal inline fun <reified T : Component> findComponents(): List<T> = components.filterIsInstance<T>()
 
+    fun initialize(scene: SceneFacade) {
+        this.sceneFacade = scene
+        println("initialize: $name")
+        allComponents.forEach { it.initialize() }
+        children.forEach { it.initialize(scene) }
+    }
+
     fun update(dt: Double) {
         if (!initialized) {
-            children.forEach { it.sceneFacade = sceneFacade }
             allComponents.forEach { it.setup() }
             initialized = true
         }

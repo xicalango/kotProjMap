@@ -1,5 +1,6 @@
 package xx.projmap.scene2
 
+import xx.projmap.geometry.GeoRect
 import xx.projmap.geometry.Transform
 import xx.projmap.graphics.GraphicsAdapter
 import xx.projmap.graphics.withColor
@@ -12,6 +13,8 @@ abstract class Renderable(var color: Color = Color.WHITE) : Component() {
             renderInternal(graphicsAdapter, transform)
         })
     }
+
+    abstract val boundingBox: GeoRect
 
     abstract fun renderInternal(graphicsAdapter: GraphicsAdapter, transform: Transform)
 

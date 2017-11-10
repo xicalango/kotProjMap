@@ -7,10 +7,13 @@ import xx.projmap.geometry.Transform
 import xx.projmap.graphics.GraphicsAdapter
 import xx.projmap.graphics.RenderDestination
 import xx.projmap.graphics.RenderableScene
+import java.util.*
 
 interface SceneFacade {
     val entities: List<Entity>
     val allEntities: List<Entity>
+
+    val config: Properties
 
     fun <T : Entity> createEntity(constructor: () -> T, parent: Entity? = null, name: String? = null): T
 }
@@ -30,7 +33,7 @@ fun SceneFacade.getMainCamera(): CameraEntity = getCameras().find { it.name == "
 fun SceneFacade.createCamera(region: GeoRect, renderDestination: RenderDestination, transform: Transform = IdentityTransform(), name: String = "camera"): CameraEntity =
         createEntity({ CameraEntity(region, renderDestination, transform) }, name = name)
 
-class Scene : SceneFacade, RenderableScene {
+class Scene(override val config: Properties = Properties()) : SceneFacade, RenderableScene {
 
     override val entities: MutableList<Entity> = ArrayList()
 
@@ -45,7 +48,7 @@ class Scene : SceneFacade, RenderableScene {
             newEntity.name
         }
 
-        newEntity.sceneFacade = this
+        newEntity.initialize(this)
 
         if (parent == null) {
             addEntities += newEntity
@@ -62,6 +65,10 @@ class Scene : SceneFacade, RenderableScene {
             }
             addEntities.clear()
         }
+    }
+
+    fun initialize() {
+        startFrame()
     }
 
     fun update(dt: Double) {

@@ -2,6 +2,7 @@ package xx.projmap.scene2
 
 import xx.projmap.events.KeyEvent
 import xx.projmap.events.MouseClickEvent
+import java.util.*
 
 abstract class Component(enabled: Boolean = true) {
 
@@ -19,6 +20,13 @@ abstract class Component(enabled: Boolean = true) {
 
     val sceneFacade: SceneFacade
         get() = entity.sceneFacade
+
+    val config: Properties
+        get() = sceneFacade.config
+
+    open fun initialize() {
+
+    }
 
     open fun setup() {
 

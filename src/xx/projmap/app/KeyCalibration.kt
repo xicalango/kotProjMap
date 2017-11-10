@@ -143,7 +143,33 @@ class KeyCalibrationBehavior : Behavior() {
     override fun onKeyReleased(event: KeyEvent) {
         when (event.keyChar) {
             'c' -> stateManager.nextState = State.CAMERA_CALIBRATION
+            'w' -> moveKey(dy = -1.0)
+            's' -> moveKey(dy = 1.0)
+            'a' -> moveKey(dx = -1.0)
+            'd' -> moveKey(dx = 1.0)
+            'W' -> moveKey(dy = -10.0)
+            'S' -> moveKey(dy = 10.0)
+            'A' -> moveKey(dx = -10.0)
+            'D' -> moveKey(dx = 10.0)
+            'u' -> scaleKey(dh = -1.0)
+            'j' -> scaleKey(dh = 1.0)
+            'h' -> scaleKey(dw = -1.0)
+            'k' -> scaleKey(dw = 1.0)
+            'U' -> scaleKey(dh = -10.0)
+            'J' -> scaleKey(dh = 10.0)
+            'H' -> scaleKey(dw = -10.0)
+            'K' -> scaleKey(dw = 10.0)
         }
     }
+
+    private fun moveKey(dx: Double = 0.0, dy: Double = 0.0) {
+        currentKey?.origin?.move(dx, dy)
+    }
+
+    private fun scaleKey(dw: Double = 0.0, dh: Double = 0.0) {
+        currentKey?.findComponent<RectRenderable>()?.rect?.resize(dw, dh)
+        keyRect.resize(dw, dh)
+    }
+
 
 }

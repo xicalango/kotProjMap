@@ -1,8 +1,9 @@
 package xx.projmap.geometry
 
 import java.util.*
+import kotlin.Comparator
 
-interface GeoPoint : GeoEntity<Point, MutPoint> {
+interface GeoPoint : GeoEntity<Point, MutPoint>, Comparable<GeoPoint> {
 
     val x: Double
     val y: Double
@@ -25,6 +26,28 @@ interface GeoPoint : GeoEntity<Point, MutPoint> {
     override fun translated(point: GeoPoint): GeoPoint
 
     operator fun plus(point: GeoPoint) = translated(point)
+
+    override fun compareTo(other: GeoPoint): Int {
+        return compareToWithDelta(other, .0001)
+    }
+
+    fun compareToWithDelta(point: GeoPoint, delta: Double): Int {
+        val dX = Math.abs(x - point.x)
+        val dY = Math.abs(y - point.y)
+        return if (dY <= delta) {
+            if (dX <= delta) {
+                0
+            } else {
+                x.compareTo(point.x)
+            }
+        } else {
+            y.compareTo(point.y)
+        }
+    }
+}
+
+fun getDeltaComparator(delta: Double): Comparator<GeoPoint> = Comparator { p1, p2 ->
+    p1.compareToWithDelta(p2, delta)
 }
 
 data class Point(override val x: Double = 0.0, override val y: Double = 0.0) : GeoPoint {

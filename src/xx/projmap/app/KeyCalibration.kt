@@ -123,16 +123,28 @@ class KeyCalibrationBehavior : Behavior() {
                 return
             }
 
+            val keyRect = key.findComponent<RectRenderable>()?.rect
+            val keyBehavior = key.findComponent<KeyBehavior>()
+
             textLines[0].findComponent<TextRenderable>()?.text = "x: ${key.origin.x}"
             textLines[1].findComponent<TextRenderable>()?.text = "y: ${key.origin.y}"
-            textLines[2].findComponent<TextRenderable>()?.text = "w: ${key.findComponent<RectRenderable>()?.rect?.w}"
-            textLines[3].findComponent<TextRenderable>()?.text = "h: ${key.findComponent<RectRenderable>()?.rect?.h}"
-            textLines[4].findComponent<TextRenderable>()?.text = "key: ${key.findComponent<KeyBehavior>()?.keyChar ?: ' '}"
+            textLines[2].findComponent<TextRenderable>()?.text = "w: ${keyRect?.w}"
+            textLines[3].findComponent<TextRenderable>()?.text = "h: ${keyRect?.h}"
+            textLines[4].findComponent<TextRenderable>()?.text = "key: ${keyBehavior?.keyChar ?: ' '} / ${keyBehavior?.keyCode ?: -1}"
             textLines[5].findComponent<TextRenderable>()?.text = "mode: $keyEnterMode"
         }
     }
 
     override fun onKeyReleased(event: KeyEvent) {
+        if (event.keyCode == 27) {
+            if (keyEnterMode == KeyEnterMode.KEY_CHAR_ENTER) {
+                handleKeyCharInput(event)
+            }
+            keyEnterMode = KeyEnterMode.COMMAND
+            updateText()
+            return
+        }
+
         when (keyEnterMode) {
             KeyEnterMode.COMMAND -> handleCommand(event)
             KeyEnterMode.KEY_CHAR_ENTER -> handleKeyCharInput(event)
@@ -141,10 +153,12 @@ class KeyCalibrationBehavior : Behavior() {
     }
 
     private fun findKey(event: KeyEvent) {
-        val key = keyboardEntity.findChildren<KeyEntity>().find { it.findComponent<KeyBehavior>()?.keyChar == event.keyChar }
+        val key = keyboardEntity.findChildren<KeyEntity>().find {
+            val keyBehavior = it.findComponent<KeyBehavior>()
+            keyBehavior?.keyChar == event.keyChar || keyBehavior?.keyCode == event.keyCode
+        }
         if (key != null) {
             selectKey(key)
-            keyEnterMode = KeyEnterMode.COMMAND
             updateText()
         }
     }
@@ -155,8 +169,9 @@ class KeyCalibrationBehavior : Behavior() {
                 return
             }
 
-            key.findComponent<KeyBehavior>()?.keyChar = event.keyChar
-            keyEnterMode = KeyEnterMode.COMMAND
+            val keyBehavior = key.findComponent<KeyBehavior>()
+            keyBehavior?.keyChar = event.keyChar
+            keyBehavior?.keyCode = event.keyCode
             updateText()
         }
     }

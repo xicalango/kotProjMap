@@ -1,9 +1,6 @@
 package xx.projmap.scene2
 
-import xx.projmap.events.Event
-import xx.projmap.events.EventQueue
-import xx.projmap.events.KeyEvent
-import xx.projmap.events.QuitEvent
+import xx.projmap.events.*
 import xx.projmap.graphics.Renderer
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -21,6 +18,9 @@ class Simulation(config: Properties = Properties()) {
     private var last = System.currentTimeMillis()
 
     private var running: Boolean = true
+
+    private var escPressedTimer: Double = 1.0
+    private var escPressed: Boolean = false
 
     fun run(renderer: Renderer) {
 
@@ -47,6 +47,14 @@ class Simulation(config: Properties = Properties()) {
             val events = eventQueue.currentEvents
             handleInternalEvents(events)
             scene.handleEvents(events)
+
+            if (escPressed) {
+                escPressedTimer -= dt
+                if (escPressedTimer <= 0) {
+                    running = false
+                }
+            }
+
             if (simulationConfig.simulationFpsLimit != null) {
                 Thread.sleep(1000 / simulationConfig.simulationFpsLimit.toLong())
             }
@@ -61,7 +69,17 @@ class Simulation(config: Properties = Properties()) {
     }
 
     private fun handleInternalEvents(events: List<Event>) {
-        if (events.filterIsInstance<KeyEvent>().any { it.keyCode == 27 } || events.filterIsInstance<QuitEvent>().any()) {
+        events.filterIsInstance<KeyEvent>().forEach {
+            if (it.keyCode == 27) {
+                if (it.direction == Direction.PRESSED && !escPressed) {
+                    escPressed = true
+                    escPressedTimer = 1.0
+                } else if (it.direction == Direction.RELEASED && escPressed) {
+                    escPressed = false
+                }
+            }
+        }
+        if (events.filterIsInstance<QuitEvent>().any()) {
             running = false
         }
     }

@@ -26,6 +26,7 @@ class KeyEntity : Entity("key") {
 class KeyBehavior : Behavior() {
 
     var keyChar: Char? = null
+    var keyCode: Int? = null
 
 }
 
@@ -69,7 +70,9 @@ class KeyboardBehavior : Behavior() {
 
             val newKey = createNewKey(point, rect)
 
-            newKey.findComponent<KeyBehavior>()?.keyChar = keyProperties.getProperty("key$index.char")?.toCharArray()?.getOrNull(0)
+            val keyBehavior = newKey.findComponent<KeyBehavior>()
+            keyBehavior?.keyChar = keyProperties.getProperty("key$index.char")?.toCharArray()?.getOrNull(0)
+            keyBehavior?.keyCode = keyProperties.getProperty("key$index.code")?.toInt()
         }
 
     }
@@ -77,8 +80,9 @@ class KeyboardBehavior : Behavior() {
     fun storeKeys() {
         val keyProperties = Properties()
 
-        entity.findChildren<KeyEntity>()
-                .sortedWith(Comparator { k1, k2 -> -k1.origin.compareToWithDelta(k2.origin, 5.0) })
+        val children = entity.findChildren<KeyEntity>()
+        keyProperties.setProperty("keys.count", children.size.toString())
+        children.sortedWith(Comparator { k1, k2 -> -k1.origin.compareToWithDelta(k2.origin, 5.0) })
                 .forEachIndexed { index, key ->
                     val collider = key.findComponent<BoxCollider>()!!
                     val boundingBox = collider.boundingBox
@@ -91,8 +95,10 @@ class KeyboardBehavior : Behavior() {
                     if (keyBehavior.keyChar != null) {
                         keyProperties.setProperty("key$index.char", keyBehavior.keyChar?.toString())
                     }
+                    if (keyBehavior.keyCode != null) {
+                        keyProperties.setProperty("key$index.code", keyBehavior.keyCode?.toString())
+                    }
                 }
-        keyProperties.setProperty("keys.count", entity.findChildren<KeyEntity>().size.toString())
 
         val path = Paths.get(keyPropertiesFile)
 

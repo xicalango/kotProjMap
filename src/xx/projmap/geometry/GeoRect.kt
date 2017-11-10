@@ -24,6 +24,8 @@ interface GeoRect : GeoEntity<Rect, MutRect> {
         else -> throw IllegalArgumentException("$n")
     }
 
+    override fun boundingBox(): GeoRect = Rect(x, y, w, h)
+
     fun transformX(src: Double, dstRect: GeoRect) =
             proj2(x, x + w, dstRect.x, dstRect.x + dstRect.w, src)
 
@@ -36,7 +38,7 @@ interface GeoRect : GeoEntity<Rect, MutRect> {
         return dst
     }
 
-    fun toNormalized(): GeoRect = Rect(0.0, 0.0, NORMALIZATION_VALUE, NORMALIZATION_VALUE * (h / w))
+    fun toNormalized(normalizationValue: Double = NORMALIZATION_VALUE): GeoRect = Rect(0.0, 0.0, normalizationValue, normalizationValue * (h / w))
 
     operator fun contains(other: GeoRect): Boolean = other.x >= x && other.y >= y && other.w <= w && other.h <= h
 

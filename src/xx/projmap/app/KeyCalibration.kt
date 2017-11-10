@@ -8,9 +8,10 @@ import java.util.*
 
 class KeyEntity : Entity("key") {
     init {
-        val rectRenderable = RectRenderable(MutRect(0.0, 0.0, 100.0, 100.0))
-        rectRenderable.color = Color.RED
-        addComponent(rectRenderable)
+        addComponent(RectRenderable(MutRect(0.0, 0.0, 100.0, 20.0)))
+        val textRenderable = TextRenderable()
+        textRenderable.setSpacing(2.5)
+        addComponent(textRenderable)
         addComponent(KeyBehavior())
     }
 }
@@ -24,11 +25,41 @@ class KeyBehavior : Behavior() {
 class KeyCalibration : Entity("keyCalibration") {
     init {
         addComponent(KeyCalibrationBehavior())
+        addComponent(RandomRectAddBehavior())
     }
 }
 
 private const val CREATION_DELAY_VARIATION = 0.2
 private const val MIN_CREATION_DELAY = 0.5
+
+class RandomRectAddBehavior : Behavior() {
+    private val random = Random()
+
+    private lateinit var camera: Camera
+
+    private var counter = random.nextDouble() * CREATION_DELAY_VARIATION
+
+    private fun resetCounter() {
+        counter = MIN_CREATION_DELAY + (random.nextDouble() * CREATION_DELAY_VARIATION)
+    }
+
+    override fun setup() {
+        camera = sceneFacade.getMainCamera().camera
+        enabled = false
+    }
+
+    override fun update(dt: Double) {
+        counter -= dt
+        if (counter <= 0) {
+            val point = random.randomPointIn(camera.renderRegion).toMutable()
+            camera.viewportToWorld(point, point)
+            val entity = sceneFacade.createEntity(::KeyEntity, parent = entity)
+            entity.findComponent<Renderable>()?.color = Color(random.nextInt())
+            entity.origin.set(point)
+            resetCounter()
+        }
+    }
+}
 
 class KeyCalibrationBehavior : Behavior() {
 
@@ -36,12 +67,6 @@ class KeyCalibrationBehavior : Behavior() {
 
     private lateinit var camera: Camera
     private lateinit var cameraCalibration: CameraCalibrationState
-
-    private var counter = random.nextDouble() * CREATION_DELAY_VARIATION
-
-    private fun resetCounter() {
-        counter = MIN_CREATION_DELAY + (random.nextDouble() * CREATION_DELAY_VARIATION)
-    }
 
     override fun setup() {
         camera = sceneFacade.getMainCamera().camera
@@ -59,21 +84,9 @@ class KeyCalibrationBehavior : Behavior() {
         entity.findChildren<KeyEntity>().flatMap { it.findComponents<Renderable>() }.forEach { it.enabled = false }
     }
 
-    override fun update(dt: Double) {
-        counter -= dt
-        if (counter <= 0) {
-            val point = random.randomPointIn(camera.renderRegion).toMutable()
-            camera.viewportToWorld(point, point)
-            val entity = sceneFacade.createEntity(::KeyEntity, parent = entity)
-            entity.findComponent<Renderable>()?.color = Color(random.nextInt())
-            entity.origin.set(point)
-            resetCounter()
-        }
-    }
-
     private fun updateTransform(calibrationPoints: List<MutPoint>) {
         assert(calibrationPoints.size == 4)
-        val srcQuad = camera.region.toQuad()
+        val srcQuad = Rect(0.0, 0.0, 470.0, 170.0).toQuad()
         val dstQuad = createQuadFromPoints(calibrationPoints.toTypedArray())
         val transformation = Transformation(srcQuad, dstQuad)
         camera.transform = transformation
@@ -81,9 +94,13 @@ class KeyCalibrationBehavior : Behavior() {
 
     override fun onMouseClicked(event: MouseClickEvent) {
         val entity = sceneFacade.createEntity(::KeyEntity, parent = entity)
-        entity.findComponent<Renderable>()?.color = Color(random.nextInt())
+        val color = Color(random.nextInt())
+        val textRenderable = entity.findComponent<TextRenderable>()
+        textRenderable?.text = color.toString()
+        val rect = entity.findComponent<RectRenderable>()
+        rect?.color = color
+        rect?.rect?.updateFrom(textRenderable?.pointArray?.boundingBox!!)
         camera.viewportToWorld(event.point, entity.origin)
     }
-
 
 }

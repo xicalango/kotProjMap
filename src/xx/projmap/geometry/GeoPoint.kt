@@ -20,6 +20,8 @@ interface GeoPoint : GeoEntity<Point, MutPoint> {
         else -> throw IllegalArgumentException("$n")
     }
 
+    override fun boundingBox(): GeoRect = Rect(x, y, 0.0, 0.0)
+
     override fun translated(point: GeoPoint): GeoPoint
 
     operator fun plus(point: GeoPoint) = translated(point)

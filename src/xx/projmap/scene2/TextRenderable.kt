@@ -6,9 +6,11 @@ import xx.projmap.geometry.Transform
 import xx.projmap.graphics.GraphicsAdapter
 import xx.projmap.graphics.render4x6ToPoints
 
-class TextRenderable(text: String) : Renderable() {
+class TextRenderable(text: String = "") : Renderable() {
 
-    private var pointArray: Array<Point> = emptyArray()
+    var pointArray: Array<Point> = emptyArray()
+        private set
+
     private var dstPointArray: Array<MutPoint> = emptyArray()
 
     var xPointSpacing: Double = 10.0
@@ -38,6 +40,11 @@ class TextRenderable(text: String) : Renderable() {
 
     init {
         this.text = text
+    }
+
+    fun setSpacing(spacing: Double) {
+        xPointSpacing = spacing
+        yPointSpacing = spacing
     }
 
     private fun resetPointArray() {

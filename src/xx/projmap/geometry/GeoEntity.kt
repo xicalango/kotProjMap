@@ -13,7 +13,21 @@ interface SimpleGeoEntity {
 
     fun translated(point: GeoPoint): SimpleGeoEntity
 
-    fun toNestedArrays(): Array<DoubleArray> = Array(size, { doubleArrayOf(getX(it), getY(it)) })
+    fun boundingBox(): GeoRect {
+        if (size == 0) {
+            return Rect(0.0, 0.0, 0.0, 0.0)
+        }
+        val xs = DoubleArray(size, this::getX)
+        val ys = DoubleArray(size, this::getY)
+
+        val minX = xs.min()!!
+        val maxX = xs.max()!!
+        val minY = ys.min()!!
+        val maxY = ys.max()!!
+
+        return Rect(minX, minY, maxX - minX, maxY - minY)
+    }
+
 }
 
 interface GeoEntity<ImmutableType, MutableType> : SimpleGeoEntity

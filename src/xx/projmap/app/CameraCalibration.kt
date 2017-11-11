@@ -8,7 +8,7 @@ import xx.projmap.scene2.*
 
 class CameraCalibrationPoint : Entity("calibrationPoint") {
 
-    private val activeColorChanger = ActiveColorChanger()
+    val activeColorChanger = ActiveColorChanger()
 
     init {
         origin.x = 500.0
@@ -52,14 +52,17 @@ class CameraCalibrationBehavior : Behavior() {
     }
 
     override fun onMouseClicked(event: MouseClickEvent) {
-        if (event.button != MouseButton.LEFT) {
+        if (event.button !in setOf(MouseButton.LEFT, MouseButton.RIGHT)) {
             return
         }
 
         val dstPoint = cameraCalibrationPoints[curPoint].origin
         camera.viewportToCamera(event.point, dstPoint)
         updateTransformation()
-        selectNextKey()
+
+        if (event.button == MouseButton.LEFT) {
+            selectNextKey()
+        }
     }
 
     private fun selectNextKey() {
@@ -78,7 +81,20 @@ class CameraCalibrationBehavior : Behavior() {
         when (event.keyChar) {
             ' ' -> selectNextKey()
             'p' -> storeCalibration()
+            'w' -> moveCurrentPoint(dy = -1.0)
+            's' -> moveCurrentPoint(dy = +1.0)
+            'a' -> moveCurrentPoint(dx = -1.0)
+            'd' -> moveCurrentPoint(dx = +1.0)
+            'W' -> moveCurrentPoint(dy = -10.0)
+            'S' -> moveCurrentPoint(dy = +10.0)
+            'A' -> moveCurrentPoint(dx = -10.0)
+            'D' -> moveCurrentPoint(dx = +10.0)
         }
+    }
+
+    private fun moveCurrentPoint(dx: Double = 0.0, dy: Double = 0.0) {
+        cameraCalibrationPoints[curPoint].origin.move(dx, dy)
+        updateTransformation()
     }
 
     private fun updateTransformation() {
@@ -90,8 +106,9 @@ class CameraCalibrationBehavior : Behavior() {
     }
 
     private fun loadCalibration() {
-        val renderRegion = camera.renderRegion.toMutable().copy()
+        val renderRegion = camera.region.copy()
         renderRegion.scale(.9)
+        renderRegion.move(10.0, 10.0)
         val defaultCalibrationPoints = renderRegion.toPointArray()
 
         (0 until 4).forEach { pointIndex ->
@@ -120,7 +137,7 @@ class CameraCalibrationBehavior : Behavior() {
     override fun onActivation() {
         curPoint = 0
         getCurrentCalibrationPoint()?.active = true
-        entity.findChildren<CameraCalibrationPoint>()
+        cameraCalibrationPoints
                 .flatMap { it.findComponents<Renderable>() }
                 .forEach { it.enabled = true }
 
@@ -131,7 +148,8 @@ class CameraCalibrationBehavior : Behavior() {
     }
 
     override fun onDeactivation() {
-        entity.findChildren<CameraCalibrationPoint>().flatMap { it.findComponents<Renderable>() }.forEach { it.enabled = false }
+        cameraCalibrationPoints.flatMap { it.findComponents<Renderable>() }.forEach { it.enabled = false }
+        cameraCalibrationPoints.forEach { it.activeColorChanger.active = false }
     }
 
 }

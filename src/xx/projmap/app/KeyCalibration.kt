@@ -42,7 +42,6 @@ class KeyCalibrationBehavior : Behavior() {
 
     private lateinit var textLines: List<TextLineEntity>
 
-    private val keyboardRect = MutRect()
     private val keyRect = MutRect()
 
     private var currentKey: KeyEntity? = null
@@ -68,12 +67,8 @@ class KeyCalibrationBehavior : Behavior() {
     }
 
     private fun loadConfig() {
-        keyboardRect.w = sceneFacade.config.getProperty("keyboard.width", "460").toDouble()
-        keyboardRect.h = sceneFacade.config.getProperty("keyboard.height", "170").toDouble()
-
         keyRect.w = config.getProperty("key.defaultWidth", "13").toDouble()
         keyRect.h = config.getProperty("key.defaultHeight", "13").toDouble()
-
     }
 
     private fun storeConfig() {
@@ -98,7 +93,7 @@ class KeyCalibrationBehavior : Behavior() {
     private fun updateTransform(calibrationPoints: List<MutPoint>) {
         assert(calibrationPoints.size == 4)
         val dstQuad = createQuadFromPoints(calibrationPoints.toTypedArray())
-        val transformation = Transformation(keyboardRect.toQuad(), dstQuad)
+        val transformation = Transformation(keyboardBehavior.keyboardQuad, dstQuad)
         camera.transform = transformation
     }
 

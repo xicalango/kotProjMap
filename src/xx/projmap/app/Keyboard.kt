@@ -1,10 +1,7 @@
 package xx.projmap.app
 
 import xx.projmap.events.KeyEvent
-import xx.projmap.geometry.GeoPoint
-import xx.projmap.geometry.GeoRect
-import xx.projmap.geometry.MutPoint
-import xx.projmap.geometry.MutRect
+import xx.projmap.geometry.*
 import xx.projmap.scene2.Behavior
 import xx.projmap.scene2.BoxCollider
 import xx.projmap.scene2.Entity
@@ -46,7 +43,14 @@ class KeyboardEntity : Entity("keyboard") {
 
 class KeyboardBehavior : Behavior() {
 
+    private val _keyboardRect: MutRect = MutRect()
     private lateinit var keyPropertiesFile: String
+
+    val keyboardRect: GeoRect
+        get() = _keyboardRect
+
+    val keyboardQuad: GeoQuad
+        get() = _keyboardRect.toQuad()
 
     override fun initialize() {
         keyPropertiesFile = config.getProperty("keyboard.properties.file", "keyboard.properties")
@@ -61,6 +65,9 @@ class KeyboardBehavior : Behavior() {
 
         val keyProperties = Properties()
         Files.newInputStream(path).use(keyProperties::load)
+
+        _keyboardRect.w = keyProperties.getProperty("keyboard.width", "460").toDouble()
+        _keyboardRect.h = keyProperties.getProperty("keyboard.height", "170").toDouble()
 
         val numKeys = keyProperties.getProperty("keys.count", "0").toInt()
 

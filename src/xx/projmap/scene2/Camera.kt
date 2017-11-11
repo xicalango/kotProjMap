@@ -7,7 +7,7 @@ import xx.projmap.graphics.RenderDestination
 import xx.projmap.graphics.withColor
 import java.awt.Color
 
-class Camera(region: GeoRect, private val renderDestination: RenderDestination, var transform: Transform = IdentityTransform()) : Component() {
+class Camera(region: GeoRect, private val renderDestination: RenderDestination, var transform: Transform = IdentityTransform) : Component() {
 
     val region: MutRect = region.toMutable()
 

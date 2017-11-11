@@ -18,9 +18,9 @@ interface SceneFacade {
     fun <T : Entity> createEntity(constructor: () -> T, parent: Entity? = null, name: String? = null): T
 }
 
-inline fun <reified T> SceneFacade.findEntity(): T? = entities.filterIsInstance<T>().firstOrNull()
+inline fun <reified T : Entity> SceneFacade.findEntity(): T? = entities.filterIsInstance<T>().firstOrNull()
 
-inline fun <reified T> SceneFacade.findEntities(): List<T> = entities.filterIsInstance<T>()
+inline fun <reified T : Entity> SceneFacade.findEntities(): List<T> = entities.filterIsInstance<T>()
 
 fun SceneFacade.findEntityByTag(tag: String): List<Entity> = entities.filter { it.tag == tag }
 
@@ -32,7 +32,7 @@ fun SceneFacade.getCameras(): List<CameraEntity> {
 
 fun SceneFacade.getMainCamera(): CameraEntity = getCameras().find { it.name == "mainCamera" } ?: getCameras().first()
 
-fun SceneFacade.createCamera(region: GeoRect, renderDestination: RenderDestination, transform: Transform = IdentityTransform(), name: String = "camera"): CameraEntity =
+fun SceneFacade.createCamera(region: GeoRect, renderDestination: RenderDestination, transform: Transform = IdentityTransform, name: String = "camera"): CameraEntity =
         createEntity({ CameraEntity(region, renderDestination, transform) }, name = name)
 
 class Scene(override val config: Properties = Properties()) : SceneFacade, RenderableScene {

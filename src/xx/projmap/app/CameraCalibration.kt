@@ -3,36 +3,18 @@ package xx.projmap.app
 import xx.projmap.events.KeyEvent
 import xx.projmap.events.MouseButton
 import xx.projmap.events.MouseClickEvent
-import xx.projmap.geometry.IdentityTransform
+import xx.projmap.geometry.*
 import xx.projmap.scene2.*
-import java.awt.Color
 
 class CameraCalibrationPoint : Entity("calibrationPoint") {
+
+    private val activeColorChanger = ActiveColorChanger()
+
     init {
         origin.x = 500.0
         origin.y = 500.0
-        addComponent(PointRenderable())
-        addComponent(ActiveColorChanger())
-    }
-}
-
-class ActiveColorChanger(private val activeColor: Color = Color.RED, private val inactiveColor: Color = Color.WHITE) : Behavior() {
-
-    private lateinit var renderable: Renderable
-
-    var active: Boolean = false
-        set(value) {
-            field = value
-            if (value) {
-                renderable.color = activeColor
-            } else {
-                renderable.color = inactiveColor
-            }
-        }
-
-    override fun initialize() {
-        renderable = entity.findComponent()!!
-
+        addComponent(PointRenderable(ignoreTransform = true))
+        addComponent(activeColorChanger)
     }
 }
 
@@ -49,8 +31,10 @@ class CameraCalibrationState : Entity("cameraCalibrationState") {
 class CameraCalibrationBehavior : Behavior() {
 
     private lateinit var cameraCalibrationPoints: Array<CameraCalibrationPoint>
-    private lateinit var calibrationCamera: CameraEntity
+    private lateinit var camera: Camera
     private lateinit var stateManager: StateManagerBehavior
+    private lateinit var keyboardBehavior: KeyboardBehavior
+
     private var curPoint = 0
 
     override fun initialize() {
@@ -58,9 +42,12 @@ class CameraCalibrationBehavior : Behavior() {
     }
 
     override fun setup() {
-        calibrationCamera = sceneFacade.getMainCamera()
+        camera = sceneFacade.getMainCamera().camera
         stateManager = sceneFacade.findEntity<StateManager>()?.findComponent()!!
+        keyboardBehavior = sceneFacade.findEntity<KeyboardEntity>()?.keyboardBehavior!!
+
         loadCalibration()
+        updateTransformation()
         enabled = true
     }
 
@@ -70,7 +57,8 @@ class CameraCalibrationBehavior : Behavior() {
         }
 
         val dstPoint = cameraCalibrationPoints[curPoint].origin
-        calibrationCamera.camera.viewportToCamera(event.point, dstPoint)
+        camera.viewportToCamera(event.point, dstPoint)
+        updateTransformation()
         selectNextKey()
     }
 
@@ -93,16 +81,31 @@ class CameraCalibrationBehavior : Behavior() {
         }
     }
 
-    private fun loadCalibration() {
-        (0 until 4).forEach { pointIndex ->
-            val loadedX = sceneFacade.config.getProperty("calibration.point$pointIndex.x")?.toDouble()
-            val loadedY = sceneFacade.config.getProperty("calibration.point$pointIndex.y")?.toDouble()
+    private fun updateTransformation() {
+        val calibrationPoints = cameraCalibrationPoints.map { it.origin }
+        assert(calibrationPoints.size == 4)
+        val dstQuad = createQuadFromPoints(calibrationPoints.toTypedArray())
+        val transformation = Transformation(keyboardBehavior.keyboardQuad, dstQuad)
+        camera.transform = transformation
+    }
 
-            if (loadedX != null && loadedY != null) {
-                val origin = cameraCalibrationPoints[pointIndex].origin
-                origin.x = loadedX
-                origin.y = loadedY
-            }
+    private fun loadCalibration() {
+        val renderRegion = camera.renderRegion.toMutable().copy()
+        renderRegion.scale(.9)
+        val defaultCalibrationPoints = renderRegion.toPointArray()
+
+        (0 until 4).forEach { pointIndex ->
+            val loadedX = config.getProperty("calibration.point$pointIndex.x")
+                    ?.toDouble()
+                    ?: defaultCalibrationPoints[pointIndex].x
+
+            val loadedY = config.getProperty("calibration.point$pointIndex.y")
+                    ?.toDouble()
+                    ?: defaultCalibrationPoints[pointIndex].y
+
+            val origin = cameraCalibrationPoints[pointIndex].origin
+            origin.x = loadedX
+            origin.y = loadedY
         }
     }
 
@@ -117,9 +120,14 @@ class CameraCalibrationBehavior : Behavior() {
     override fun onActivation() {
         curPoint = 0
         getCurrentCalibrationPoint()?.active = true
-        entity.findChildren<CameraCalibrationPoint>().flatMap { it.findComponents<Renderable>() }.forEach { it.enabled = true }
-        sceneFacade.findEntity<KeyboardEntity>()?.findChildren<KeyEntity>()?.flatMap { it.findComponents<Renderable>() }?.forEach { it.enabled = false }
-        calibrationCamera.camera.transform = IdentityTransform()
+        entity.findChildren<CameraCalibrationPoint>()
+                .flatMap { it.findComponents<Renderable>() }
+                .forEach { it.enabled = true }
+
+        sceneFacade.findEntity<KeyboardEntity>()
+                ?.findChildren<KeyEntity>()
+                ?.flatMap { it.findComponents<Renderable>() }
+                ?.forEach { it.enabled = true }
     }
 
     override fun onDeactivation() {

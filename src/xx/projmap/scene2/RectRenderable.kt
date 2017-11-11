@@ -2,8 +2,9 @@ package xx.projmap.scene2
 
 import xx.projmap.geometry.*
 import xx.projmap.graphics.GraphicsAdapter
+import java.awt.Color
 
-class RectRenderable(rect: GeoRect) : Renderable() {
+class RectRenderable(rect: GeoRect = MutRect(0.0, 0.0, 1.0, 1.0), color: Color = Color.WHITE, ignoreTransform: Boolean = false) : Renderable(color, ignoreTransform) {
 
     val rect = rect.toMutable()
 

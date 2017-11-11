@@ -3,8 +3,9 @@ package xx.projmap.scene2
 import xx.projmap.geometry.*
 import xx.projmap.graphics.GraphicsAdapter
 import xx.projmap.graphics.render4x6ToPoints
+import java.awt.Color
 
-class TextRenderable(text: String = "") : Renderable() {
+class TextRenderable(text: String = "", color: Color = Color.WHITE, ignoreTransform: Boolean = false) : Renderable(color, ignoreTransform) {
     override val boundingBox: GeoRect
         get() = pointArray.boundingBox + entity.position
 

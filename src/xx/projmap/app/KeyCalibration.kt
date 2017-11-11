@@ -86,10 +86,6 @@ class KeyCalibrationBehavior : Behavior() {
         textLines.flatMap { it.findComponents<Renderable>() }.forEach { it.enabled = true }
     }
 
-    override fun onDeactivation() {
-        textLines.flatMap { it.findComponents<Renderable>() }.forEach { it.enabled = false }
-    }
-
     private fun updateTransform(calibrationPoints: List<MutPoint>) {
         assert(calibrationPoints.size == 4)
         val dstQuad = createQuadFromPoints(calibrationPoints.toTypedArray())

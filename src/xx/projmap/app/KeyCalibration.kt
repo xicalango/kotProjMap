@@ -1,6 +1,7 @@
 package xx.projmap.app
 
 import xx.projmap.events.KeyEvent
+import xx.projmap.events.MouseButton
 import xx.projmap.events.MouseClickEvent
 import xx.projmap.geometry.*
 import xx.projmap.scene2.*
@@ -84,6 +85,7 @@ class KeyCalibrationBehavior : Behavior() {
             it.enabled = true
         }
         textLines.flatMap { it.findComponents<Renderable>() }.forEach { it.enabled = true }
+        updateText()
     }
 
     private fun updateTransform(calibrationPoints: List<MutPoint>) {
@@ -93,7 +95,26 @@ class KeyCalibrationBehavior : Behavior() {
         camera.transform = transformation
     }
 
-    override fun onMouseClicked(event: MouseClickEvent) {
+    override fun onMouseClicked(event: MouseClickEvent) = when (event.button) {
+        MouseButton.LEFT -> addKey(event)
+        MouseButton.RIGHT -> changeTextBaseline(event)
+        else -> Unit
+    }
+
+    private fun changeTextBaseline(event: MouseClickEvent) {
+        val worldPoint = camera.viewportToWorld(event.point)
+
+        val firstLineOrigin = textLines[0].origin.toImmutable()
+
+        val dx = worldPoint.x - firstLineOrigin.x
+        val dy = worldPoint.y - firstLineOrigin.y
+
+        textLines.forEach {
+            it.origin.move(dx, dy)
+        }
+    }
+
+    private fun addKey(event: MouseClickEvent) {
         val worldPoint = camera.viewportToWorld(event.point)
 
         val keyEntity = keyboardEntity.findChildren<KeyEntity>()
@@ -114,21 +135,21 @@ class KeyCalibrationBehavior : Behavior() {
     }
 
     private fun updateText() {
+        textLines[0].findComponent<TextRenderable>()?.text = "mode: $keyEnterMode"
         currentKey.let { key ->
             if (key == null) {
-                return
+                return@let
             }
 
             val keyRect = key.findComponent<RectRenderable>()?.rect
             val keyBehavior = key.findComponent<KeyBehavior>()
 
-            textLines[0].findComponent<TextRenderable>()?.text = "x: ${key.origin.x}"
-            textLines[1].findComponent<TextRenderable>()?.text = "y: ${key.origin.y}"
-            textLines[2].findComponent<TextRenderable>()?.text = "w: ${keyRect?.w}"
-            textLines[3].findComponent<TextRenderable>()?.text = "h: ${keyRect?.h}"
-            textLines[4].findComponent<TextRenderable>()?.text = "key: ${keyBehavior?.keyChar ?: ' '} / ${keyBehavior?.keyCode ?: -1}"
+            textLines[1].findComponent<TextRenderable>()?.text = "x: ${key.origin.x}"
+            textLines[2].findComponent<TextRenderable>()?.text = "y: ${key.origin.y}"
+            textLines[3].findComponent<TextRenderable>()?.text = "w: ${keyRect?.w}"
+            textLines[4].findComponent<TextRenderable>()?.text = "h: ${keyRect?.h}"
+            textLines[5].findComponent<TextRenderable>()?.text = "key: ${keyBehavior?.keyChar ?: ' '} / ${keyBehavior?.keyCode ?: -1}"
         }
-        textLines[5].findComponent<TextRenderable>()?.text = "mode: $keyEnterMode"
     }
 
     override fun onKeyReleased(event: KeyEvent) {

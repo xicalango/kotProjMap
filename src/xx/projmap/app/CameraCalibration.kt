@@ -11,8 +11,6 @@ class CameraCalibrationPoint : Entity("calibrationPoint") {
     val activeColorChanger = ActiveColorChanger()
 
     init {
-        origin.x = 500.0
-        origin.y = 500.0
         addComponent(PointRenderable(ignoreTransform = true))
         addComponent(activeColorChanger)
     }

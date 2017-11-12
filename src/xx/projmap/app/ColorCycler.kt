@@ -21,7 +21,7 @@ class ColorCyclerBehavior : Behavior() {
     private val length = 20
 
     override fun setup() {
-        keyboardEntity = sceneFacade.findEntity()!!
+        keyboardEntity = scene.findEntity()!!
         enabled = false
     }
 

@@ -40,9 +40,9 @@ class CameraCalibrationBehavior : Behavior() {
     }
 
     override fun setup() {
-        camera = sceneFacade.getMainCamera().camera
-        stateManager = sceneFacade.findEntity<StateManager>()?.findComponent()!!
-        keyboardBehavior = sceneFacade.findEntity<KeyboardEntity>()?.keyboardBehavior!!
+        camera = scene.getMainCamera().camera
+        stateManager = scene.findEntity<StateManager>()?.findComponent()!!
+        keyboardBehavior = scene.findEntity<KeyboardEntity>()?.keyboardBehavior!!
 
         loadCalibration()
         updateTransformation()
@@ -127,8 +127,8 @@ class CameraCalibrationBehavior : Behavior() {
     private fun storeCalibration() {
         (0 until 4).forEach { pointIndex ->
             val origin = cameraCalibrationPoints[pointIndex].origin
-            sceneFacade.config.setProperty("calibration.point$pointIndex.x", origin.x.toString())
-            sceneFacade.config.setProperty("calibration.point$pointIndex.y", origin.y.toString())
+            scene.config.setProperty("calibration.point$pointIndex.x", origin.x.toString())
+            scene.config.setProperty("calibration.point$pointIndex.y", origin.y.toString())
         }
     }
 
@@ -139,7 +139,7 @@ class CameraCalibrationBehavior : Behavior() {
                 .flatMap { it.findComponents<Renderable>() }
                 .forEach { it.enabled = true }
 
-        sceneFacade.findEntity<KeyboardEntity>()
+        scene.findEntity<KeyboardEntity>()
                 ?.findChildren<KeyEntity>()
                 ?.flatMap { it.findComponents<Renderable>() }
                 ?.forEach { it.enabled = true }

@@ -94,6 +94,10 @@ class KeyboardBehavior : Behavior() {
         val keyProperties = Properties()
 
         val children = entity.findChildren<KeyEntity>()
+
+        keyProperties.setProperty("keyboard.width", _keyboardRect.w.toString())
+        keyProperties.setProperty("keyboard.height", _keyboardRect.h.toString())
+
         keyProperties.setProperty("keys.count", children.size.toString())
         children.sortedWith(Comparator { k1, k2 -> -k1.origin.compareToWithDelta(k2.origin, 5.0) })
                 .forEachIndexed { index, key ->
@@ -119,7 +123,7 @@ class KeyboardBehavior : Behavior() {
     }
 
     fun createNewKey(worldPoint: GeoPoint, keyRect: GeoRect): KeyEntity {
-        val entity = sceneFacade.createEntity(::KeyEntity, parent = entity)
+        val entity = scene.createEntity(::KeyEntity, parent = entity)
         entity.origin.set(worldPoint)
 
         val rect = entity.findComponent<RectRenderable>()
@@ -128,15 +132,7 @@ class KeyboardBehavior : Behavior() {
         return entity
     }
 
-    fun findEntityByChar(char: Char): KeyEntity? = entity.findChildren<KeyEntity>().find {
-        it.findComponent<KeyBehavior>()?.keyChar == char
-    }
-
-    fun findEntityByCode(code: Int): KeyEntity? = entity.findChildren<KeyEntity>().find {
-        it.findComponent<KeyBehavior>()?.keyCode == code
-    }
-
-    fun findEntityByEvent(event: KeyEvent) = entity.findChildren<KeyEntity>().find {
+    fun findKeyByEvent(event: KeyEvent) = entity.findChildren<KeyEntity>().find {
         val keyBehavior = it.findComponent<KeyBehavior>()
         keyBehavior?.keyCode == event.keyCode
     }

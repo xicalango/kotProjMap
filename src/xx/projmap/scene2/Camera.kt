@@ -20,8 +20,8 @@ class Camera(region: GeoRect, private val renderDestination: RenderDestination, 
         startFrame(graphicsAdapter)
 
         try {
-            synchronized(sceneFacade.entities) {
-                sceneFacade.entities.forEach { it.render(graphicsAdapter, transform) }
+            synchronized(scene.entities) {
+                scene.entities.forEach { it.render(graphicsAdapter, transform) }
             }
         } finally {
             finishFrame(graphicsAdapter)

@@ -57,12 +57,12 @@ class KeyCalibrationBehavior : Behavior() {
     }
 
     override fun setup() {
-        camera = sceneFacade.getMainCamera().camera
-        val stateManagerEntity = sceneFacade.findEntity<StateManager>()!!
+        camera = scene.getMainCamera().camera
+        val stateManagerEntity = scene.findEntity<StateManager>()!!
         stateManager = stateManagerEntity.findComponent()!!
         cameraCalibration = stateManagerEntity.findChild()!!
 
-        keyboardEntity = sceneFacade.findEntity()!!
+        keyboardEntity = scene.findEntity()!!
         keyboardBehavior = keyboardEntity.findComponent()!!
         enabled = false
     }
@@ -167,7 +167,7 @@ class KeyCalibrationBehavior : Behavior() {
     }
 
     private fun findKey(event: KeyEvent) {
-        val key = keyboardBehavior.findEntityByEvent(event)
+        val key = keyboardBehavior.findKeyByEvent(event)
         if (key != null) {
             selectKey(key)
             updateText()

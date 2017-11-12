@@ -12,7 +12,7 @@ import xx.projmap.graphics.GraphicsAdapter
 
 open class Entity(var name: String = "entity", origin: GeoPoint = Point()) {
 
-    lateinit var sceneFacade: SceneFacade
+    lateinit var scene: SceneFacade
 
     protected val children: MutableList<Entity> = ArrayList()
 
@@ -98,7 +98,7 @@ open class Entity(var name: String = "entity", origin: GeoPoint = Point()) {
     internal inline fun <reified T : Component> findComponents(): List<T> = components.filterIsInstance<T>()
 
     fun initialize(scene: SceneFacade) {
-        this.sceneFacade = scene
+        this.scene = scene
         allComponents.forEach { it.initialize() }
         children.forEach { it.initialize(scene) }
     }

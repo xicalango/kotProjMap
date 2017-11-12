@@ -119,16 +119,16 @@ class KeyShootBehavior : Behavior() {
     private var lineY = -300.0
 
     override fun setup() {
-        keyboardEntity = sceneFacade.findEntity()!!
+        keyboardEntity = scene.findEntity()!!
         keyboardBehavior = keyboardEntity.findComponent()!!
         enabled = false
     }
 
     override fun onKeyReleased(event: KeyEvent) {
-        val keyEntity = keyboardBehavior.findEntityByEvent(event)
+        val keyEntity = keyboardBehavior.findKeyByEvent(event)
 
         if (keyEntity != null) {
-            val flyingLetter = sceneFacade.createEntity(::FlyingLetter, parent = entity, name = "key_${keyEntity.keyBehavior.keyChar}")
+            val flyingLetter = scene.createEntity(::FlyingLetter, parent = entity, name = "key_${keyEntity.keyBehavior.keyChar}")
             flyingLetter.origin.set(keyEntity.origin)
 
             flyingLetter.flyingLetterBehavior.destination.x = destinationX
@@ -149,7 +149,7 @@ class KeyShootBehavior : Behavior() {
             val color = random.nextFloat()
             flyingLetter.flyingLetterBehavior.color = color
 
-            val decayingRect = sceneFacade.createEntity(::DecayingRect, parent = entity, name = "decay_${keyEntity.keyBehavior.keyChar}")
+            val decayingRect = scene.createEntity(::DecayingRect, parent = entity, name = "decay_${keyEntity.keyBehavior.keyChar}")
             decayingRect.origin.set(keyEntity.origin)
             decayingRect.rectRenderable.rect.updateFrom(keyEntity.rectRenderable.rect)
             decayingRect.decayingRectBehavior.color = color

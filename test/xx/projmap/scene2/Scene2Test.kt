@@ -46,8 +46,8 @@ internal class Scene2Test {
                         }
 
                         override fun setup() {
-                            camera = sceneFacade.getCameras().find { it.name == "mainCamera" }?.camera!!
-                            subCamera = sceneFacade.getCameras().find { it.name == "subCamera" }?.camera!!
+                            camera = this.scene.getCameras().find { it.name == "mainCamera" }?.camera!!
+                            subCamera = this.scene.getCameras().find { it.name == "subCamera" }?.camera!!
                         }
 
                         override fun update(dt: Double) {
@@ -67,7 +67,7 @@ internal class Scene2Test {
                             println("subCam: $subCam")
                             println("subWorld: $subWorld")
 
-                            val rectEntity = entity.sceneFacade.createEntity(::RectEntity)
+                            val rectEntity = entity.scene.createEntity(::RectEntity)
                             rectEntity.origin.set(subWorld)
                         }
                     })

@@ -18,11 +18,11 @@ abstract class Component(enabled: Boolean = true) {
             }
         }
 
-    val sceneFacade: SceneFacade
-        get() = entity.sceneFacade
+    val scene: SceneFacade
+        get() = entity.scene
 
     val config: Properties
-        get() = sceneFacade.config
+        get() = scene.config
 
     open fun initialize() {
 

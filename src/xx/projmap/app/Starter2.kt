@@ -36,7 +36,8 @@ private fun storeProperties(fileName: String, properties: Properties) {
 
 fun main(args: Array<String>) {
 
-    val config = loadProperties(args.getOrElse(0, { CONFIG_FILE_NAME }))
+    val configFileName = args.getOrElse(0, { CONFIG_FILE_NAME })
+    val config = loadProperties(configFileName)
 
     val simulation = Simulation(config = config)
 
@@ -54,7 +55,7 @@ fun main(args: Array<String>) {
 
     simulation.run(frame.projectionPanel)
 
-    storeProperties(CONFIG_FILE_NAME, config)
+    storeProperties(configFileName, config)
 
     System.exit(0)
 }

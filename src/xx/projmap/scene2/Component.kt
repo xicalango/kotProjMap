@@ -24,36 +24,20 @@ abstract class Component(enabled: Boolean = true) {
     val config: Properties
         get() = scene.config
 
-    open fun initialize() {
+    open fun initialize() = Unit
 
-    }
+    open fun setup() = Unit
 
-    open fun setup() {
+    open fun update(dt: Double) = Unit
 
-    }
+    open fun onKeyPressed(event: KeyEvent) = Unit
 
-    open fun update(dt: Double) {
+    open fun onKeyReleased(event: KeyEvent) = Unit
 
-    }
+    open fun onMouseClicked(event: MouseClickEvent) = Unit
 
-    open fun onKeyPressed(event: KeyEvent) {
+    open fun onActivation() = Unit
 
-    }
-
-    open fun onKeyReleased(event: KeyEvent) {
-
-    }
-
-    open fun onMouseClicked(event: MouseClickEvent) {
-
-    }
-
-    open fun onActivation() {
-
-    }
-
-    open fun onDeactivation() {
-
-    }
+    open fun onDeactivation() = Unit
 
 }

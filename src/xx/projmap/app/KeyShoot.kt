@@ -1,6 +1,8 @@
 package xx.projmap.app
 
 import xx.projmap.events.KeyEvent
+import xx.projmap.events.MouseButton
+import xx.projmap.events.MouseClickEvent
 import xx.projmap.geometry.MutPoint
 import xx.projmap.geometry.MutRect
 import xx.projmap.graphics.DrawStyle
@@ -111,12 +113,17 @@ class KeyShootBehavior : Behavior() {
     private lateinit var keyboardEntity: KeyboardEntity
     private lateinit var keyboardBehavior: KeyboardBehavior
 
-    private val minX = -70.0
+    private var minX = -70.0
     private val maxX = 600.0
 
-    private var destinationX = minX
+    private var minY = -300.0
+    private val maxY = 0.0
 
-    private var lineY = -300.0
+    private val xStep = 20.0
+    private val yStep = 25.0
+
+    private var lineX = minX
+    private var lineY = minY
 
     override fun setup() {
         keyboardEntity = scene.findEntity()!!
@@ -128,19 +135,26 @@ class KeyShootBehavior : Behavior() {
         val keyEntity = keyboardBehavior.findKeyByEvent(event)
 
         if (keyEntity != null) {
+            if (keyEntity.keyBehavior.keyCode == 10) {
+                lineY += 25.0
+                lineX = minX
+
+                if (lineY >= maxY) {
+                    lineY = minY
+                }
+                return
+            }
+
             val flyingLetter = scene.createEntity(::FlyingLetter, parent = entity, name = "key_${keyEntity.keyBehavior.keyChar}")
             flyingLetter.origin.set(keyEntity.origin)
 
-            flyingLetter.flyingLetterBehavior.destination.x = destinationX
+            flyingLetter.flyingLetterBehavior.destination.x = lineX
             flyingLetter.flyingLetterBehavior.destination.y = lineY
 
-            destinationX += 20.0
-            if (destinationX >= maxX) {
-                destinationX = minX
-                lineY += 25.0
-                if (lineY >= -10.0) {
-                    lineY = -300.0
-                }
+            lineX += xStep
+            if (lineX >= maxX) {
+                lineX = minX
+                lineY += yStep
             }
 
             flyingLetter.flyingLetterBehavior.velocity = -250.0 + random.nextInt(50)
@@ -157,12 +171,22 @@ class KeyShootBehavior : Behavior() {
 
     }
 
+    override fun onMouseClicked(event: MouseClickEvent) {
+        if (event.button == MouseButton.RIGHT) {
+            val worldPoint = scene.getMainCamera().camera.viewportToWorld(event.point)
+            lineX = worldPoint.x
+            lineY = worldPoint.y
+            minX = worldPoint.x
+            minY = worldPoint.y
+        }
+    }
+
     override fun onActivation() {
         keyboardEntity.findChildren<KeyEntity>().map { it.findComponent<RectRenderable>() }.forEach { renderable ->
             renderable?.color = Color.WHITE
             renderable?.drawStyle = DrawStyle.LINE
         }
-        destinationX = minX
+        lineX = minX
     }
 
     override fun onDeactivation() {

@@ -171,19 +171,14 @@ class KeyCalibrationBehavior : Behavior() {
     }
 
     private fun findKey(event: KeyEvent) {
-        val key = keyboardBehavior.findKeyByEvent(event)
-        if (key != null) {
+        keyboardBehavior.findKeyByEvent(event)?.let { key ->
             selectKey(key)
             updateText()
         }
     }
 
     private fun handleKeyCharInput(event: KeyEvent) {
-        currentKey.let { key ->
-            if (key == null) {
-                return
-            }
-
+        currentKey?.let { key ->
             val keyBehavior = key.findComponent<KeyBehavior>()
             keyBehavior?.keyChar = event.keyChar
             keyBehavior?.keyCode = event.keyCode
@@ -193,7 +188,6 @@ class KeyCalibrationBehavior : Behavior() {
 
     private fun handleCommand(event: KeyEvent) {
         when (event.keyChar) {
-            'c' -> stateManager.nextState = State.CAMERA_CALIBRATION
             'w' -> moveKey(dy = -1.0)
             's' -> moveKey(dy = +1.0)
             'a' -> moveKey(dx = -1.0)
@@ -223,6 +217,14 @@ class KeyCalibrationBehavior : Behavior() {
                 storeConfig()
                 keyboardBehavior.storeKeys()
             }
+            'c' -> {
+                currentKey?.rectRenderable?.rect?.let { rect ->
+                    keyRect.updateFrom(rect)
+                }
+            }
+            'v' -> {
+                currentKey?.rectRenderable?.rect?.updateFrom(keyRect)
+            }
             ' ' -> {
                 duplicateKey()
             }
@@ -230,17 +232,14 @@ class KeyCalibrationBehavior : Behavior() {
     }
 
     private fun duplicateKey() {
-        val key = currentKey
-
-        if (key != null) {
+        currentKey?.let { key ->
             val newKey = keyboardBehavior.createNewKey(key.origin, key.findComponent<RectRenderable>()?.rect!!)
             selectKey(newKey)
         }
     }
 
     private fun removeKey() {
-        val currentKey = this.currentKey
-        if (currentKey != null) {
+        this.currentKey?.let { currentKey ->
             currentKey.destroy = true
             keyboardEntity.findChild<KeyEntity>().let {
                 if (it != null) {

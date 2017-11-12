@@ -2,8 +2,10 @@ package xx.projmap.app
 
 import xx.projmap.app.State.*
 import xx.projmap.events.KeyEvent
+import xx.projmap.graphics.DrawStyle
 import xx.projmap.scene2.Behavior
 import xx.projmap.scene2.Entity
+import xx.projmap.scene2.findEntity
 
 enum class State {
     CAMERA_CALIBRATION,
@@ -29,6 +31,8 @@ class StateManagerBehavior : Behavior() {
     private lateinit var keyCalibrationState: KeyCalibrationBehavior
     private lateinit var colorCyclerState: ColorCyclerBehavior
     private lateinit var keyShootBehavior: KeyShootBehavior
+
+    private var drawStyle: DrawStyle = DrawStyle.LINE
 
     var nextState: State? = null
     var currentState: State = CAMERA_CALIBRATION
@@ -79,10 +83,22 @@ class StateManagerBehavior : Behavior() {
 
     override fun onKeyReleased(event: KeyEvent) {
         when (event.keyCode) {
-            112 -> nextState = CAMERA_CALIBRATION
-            113 -> nextState = KEY_CALIBRATION
-            114 -> nextState = COLOR_CYCLER
-            115 -> nextState = KEY_SHOOT
+            112 -> nextState = CAMERA_CALIBRATION // F1
+            113 -> nextState = KEY_CALIBRATION // F2
+            114 -> nextState = COLOR_CYCLER // F3
+            115 -> nextState = KEY_SHOOT // F4
+            122 -> changeFillStyle()
+        }
+    }
+
+    private fun changeFillStyle() {
+        drawStyle = when (drawStyle) {
+            DrawStyle.LINE -> DrawStyle.FILL
+            DrawStyle.FILL -> DrawStyle.LINE
+        }
+
+        scene.findEntity<KeyboardEntity>()?.findChildren<KeyEntity>()?.map(KeyEntity::rectRenderable)?.forEach {
+            it.drawStyle = drawStyle
         }
     }
 

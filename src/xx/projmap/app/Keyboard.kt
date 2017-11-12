@@ -2,6 +2,7 @@ package xx.projmap.app
 
 import xx.projmap.events.KeyEvent
 import xx.projmap.geometry.*
+import xx.projmap.graphics.DrawStyle
 import xx.projmap.scene2.Behavior
 import xx.projmap.scene2.BoxCollider
 import xx.projmap.scene2.Entity
@@ -18,6 +19,7 @@ class KeyEntity : Entity("key") {
 
     init {
         addComponent(rectRenderable)
+        rectRenderable.drawStyle = DrawStyle.LINE
         addComponent(keyBehavior)
         addComponent(BoxCollider(rectRenderable))
         addComponent(ActiveColorChanger())

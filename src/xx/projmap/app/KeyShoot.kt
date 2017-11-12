@@ -190,10 +190,6 @@ class KeyShootBehavior : Behavior() {
     }
 
     override fun onDeactivation() {
-        keyboardEntity.findChildren<KeyEntity>().map { it.findComponent<RectRenderable>() }.forEach { renderable ->
-            renderable?.drawStyle = DrawStyle.FILL
-        }
-
         entity.findChildren<FlyingLetter>().forEach { it.destroy = true }
     }
 

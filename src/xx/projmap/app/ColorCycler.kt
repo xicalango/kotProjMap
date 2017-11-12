@@ -1,5 +1,6 @@
 package xx.projmap.app
 
+import xx.projmap.graphics.DrawStyle
 import xx.projmap.scene2.*
 import java.awt.Color
 
@@ -51,7 +52,14 @@ class ColorCyclerBehavior : Behavior() {
     override fun onActivation() {
         keyboardEntity.findChildren<KeyEntity>().flatMap { it.findComponents<Renderable>() }.forEach {
             it.color = Color.BLACK
+            it.drawStyle = DrawStyle.FILL
             it.enabled = true
+        }
+    }
+
+    override fun onDeactivation() {
+        keyboardEntity.findChildren<KeyEntity>().flatMap { it.findComponents<Renderable>() }.forEach {
+            it.drawStyle = DrawStyle.LINE
         }
     }
 

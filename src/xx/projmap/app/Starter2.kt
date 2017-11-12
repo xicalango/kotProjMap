@@ -36,7 +36,7 @@ private fun storeProperties(fileName: String, properties: Properties) {
 
 fun main(args: Array<String>) {
 
-    val config = loadProperties(CONFIG_FILE_NAME)
+    val config = loadProperties(args.getOrElse(0, { CONFIG_FILE_NAME }))
 
     val simulation = Simulation(config = config)
 

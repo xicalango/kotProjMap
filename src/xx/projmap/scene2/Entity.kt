@@ -30,12 +30,7 @@ open class Entity(var name: String = "entity", origin: GeoPoint = Point()) {
 
     val position: GeoPoint
         get() {
-            val par = parent
-            return if (par == null) {
-                origin
-            } else {
-                origin + par.position
-            }
+            return parent?.let { origin + it.position } ?: origin
         }
 
     val enabledComponents: List<Component>

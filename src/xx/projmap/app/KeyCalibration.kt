@@ -140,10 +140,7 @@ class KeyCalibrationBehavior : Behavior() {
 
     private fun updateText() {
         textLines[0].findComponent<TextRenderable>()?.text = "mode: $keyEnterMode"
-        currentKey.let { key ->
-            if (key == null) {
-                return@let
-            }
+        currentKey?.let { key ->
 
             val keyRect = key.findComponent<RectRenderable>()?.rect
             val keyBehavior = key.findComponent<KeyBehavior>()

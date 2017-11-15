@@ -16,7 +16,9 @@ class Simulation(config: Properties = Properties()) {
 
     private val simulationConfig: SimulationConfig = simulationConfigFromProperties(config)
 
-    private var frameCounter = 0
+    var frameCounter = 0
+        private set
+
     private var lastFrameCounter = 0
     private var last = System.currentTimeMillis()
 
@@ -24,7 +26,7 @@ class Simulation(config: Properties = Properties()) {
 
     fun run(renderer: Renderer) {
 
-        scene.initialize()
+        scene.initialize(this)
 
         var lastTimestamp = System.nanoTime()
 

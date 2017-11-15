@@ -24,6 +24,9 @@ abstract class Component(enabled: Boolean = true) {
     val config: Properties
         get() = scene.config
 
+    val simulation: Simulation
+        get() = scene.simulation
+
     open fun initialize() = Unit
 
     open fun setup() = Unit

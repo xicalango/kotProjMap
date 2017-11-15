@@ -15,6 +15,8 @@ interface SceneFacade {
 
     val config: Properties
 
+    val simulation: Simulation
+
     fun <T : Entity> createEntity(constructor: () -> T, parent: Entity? = null, name: String? = null): T
 }
 
@@ -40,6 +42,9 @@ class Scene(override val config: Properties = Properties()) : SceneFacade, Rende
     override val entities: MutableList<Entity> = ArrayList()
 
     private val addEntities: MutableList<Entity> = ArrayList()
+
+    override lateinit var simulation: Simulation
+        private set
 
     override val allEntities: List<Entity>
         get() = entities.flatMap(Entity::allChildren)
@@ -69,7 +74,8 @@ class Scene(override val config: Properties = Properties()) : SceneFacade, Rende
         }
     }
 
-    fun initialize() {
+    fun initialize(simulation: Simulation) {
+        this.simulation = simulation
         startFrame()
     }
 

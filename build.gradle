@@ -1,16 +1,37 @@
+
 buildscript {
-    ext.kotlin_version = '1.1.51'
+    ext.versions = [
+            kotlin: '1.1.60',
+            ejml: '0.32',
+            moshi: '1.5.0'
+    ]
 
     repositories {
         mavenCentral()
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
     }
 }
+apply plugin: 'kotlin'
 
-plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.1.51"
-//    id "org.jetbrains.intellij" version "0.2.17"
+repositories {
+    mavenCentral()
+}
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:${versions.kotlin}"
+    compile group: 'org.ejml', name: 'ejml-all', version: versions.ejml
+    compile "com.squareup.moshi:moshi:${versions.moshi}"
+    compile "com.squareup.moshi:moshi-kotlin:${versions.moshi}"
+}
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }

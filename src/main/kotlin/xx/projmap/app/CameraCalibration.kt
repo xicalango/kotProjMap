@@ -100,8 +100,7 @@ class CameraCalibrationBehavior : Behavior() {
     }
 
     private fun updateTransformation() {
-        val calibrationPoints = cameraCalibrationPoints.map { it.origin }
-        assert(calibrationPoints.size == 4)
+        val calibrationPoints = cameraCalibrationPoints.map(CameraCalibrationPoint::origin)
         val dstQuad = createQuadFromPoints(calibrationPoints.toTypedArray())
         val transformation = Transformation(keyboardBehavior.keyboardQuad, dstQuad)
         camera.transform = transformation
@@ -120,9 +119,7 @@ class CameraCalibrationBehavior : Behavior() {
     }
 
     private fun storeCalibration() {
-        cameraCalibrationPoints.forEachIndexed { index, cameraCalibrationPoint ->
-            appConfig.calibrationPoints[index].set(cameraCalibrationPoint.origin)
-        }
+        appConfig.calibrationPoints = cameraCalibrationPoints.map { it.origin.copy() }
     }
 
     override fun onActivation() {

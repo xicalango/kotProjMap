@@ -52,6 +52,6 @@ compileTestKotlin {
 
 shadowJar {
     manifest {
-        attributes 'Main-Class': 'xx.projmap.app.Starter2'
+        attributes 'Main-Class': 'xx.projmap.app.Starter2Kt'
     }
 }

@@ -3,6 +3,7 @@ package xx.projmap.app
 import okio.Okio
 import xx.projmap.events.KeyEvent
 import xx.projmap.geometry.*
+import xx.projmap.getInputStream
 import xx.projmap.graphics.DrawStyle
 import xx.projmap.moshi
 import xx.projmap.scene2.*
@@ -27,7 +28,7 @@ data class KeyResource(val x: Double, val y: Double, val w: Double, val h: Doubl
 
 }
 
-data class KeyboardResource(val width: Double, val height: Double, val keys: List<KeyResource>)
+data class KeyboardResource(val width: Double, val height: Double, val keys: List<KeyResource> = emptyList())
 
 val keyboardResourceAdapter = moshi.adapter(KeyboardResource::class.java).indent("  ")
 
@@ -60,7 +61,7 @@ class KeyboardEntity : Entity("keyboard") {
 
 class KeyboardBehavior : Behavior() {
 
-    private val _keyboardRect: MutRect = MutRect()
+    private val _keyboardRect: MutRect = MutRect(w = 1.0, h = 1.0)
     private lateinit var keyboardFilename: String
     private lateinit var appConfig: AppConfig
 
@@ -116,12 +117,9 @@ class KeyboardBehavior : Behavior() {
     }
 
     private fun loadKeys() {
-        val path = Paths.get(keyboardFilename)
-        if (!Files.exists(path)) {
-            return
-        }
+        val inputStream = getInputStream(keyboardFilename, KeyboardResource::class.java) ?: return
 
-        Okio.buffer(Okio.source(path))
+        Okio.buffer(Okio.source(inputStream))
                 .use(keyboardResourceAdapter::fromJson)
                 ?.let(this::loadFromKeyboardResource)
     }

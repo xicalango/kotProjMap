@@ -5,7 +5,6 @@ import xx.projmap.events.EventQueue
 import xx.projmap.events.KeyEvent
 import xx.projmap.events.QuitEvent
 import xx.projmap.graphics.Renderer
-import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
@@ -44,11 +43,16 @@ class Simulation() {
             val dt = (now - lastTimestamp) / TimeUnit.SECONDS.toNanos(1).toDouble()
             lastTimestamp = now
 
-            scene.startFrame()
-            scene.update(dt)
-            val events = eventQueue.currentEvents
-            handleInternalEvents(events)
-            scene.handleEvents(events)
+            try {
+                scene.startFrame()
+                scene.update(dt)
+                val events = eventQueue.currentEvents
+                handleInternalEvents(events)
+                scene.handleEvents(events)
+            } catch (e: Exception) {
+                running = false
+                throw e
+            }
 
             if (simulationConfig.simulationFpsLimit != null) {
                 Thread.sleep(1000 / simulationConfig.simulationFpsLimit.toLong())

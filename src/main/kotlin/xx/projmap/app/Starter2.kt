@@ -34,7 +34,6 @@ fun main(args: Array<String>) {
 
     try {
         simulation.run(frame.projectionPanel)
-
         storeAppConfig(configFilename, config)
     } finally {
         System.exit(0)

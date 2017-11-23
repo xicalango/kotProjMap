@@ -3,7 +3,9 @@ package xx.projmap.app
 import xx.projmap.events.KeyEvent
 import xx.projmap.events.MouseButton
 import xx.projmap.events.MouseClickEvent
-import xx.projmap.geometry.*
+import xx.projmap.geometry.Transformation
+import xx.projmap.geometry.createQuadFromPoints
+import xx.projmap.geometry.toPointArray
 import xx.projmap.scene2.*
 
 class CameraCalibrationPoint : Entity("calibrationPoint") {
@@ -32,6 +34,7 @@ class CameraCalibrationBehavior : Behavior() {
     private lateinit var camera: Camera
     private lateinit var stateManager: StateManagerBehavior
     private lateinit var keyboardBehavior: KeyboardBehavior
+    private lateinit var appConfig: AppConfig
 
     private var curPoint = 0
 
@@ -40,6 +43,7 @@ class CameraCalibrationBehavior : Behavior() {
     }
 
     override fun setup() {
+        appConfig = scene.findEntity<AppConfigEntity>()?.config!!
         camera = scene.getMainCamera().camera
         stateManager = scene.findEntity<StateManager>()?.findComponent()!!
         keyboardBehavior = scene.findEntity<KeyboardEntity>()?.keyboardBehavior!!
@@ -110,25 +114,14 @@ class CameraCalibrationBehavior : Behavior() {
         val defaultCalibrationPoints = renderRegion.toPointArray()
 
         (0 until 4).forEach { pointIndex ->
-            val loadedX = config.getProperty("calibration.point$pointIndex.x")
-                    ?.toDouble()
-                    ?: defaultCalibrationPoints[pointIndex].x
-
-            val loadedY = config.getProperty("calibration.point$pointIndex.y")
-                    ?.toDouble()
-                    ?: defaultCalibrationPoints[pointIndex].y
-
-            val origin = cameraCalibrationPoints[pointIndex].origin
-            origin.x = loadedX
-            origin.y = loadedY
+            val point = appConfig.calibrationPoints.getOrElse(pointIndex, defaultCalibrationPoints::get)
+            cameraCalibrationPoints[pointIndex].origin.set(point)
         }
     }
 
     private fun storeCalibration() {
-        (0 until 4).forEach { pointIndex ->
-            val origin = cameraCalibrationPoints[pointIndex].origin
-            scene.config.setProperty("calibration.point$pointIndex.x", origin.x.toString())
-            scene.config.setProperty("calibration.point$pointIndex.y", origin.y.toString())
+        cameraCalibrationPoints.forEachIndexed { index, cameraCalibrationPoint ->
+            appConfig.calibrationPoints[index].set(cameraCalibrationPoint.origin)
         }
     }
 

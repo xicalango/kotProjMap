@@ -9,12 +9,12 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
-class Simulation(config: Properties = Properties()) {
+class Simulation() {
 
     val eventQueue: EventQueue = EventQueue()
-    val scene: Scene = Scene(config = config)
+    val scene: Scene = Scene()
 
-    private val simulationConfig: SimulationConfig = simulationConfigFromProperties(config)
+    private val simulationConfig: SimulationConfig = loadSimulationConfig()
 
     var frameCounter = 0
         private set

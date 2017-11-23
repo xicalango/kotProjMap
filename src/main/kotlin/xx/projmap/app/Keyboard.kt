@@ -5,10 +5,7 @@ import xx.projmap.events.KeyEvent
 import xx.projmap.geometry.*
 import xx.projmap.graphics.DrawStyle
 import xx.projmap.moshi
-import xx.projmap.scene2.Behavior
-import xx.projmap.scene2.BoxCollider
-import xx.projmap.scene2.Entity
-import xx.projmap.scene2.RectRenderable
+import xx.projmap.scene2.*
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
@@ -64,7 +61,8 @@ class KeyboardEntity : Entity("keyboard") {
 class KeyboardBehavior : Behavior() {
 
     private val _keyboardRect: MutRect = MutRect()
-    private lateinit var keyPropertiesFile: String
+    private lateinit var keyboardFilename: String
+    private lateinit var appConfig: AppConfig
 
     val keyboardRect: GeoRect
         get() = _keyboardRect
@@ -73,7 +71,11 @@ class KeyboardBehavior : Behavior() {
         get() = _keyboardRect.toQuad()
 
     override fun initialize() {
-        keyPropertiesFile = config.getProperty("keyboard.properties.file", "keyboard.properties")
+    }
+
+    override fun setup() {
+        appConfig = scene.findEntity<AppConfigEntity>()?.config!!
+        keyboardFilename = appConfig.keyboardFile
         loadKeys()
     }
 
@@ -114,7 +116,7 @@ class KeyboardBehavior : Behavior() {
     }
 
     private fun loadKeys() {
-        val path = Paths.get(keyPropertiesFile)
+        val path = Paths.get(keyboardFilename)
         if (!Files.exists(path)) {
             return
         }
@@ -127,7 +129,7 @@ class KeyboardBehavior : Behavior() {
     fun storeKeys() {
         val keyboardResource = toKeyboardResource()
 
-        val path = Paths.get(keyPropertiesFile)
+        val path = Paths.get(keyboardFilename)
 
         Okio.buffer(Okio.sink(path)).use { sink ->
             keyboardResourceAdapter.toJson(sink, keyboardResource)

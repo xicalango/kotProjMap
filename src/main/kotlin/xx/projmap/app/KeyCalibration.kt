@@ -40,6 +40,7 @@ class KeyCalibrationBehavior : Behavior() {
     private lateinit var stateManager: StateManagerBehavior
     private lateinit var keyboardEntity: KeyboardEntity
     private lateinit var keyboardBehavior: KeyboardBehavior
+    private lateinit var appConfig: AppConfig
 
     private lateinit var textLines: List<TextLineEntity>
 
@@ -51,12 +52,13 @@ class KeyCalibrationBehavior : Behavior() {
 
 
     override fun initialize() {
-        loadConfig()
-
         textLines = entity.findChildren<TextLineEntity>().sortedBy { it.origin.y }
     }
 
     override fun setup() {
+        appConfig = scene.findEntity<AppConfigEntity>()?.config!!
+        loadConfig()
+
         camera = scene.getMainCamera().camera
         val stateManagerEntity = scene.findEntity<StateManager>()!!
         stateManager = stateManagerEntity.findComponent()!!
@@ -68,13 +70,13 @@ class KeyCalibrationBehavior : Behavior() {
     }
 
     private fun loadConfig() {
-        keyRect.w = config.getProperty("key.defaultWidth", "13").toDouble()
-        keyRect.h = config.getProperty("key.defaultHeight", "13").toDouble()
+        keyRect.w = appConfig.defaultKeyWidth
+        keyRect.h = appConfig.defaultKeyHeight
     }
 
     private fun storeConfig() {
-        config.setProperty("key.defaultWidth", keyRect.w.toString())
-        config.setProperty("key.defaultHeight", keyRect.h.toString())
+        appConfig.defaultKeyWidth = keyRect.w
+        appConfig.defaultKeyHeight = keyRect.h
     }
 
     override fun onActivation() {

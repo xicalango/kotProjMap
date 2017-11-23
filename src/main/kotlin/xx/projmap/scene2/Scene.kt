@@ -13,8 +13,6 @@ interface SceneFacade {
     val entities: List<Entity>
     val allEntities: List<Entity>
 
-    val config: Properties
-
     val simulation: Simulation
 
     fun <T : Entity> createEntity(constructor: () -> T, parent: Entity? = null, name: String? = null): T
@@ -37,7 +35,7 @@ fun SceneFacade.getMainCamera(): CameraEntity = getCameras().find { it.name == "
 fun SceneFacade.createCamera(region: GeoRect, renderDestination: RenderDestination, transform: Transform = IdentityTransform, name: String = "camera"): CameraEntity =
         createEntity({ CameraEntity(region, renderDestination, transform) }, name = name)
 
-class Scene(override val config: Properties = Properties()) : SceneFacade, RenderableScene {
+class Scene : SceneFacade, RenderableScene {
 
     override val entities: MutableList<Entity> = ArrayList()
 

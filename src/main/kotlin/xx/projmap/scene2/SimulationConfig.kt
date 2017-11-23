@@ -1,15 +1,24 @@
 package xx.projmap.scene2
 
-import java.util.*
+import okio.Okio
+import xx.projmap.moshi
+import java.nio.file.Files
+import java.nio.file.Paths
+
+private val simulationConfigAdapter = moshi.adapter(SimulationConfig::class.java)
 
 data class SimulationConfig(
         val graphicsFpsLimit: Int? = 60,
         val simulationFpsLimit: Int? = 100
 )
 
-fun simulationConfigFromProperties(properties: Properties): SimulationConfig {
-    val graphicsFpsLimit = properties.getProperty("sim.${SimulationConfig::graphicsFpsLimit.name}", "60").toInt()
-    val simulationFpsLimit = properties.getProperty("sim.${SimulationConfig::simulationFpsLimit.name}", "100").toInt()
+fun loadSimulationConfig(): SimulationConfig {
+    val simulationConfigPath = Paths.get("simulationConfig.json")
 
-    return SimulationConfig(graphicsFpsLimit, simulationFpsLimit)
+    if (!Files.exists(simulationConfigPath)) {
+        return SimulationConfig()
+    }
+
+
+    return Okio.buffer(Okio.source(simulationConfigPath)).use(simulationConfigAdapter::fromJson) ?: SimulationConfig()
 }

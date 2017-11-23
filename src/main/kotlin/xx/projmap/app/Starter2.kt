@@ -1,48 +1,28 @@
 package xx.projmap.app
 
+import okio.Okio
 import xx.projmap.geometry.Rect
 import xx.projmap.graphics.createSubRenderDestination
 import xx.projmap.scene2.Simulation
 import xx.projmap.scene2.createCamera
 import xx.projmap.swing.ProjectionFrame
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 import javax.swing.JFrame
 
-private const val CONFIG_FILE_NAME = "config.properties"
-
-private fun loadProperties(fileName: String): Properties {
-    val path = Paths.get(fileName)
-
-    val properties = Properties()
-
-    if (Files.exists(path)) {
-        Files.newInputStream(path).use(properties::load)
-    }
-
-    println("loaded config: $properties")
-
-    return properties
-}
-
-private fun storeProperties(fileName: String, properties: Properties) {
-    val path = Paths.get(fileName)
-
-    println("storing config: $properties")
-
-    Files.newOutputStream(path).use { properties.store(it, fileName) }
-}
+private const val CONFIG_FILE_NAME = "appConfig.json"
 
 fun main(args: Array<String>) {
+    val configPath = Paths.get(args.getOrElse(0, { CONFIG_FILE_NAME }))
+    val config = loadAppConfig(configPath)
 
-    val configFileName = args.getOrElse(0, { CONFIG_FILE_NAME })
-    val config = loadProperties(configFileName)
-
-    val simulation = Simulation(config = config)
+    val simulation = Simulation()
 
     val frame = ProjectionFrame(simulation.eventQueue)
 
+    simulation.scene.createEntity({ AppConfigEntity(config) })
     simulation.scene.createEntity(::KeyboardEntity)
     simulation.scene.createEntity(::StateManager)
     val unitRect = frame.projectionPanel.region.toNormalized()
@@ -55,7 +35,21 @@ fun main(args: Array<String>) {
 
     simulation.run(frame.projectionPanel)
 
-    storeProperties(configFileName, config)
+    storeAppConfig(configPath, config)
 
     System.exit(0)
+}
+
+fun storeAppConfig(configPath: Path, config: AppConfig) {
+    Okio.buffer(Okio.sink(Files.newOutputStream(configPath))).use {
+        appConfigAdapter.toJson(it, config)
+    }
+}
+
+private fun loadAppConfig(configPath: Path): AppConfig {
+    return if (Files.exists(configPath)) {
+        Okio.buffer(Okio.source(Files.newInputStream(configPath))).use(appConfigAdapter::fromJson)!!
+    } else {
+        AppConfig()
+    }
 }

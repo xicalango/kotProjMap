@@ -21,9 +21,6 @@ abstract class Component(enabled: Boolean = true) {
     val scene: SceneFacade
         get() = entity.scene
 
-    val config: Properties
-        get() = scene.config
-
     val simulation: Simulation
         get() = scene.simulation
 

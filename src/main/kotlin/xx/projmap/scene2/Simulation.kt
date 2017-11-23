@@ -38,21 +38,17 @@ class Simulation() {
             }
         }
 
+
         while (running) {
             val now = System.nanoTime()
             val dt = (now - lastTimestamp) / TimeUnit.SECONDS.toNanos(1).toDouble()
             lastTimestamp = now
 
-            try {
-                scene.startFrame()
-                scene.update(dt)
-                val events = eventQueue.currentEvents
-                handleInternalEvents(events)
-                scene.handleEvents(events)
-            } catch (e: Exception) {
-                running = false
-                throw e
-            }
+            scene.startFrame()
+            scene.update(dt)
+            val events = eventQueue.currentEvents
+            handleInternalEvents(events)
+            scene.handleEvents(events)
 
             if (simulationConfig.simulationFpsLimit != null) {
                 Thread.sleep(1000 / simulationConfig.simulationFpsLimit.toLong())

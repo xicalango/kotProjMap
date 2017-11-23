@@ -32,11 +32,13 @@ fun main(args: Array<String>) {
     frame.extendedState = JFrame.MAXIMIZED_BOTH
     frame.isVisible = true
 
-    simulation.run(frame.projectionPanel)
+    try {
+        simulation.run(frame.projectionPanel)
 
-    storeAppConfig(configFilename, config)
-
-    System.exit(0)
+        storeAppConfig(configFilename, config)
+    } finally {
+        System.exit(0)
+    }
 }
 
 private fun storeAppConfig(configFilename: String, config: AppConfig) {

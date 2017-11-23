@@ -1,8 +1,8 @@
 package xx.projmap.geometry
 
-import org.junit.jupiter.api.Assertions.assertArrayEquals
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
+import org.junit.Assert.assertArrayEquals
+import org.junit.Assert.assertEquals
+import org.junit.Test
 
 internal class QuadTest {
 
@@ -38,14 +38,14 @@ internal class QuadTest {
     internal fun testGetXY() {
         val quad = Quad(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0)
 
-        assertEquals(0.0, quad.getX(0))
-        assertEquals(1.0, quad.getY(0))
-        assertEquals(2.0, quad.getX(1))
-        assertEquals(3.0, quad.getY(1))
-        assertEquals(4.0, quad.getX(2))
-        assertEquals(5.0, quad.getY(2))
-        assertEquals(6.0, quad.getX(3))
-        assertEquals(7.0, quad.getY(3))
+        assertEquals(0.0, quad.getX(0), 0.000001)
+        assertEquals(1.0, quad.getY(0), 0.000001)
+        assertEquals(2.0, quad.getX(1), 0.000001)
+        assertEquals(3.0, quad.getY(1), 0.000001)
+        assertEquals(4.0, quad.getX(2), 0.000001)
+        assertEquals(5.0, quad.getY(2), 0.000001)
+        assertEquals(6.0, quad.getX(3), 0.000001)
+        assertEquals(7.0, quad.getY(3), 0.000001)
     }
 
     @Test

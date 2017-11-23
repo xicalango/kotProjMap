@@ -1,6 +1,6 @@
 package xx.projmap.scene2
 
-import org.junit.jupiter.api.Test
+import org.junit.Test
 import xx.projmap.events.EventQueue
 import xx.projmap.events.MouseClickEvent
 import xx.projmap.geometry.Quad

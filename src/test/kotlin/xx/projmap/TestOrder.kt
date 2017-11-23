@@ -1,6 +1,6 @@
 package xx.projmap
 
-import org.junit.jupiter.api.Test
+import org.junit.Test
 import xx.projmap.app.KeyEntity
 import xx.projmap.app.KeyboardEntity
 import xx.projmap.scene2.Scene

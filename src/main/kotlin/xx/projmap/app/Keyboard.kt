@@ -1,8 +1,10 @@
 package xx.projmap.app
 
+import okio.Okio
 import xx.projmap.events.KeyEvent
 import xx.projmap.geometry.*
 import xx.projmap.graphics.DrawStyle
+import xx.projmap.moshi
 import xx.projmap.scene2.Behavior
 import xx.projmap.scene2.BoxCollider
 import xx.projmap.scene2.Entity
@@ -11,6 +13,26 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
 
+data class KeyResource(val x: Double, val y: Double, val w: Double, val h: Double, val char: Char? = null, val code: Int? = null) {
+    fun compareToWithDelta(key: KeyResource, delta: Double): Int {
+        val dX = Math.abs(x - key.x)
+        val dY = Math.abs(y - key.y)
+        return if (dY <= delta) {
+            if (dX <= delta) {
+                0
+            } else {
+                x.compareTo(key.x)
+            }
+        } else {
+            y.compareTo(key.y)
+        }
+    }
+
+}
+
+data class KeyboardResource(val width: Double, val height: Double, val keys: List<KeyResource>)
+
+val keyboardResourceAdapter = moshi.adapter(KeyboardResource::class.java).indent("  ")
 
 class KeyEntity : Entity("key") {
     val keyBehavior = KeyBehavior()
@@ -27,20 +49,16 @@ class KeyEntity : Entity("key") {
 }
 
 class KeyBehavior : Behavior() {
-
     var keyChar: Char? = null
     var keyCode: Int? = null
-
 }
 
 class KeyboardEntity : Entity("keyboard") {
-
     val keyboardBehavior = KeyboardBehavior()
 
     init {
         addComponent(keyboardBehavior)
     }
-
 }
 
 class KeyboardBehavior : Behavior() {
@@ -59,69 +77,61 @@ class KeyboardBehavior : Behavior() {
         loadKeys()
     }
 
+    private fun toKeyboardResource(): KeyboardResource {
+        val keys = entity.findChildren<KeyEntity>()
+                .map { key ->
+                    val boundingBox = key.findComponent<BoxCollider>()?.boundingBox!!
+                    val keyBehavior = key.findComponent<KeyBehavior>()!!
+
+                    KeyResource(boundingBox.x, boundingBox.y, boundingBox.w, boundingBox.h, keyBehavior.keyChar, keyBehavior.keyCode)
+                }
+                .sortedWith(Comparator { k1, k2 -> -k1.compareToWithDelta(k2, 5.0) })
+
+        return KeyboardResource(_keyboardRect.w, _keyboardRect.h, keys)
+    }
+
+    private fun loadFromKeyboardResource(keyboardResource: KeyboardResource) {
+        entity.findChildren<KeyEntity>().forEach { it.destroy = true }
+
+        _keyboardRect.w = keyboardResource.width
+        _keyboardRect.h = keyboardResource.height
+
+        val point = MutPoint()
+        val rect = MutRect()
+
+        keyboardResource.keys.forEach { key ->
+            point.x = key.x
+            point.y = key.y
+            rect.w = key.w
+            rect.h = key.h
+
+            val newKey = createNewKey(point, rect)
+
+            val keyBehavior = newKey.findComponent<KeyBehavior>()
+            keyBehavior?.keyChar = key.char
+            keyBehavior?.keyCode = key.code
+        }
+    }
+
     private fun loadKeys() {
         val path = Paths.get(keyPropertiesFile)
         if (!Files.exists(path)) {
             return
         }
 
-        val keyProperties = Properties()
-        Files.newInputStream(path).use(keyProperties::load)
-
-        _keyboardRect.w = keyProperties.getProperty("keyboard.width", "460").toDouble()
-        _keyboardRect.h = keyProperties.getProperty("keyboard.height", "170").toDouble()
-
-        val numKeys = keyProperties.getProperty("keys.count", "0").toInt()
-
-        val point = MutPoint()
-        val rect = MutRect()
-
-        (0 until numKeys).forEach { index ->
-
-            point.x = keyProperties.getProperty("key$index.x")?.toDouble()!!
-            point.y = keyProperties.getProperty("key$index.y")?.toDouble()!!
-            rect.w = keyProperties.getProperty("key$index.w")?.toDouble()!!
-            rect.h = keyProperties.getProperty("key$index.h")?.toDouble()!!
-
-            val newKey = createNewKey(point, rect)
-
-            val keyBehavior = newKey.findComponent<KeyBehavior>()
-            keyBehavior?.keyChar = keyProperties.getProperty("key$index.char")?.toCharArray()?.getOrNull(0)
-            keyBehavior?.keyCode = keyProperties.getProperty("key$index.code")?.toInt()
-        }
-
+        Okio.buffer(Okio.source(path))
+                .use(keyboardResourceAdapter::fromJson)
+                ?.let(this::loadFromKeyboardResource)
     }
 
     fun storeKeys() {
-        val keyProperties = Properties()
-
-        val children = entity.findChildren<KeyEntity>()
-
-        keyProperties.setProperty("keyboard.width", _keyboardRect.w.toString())
-        keyProperties.setProperty("keyboard.height", _keyboardRect.h.toString())
-
-        keyProperties.setProperty("keys.count", children.size.toString())
-        children.sortedWith(Comparator { k1, k2 -> -k1.origin.compareToWithDelta(k2.origin, 5.0) })
-                .forEachIndexed { index, key ->
-                    val collider = key.findComponent<BoxCollider>()!!
-                    val boundingBox = collider.boundingBox
-                    val keyBehavior = key.findComponent<KeyBehavior>()!!
-
-                    keyProperties.setProperty("key$index.x", boundingBox.x.toString())
-                    keyProperties.setProperty("key$index.y", boundingBox.y.toString())
-                    keyProperties.setProperty("key$index.w", boundingBox.w.toString())
-                    keyProperties.setProperty("key$index.h", boundingBox.h.toString())
-                    if (keyBehavior.keyChar != null) {
-                        keyProperties.setProperty("key$index.char", keyBehavior.keyChar?.toString())
-                    }
-                    if (keyBehavior.keyCode != null) {
-                        keyProperties.setProperty("key$index.code", keyBehavior.keyCode?.toString())
-                    }
-                }
+        val keyboardResource = toKeyboardResource()
 
         val path = Paths.get(keyPropertiesFile)
 
-        Files.newOutputStream(path).use { keyProperties.store(it, keyPropertiesFile) }
+        Okio.buffer(Okio.sink(path)).use { sink ->
+            keyboardResourceAdapter.toJson(sink, keyboardResource)
+        }
     }
 
     fun createNewKey(worldPoint: GeoPoint, keyRect: GeoRect): KeyEntity {
